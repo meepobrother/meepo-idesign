@@ -147,7 +147,16 @@ export class DesignHistoryComponent implements OnInit {
     }
 }
 
+@Component({
+    selector: 'design-pages',
+    templateUrl: './design-pages.html'
+})
 
+export class DesignPagesComponent implements OnInit {
+    pages: any[] = [];
+    constructor() { }
+    ngOnInit() { }
+}
 
 // 容器
 @Component({
@@ -163,6 +172,9 @@ export class DesignComponent implements OnInit {
     @ViewChild(DesignLibraryComponent) _library: DesignLibraryComponent;
     @ViewChild(DesignPreviewComponent) _preview: DesignPreviewComponent;
     @ViewChild(DesignHistoryComponent) _history: DesignHistoryComponent;
+    @ViewChild(DesignPagesComponent) _pages: DesignPagesComponent;
+
+    activeHistory: boolean = false;
 
     constructor(
         private history: DesignService,

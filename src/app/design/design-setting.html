@@ -1,3 +1,7 @@
 <div *ngIf="item">
     <ng-container *ngComponent="item.setting.component;input: item.props"></ng-container>
 </div>
+
+<div class="meepo-design-setting-empty" *ngIf="!item">
+    请选择要编辑的页面元素
+</div>

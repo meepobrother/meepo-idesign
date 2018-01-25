@@ -5,9 +5,45 @@
     &-history,
     &-library,
     &-preview,
-    &-setting {
+    &-setting,
+    &-pages {
         min-height: 80px;
         position: relative;
+    }
+    &-left {
+        &-container {
+            display: flex;
+            flex-direction: column;
+            height: calc(100% - 44px);
+            overflow: auto;
+            width: 250px;
+            background: #efefef;
+        }
+        &-header {
+            list-style: none;
+            margin: 0px;
+            padding: 0px;
+            display: flex;
+            flex-direction: row;
+            li {
+                text-align: center;
+                flex: 1;
+                height: 44px;
+                line-height: 44px;
+                margin: 0px;
+                &.active {
+                    background: rgb(219, 72, 4);
+                    color: #fff;
+                }
+            }
+        }
+    }
+    &-pages {
+        display: block;
+        background: #efefef;
+        width: 250px;
+        max-height: 100%;
+        overflow: auto;
     }
     &-history {
         display: block;
@@ -31,9 +67,26 @@
         }
     }
     &-library {
-        display: block;
         background: rgb(255, 255, 255);
         width: 200px;
+        display: block;
+        overflow: auto;
+        &:after {
+            clear: both;
+            content: " ";
+        }
+        .grid-item {
+            float: left;
+            width: 50%;
+            text-align: center;
+            line-height: 44px;
+            background: #efefef;
+            border: 1px solid #fff;
+            cursor: pointer;
+            &:hover {
+                background: #ccc;
+            }
+        }
     }
     &-preview {
         display: block;
@@ -63,8 +116,19 @@
     }
     &-setting {
         display: block;
-        background: rgb(255, 255, 255);
+        background: #efefef;
         flex: 1;
+        padding: 0 10px;
+        border-left: 10px solid #fff;
+        &-empty {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-size: .8em;
+            color: gray;
+        }
     }
     &-footer {
         position: fixed;

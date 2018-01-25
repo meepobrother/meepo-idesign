@@ -1,4 +1,13 @@
-<design-history></design-history>
+<div class="meepo-design-left">
+    <ul class="meepo-design-left-header">
+        <li [class.active]="activeHistory" (click)="activeHistory = true">历史记录</li>
+        <li [class.active]="!activeHistory" (click)="activeHistory = false">页面管理</li>
+    </ul>
+    <div class="meepo-design-left-container">
+        <design-history *ngIf="activeHistory"></design-history>
+        <design-pages *ngIf="!activeHistory"></design-pages>
+    </div>
+</div>
 <design-library></design-library>
 <design-preview (onClick)="setSetting($event)"></design-preview>
 <design-setting></design-setting>

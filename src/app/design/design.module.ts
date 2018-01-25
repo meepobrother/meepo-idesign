@@ -10,7 +10,7 @@ export function designServiceFactory(designService: DesignService, injector: any
 import {
     DesignLibraryComponent, DesignComponent,
     DesignHistoryComponent, DesignPreviewComponent,
-    DesignSettingComponent
+    DesignSettingComponent, DesignPagesComponent
 } from './design';
 import { CanDropDirective, CanDragDirective } from './drop-drag';
 @NgModule({
@@ -25,13 +25,13 @@ import { CanDropDirective, CanDragDirective } from './drop-drag';
         DesignLibraryComponent, DesignComponent,
         DesignHistoryComponent, DesignPreviewComponent,
         DesignSettingComponent, CanDropDirective, CanDragDirective,
-        NgComponentDirective
+        NgComponentDirective, DesignPagesComponent
     ],
     declarations: [
         DesignLibraryComponent, DesignComponent,
         DesignHistoryComponent, DesignPreviewComponent,
         DesignSettingComponent, CanDropDirective, CanDragDirective,
-        NgComponentDirective
+        NgComponentDirective, DesignPagesComponent
     ],
     providers: [
         {
