@@ -1,0 +1,7 @@
+<div class="meepo-design-preview-container" canDrop (canDropChange)="addComponent($event)">
+    <ng-container *ngFor="let item of components">
+        <div [canDrag]="item.uuid" (click)="_onClick(item)" (mouseenter)="_showMore(item)" (canDragChange)="removeComponent($event)">
+            <ng-container *ngComponentOutlet="item.preview.component;"></ng-container>
+        </div>
+    </ng-container>
+</div>
