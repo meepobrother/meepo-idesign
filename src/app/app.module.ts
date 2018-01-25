@@ -1,13 +1,15 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { RouterModule } from '@angular/router';
+
 import { FormsModule } from '@angular/forms';
 
-import { FlexLayoutModule } from '@angular/flex-layout';
 import { AppComponent } from './app.component';
 import { FlexHoverDirective } from './hover';
-import { DesignModule } from './design/design.module';
+import { IDesignModule } from './design/design.module';
 import { components, entryComponents } from './components/index';
 import { DESIGN_COMPONENTS } from './design/design.service';
+import { IPreviewModule } from './preview/preview.module';
 @NgModule({
   declarations: [
     AppComponent,
@@ -16,8 +18,15 @@ import { DESIGN_COMPONENTS } from './design/design.service';
   ],
   imports: [
     BrowserModule,
-    FlexLayoutModule,
-    DesignModule,
+    RouterModule.forRoot([{
+      path: '',
+      pathMatch: 'full',
+      redirectTo: 'design'
+    },{
+      path: 'preview',
+      loadChildren: 'app/preview/preview.module#IPreviewModule'
+    }], { useHash: true }),
+    IDesignModule,
     FormsModule
   ],
   providers: [

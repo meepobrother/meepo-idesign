@@ -39,3 +39,15 @@ export const entryComponents: Type<any>[] = [
 ];
 
 export const components: DesignLibraryProp[] = componentsSet;
+
+
+export const PreviewComponents = [
+    {
+        name: 'test1',
+        component: Test1Component
+    },
+    {
+        name: 'test2',
+        component: Test2Component
+    }
+];

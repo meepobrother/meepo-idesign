@@ -8,6 +8,7 @@ import { DesignLibraryProp, DesignHistoryProp } from './types';
 import { guid } from './uuid';
 import { fromEvent } from 'rxjs/observable/fromEvent';
 import { DesignService } from './design.service';
+import { Router } from '@angular/router';
 // 设置
 @Component({
     selector: 'design-setting',
@@ -32,6 +33,15 @@ export class DesignPreviewComponent implements OnInit {
     @Output() onClick: EventEmitter<any> = new EventEmitter();
     components: DesignLibraryProp[] = [];
     historys: DesignHistoryProp[];
+
+    directives: any = {
+        name: 'device-iphone-8 device-gold',
+        color: '',
+        src: './assets/img/bg-03.jpg',
+        type: 'image'
+    };
+
+    isOpen: boolean = false;
 
     constructor(
         private history: DesignService
@@ -155,7 +165,8 @@ export class DesignComponent implements OnInit {
     @ViewChild(DesignHistoryComponent) _history: DesignHistoryComponent;
 
     constructor(
-        private history: DesignService
+        private history: DesignService,
+        private router: Router
     ) { }
     ngOnInit() {
 
@@ -169,7 +180,9 @@ export class DesignComponent implements OnInit {
         this._preview.updateCache();
     }
 
-    previewToHistory() { }
+    previewToHistory() {
+        this.router.navigate(['preview'])
+    }
 
     postToHistory() { }
 }

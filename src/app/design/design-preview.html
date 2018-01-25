@@ -1,7 +1,18 @@
-<div class="meepo-design-preview-container" canDrop (canDropChange)="addComponent($event)">
-    <ng-container *ngFor="let item of components">
-        <div [canDrag]="item.uuid" (click)="_onClick(item)" (mouseenter)="_showMore(item)" (canDragChange)="removeComponent($event)">
-            <ng-container *ngComponent="item.preview.component;input: item.props"></ng-container>
+<div class="device device-iphone-8" [ngClass]="directives.name">
+    <div class="device-frame">
+        <img (click)="isOpen = true" *ngIf="!isOpen" class="device-content" [src]="directives.src">
+        <div *ngIf="isOpen" class="meepo-design-preview-container device-content" canDrop (canDropChange)="addComponent($event)">
+            <ng-container *ngFor="let item of components">
+                <div [canDrag]="item.uuid" (click)="_onClick(item)" (mouseenter)="_showMore(item)" (canDragChange)="removeComponent($event)">
+                    <ng-container *ngComponent="item.preview.component;input: item.props"></ng-container>
+                </div>
+            </ng-container>
         </div>
-    </ng-container>
+    </div>
+    <div class="device-stripe"></div>
+    <div class="device-header"></div>
+    <div class="device-sensors"></div>
+    <div class="device-btns"></div>
+    <div class="device-power"></div>
+    <div class="device-home"></div>
 </div>
