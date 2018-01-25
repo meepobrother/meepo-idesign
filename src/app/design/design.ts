@@ -30,7 +30,7 @@ export class DesignSettingComponent implements OnInit {
 export class DesignPreviewComponent implements OnInit {
     @HostBinding('class.meepo-design-preview') _preview: boolean = true;
     @Output() onClick: EventEmitter<any> = new EventEmitter();
-    private components: DesignLibraryProp[] = [];
+    components: DesignLibraryProp[] = [];
     historys: DesignHistoryProp[];
     constructor(
         private history: DesignService
@@ -94,11 +94,12 @@ export class DesignPreviewComponent implements OnInit {
 })
 export class DesignLibraryComponent implements OnInit {
     @HostBinding('class.meepo-design-library') _library: boolean = true;
-    private components: DesignLibraryProp[] = [];
+    components: DesignLibraryProp[] = [];
     constructor(
         private history: DesignService
     ) { }
     ngOnInit() {
+        this.history.setComponents();
         this.components = this.history.allComponents;
     }
 }
@@ -148,7 +149,9 @@ export class DesignComponent implements OnInit {
     @ViewChild(DesignHistoryComponent) _history: DesignHistoryComponent;
 
     constructor() { }
-    ngOnInit() { }
+    ngOnInit() {
+
+     }
 
     setSetting(com: DesignLibraryProp) {
         this._setting.setSetting(com);

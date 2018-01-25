@@ -23,13 +23,9 @@ componentsSet.push({
     name: 'test2'
 });
 
-export const components: DesignLibraryProp[] = componentsSet;
+export const entryComponents: Type<any>[] = [
+    Test1Component,
+    Test2Component
+];
 
-export function getComponentsArray(): Type<any>[] {
-    const arrays: Type<any>[] = [];
-    components.map((com, key) => {
-        arrays.push(com.preview.component);
-        arrays.push(com.setting.component);
-    });
-    return arrays;
-}
+export const components: DesignLibraryProp[] = componentsSet;

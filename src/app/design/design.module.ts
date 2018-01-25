@@ -1,8 +1,12 @@
-import { NgModule, ModuleWithProviders } from '@angular/core';
+import { NgModule, ModuleWithProviders, Optional, SkipSelf, Injector } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { DesignLibraryProp } from './types';
 import { DESIGN_COMPONENTS, DesignService } from './design.service';
+
+export function designServiceFactory(designService: DesignService, injector: any, comps: any) {
+    return designService || new DesignService(injector, comps);
+}
 
 import {
     DesignLibraryComponent, DesignComponent,
@@ -25,18 +29,11 @@ import { CanDropDirective, CanDragDirective } from './drop-drag';
         DesignSettingComponent, CanDropDirective, CanDragDirective
     ],
     providers: [
-        DesignService
+        {
+            provide: DesignService,
+            useFactory: designServiceFactory,
+            deps: [[new Optional(), new SkipSelf(), DesignService], Injector, DESIGN_COMPONENTS]
+        }
     ],
 })
-export class DesignModule {
-    public static forRoot(coms: DesignLibraryProp[] = []): ModuleWithProviders {
-        return {
-            ngModule: DesignModule,
-            providers: [{
-                provide: DESIGN_COMPONENTS,
-                useValue: coms,
-                multi: true
-            }]
-        }
-    }
-}
+export class DesignModule { }

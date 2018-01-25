@@ -4,23 +4,28 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { AppComponent } from './app.component';
 import { FlexHoverDirective } from './hover';
 import { DesignModule } from './design/design.module';
-import { components, getComponentsArray } from './components/index';
-
-
+import { components, entryComponents } from './components/index';
+import { DESIGN_COMPONENTS } from './design/design.service';
 @NgModule({
   declarations: [
     AppComponent,
     FlexHoverDirective,
-    ...getComponentsArray(),
+    ...entryComponents,
   ],
   imports: [
     BrowserModule,
     FlexLayoutModule,
-    DesignModule.forRoot(components)
+    DesignModule
   ],
-  providers: [],
+  providers: [
+    {
+      provide: DESIGN_COMPONENTS,
+      useValue: components,
+      multi: true
+    }
+  ],
   entryComponents: [
-    ...getComponentsArray()
+    ...entryComponents
   ],
   bootstrap: [AppComponent]
 })

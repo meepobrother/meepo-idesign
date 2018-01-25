@@ -1,4 +1,4 @@
-import { Injectable, InjectionToken, Inject } from '@angular/core';
+import { Injectable, InjectionToken, Inject, Injector } from '@angular/core';
 export const historyKey = 'historyKey';
 import { DesignHistoryProp, DesignLibraryProp } from './types';
 import { Subject } from 'rxjs/Subject';
@@ -13,9 +13,16 @@ export class DesignService {
     data$: Subject<DesignLibraryProp[]> = new Subject();
 
     allComponents: DesignLibraryProp[] = [];
+    components: DesignLibraryProp[][];
     constructor(
-        @Inject(DESIGN_COMPONENTS) public components: DesignLibraryProp[][]
+        private injector: Injector,
+        @Inject(DESIGN_COMPONENTS) _allcomponents: any
     ) {
+        console.log(_allcomponents);
+    }
+
+    setComponents() {
+        this.components = this.injector.get(DESIGN_COMPONENTS) as DesignLibraryProp[][];
         this.components.map(coms => {
             coms.forEach(com => {
                 this.allComponents.push(com);
