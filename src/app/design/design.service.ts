@@ -21,6 +21,7 @@ export class DesignService {
 
     setComponents() {
         this.components = this.injector.get(DESIGN_COMPONENTS) as DesignLibraryProp[][];
+        this.allComponents = [];
         this.components.map(coms => {
             coms.forEach(com => {
                 this.allComponents.push(com);

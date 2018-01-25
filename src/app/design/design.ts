@@ -151,7 +151,6 @@ export class DesignHistoryComponent implements OnInit {
     selector: 'design-pages',
     templateUrl: './design-pages.html'
 })
-
 export class DesignPagesComponent implements OnInit {
     pages: any[] = [];
     constructor() { }
