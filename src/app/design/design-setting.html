@@ -1,3 +1,3 @@
 <div *ngIf="item">
-    <ng-container *ngComponentOutlet="item.setting.component;"></ng-container>
+    <ng-container *ngComponent="item.setting.component;input: item.props"></ng-container>
 </div>

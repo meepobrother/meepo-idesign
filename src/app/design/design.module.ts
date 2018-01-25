@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { DesignLibraryProp } from './types';
 import { DESIGN_COMPONENTS, DesignService } from './design.service';
-
+import { NgComponentDirective } from './ng-component';
 export function designServiceFactory(designService: DesignService, injector: any, comps: any) {
     return designService || new DesignService(injector, comps);
 }
@@ -21,12 +21,14 @@ import { CanDropDirective, CanDragDirective } from './drop-drag';
     exports: [
         DesignLibraryComponent, DesignComponent,
         DesignHistoryComponent, DesignPreviewComponent,
-        DesignSettingComponent, CanDropDirective, CanDragDirective
+        DesignSettingComponent, CanDropDirective, CanDragDirective,
+        NgComponentDirective
     ],
     declarations: [
         DesignLibraryComponent, DesignComponent,
         DesignHistoryComponent, DesignPreviewComponent,
-        DesignSettingComponent, CanDropDirective, CanDragDirective
+        DesignSettingComponent, CanDropDirective, CanDragDirective,
+        NgComponentDirective
     ],
     providers: [
         {

@@ -17,9 +17,7 @@ export class DesignService {
     constructor(
         private injector: Injector,
         @Inject(DESIGN_COMPONENTS) _allcomponents: any
-    ) {
-        console.log(_allcomponents);
-    }
+    ) { }
 
     setComponents() {
         this.components = this.injector.get(DESIGN_COMPONENTS) as DesignLibraryProp[][];
@@ -60,7 +58,6 @@ export class DesignService {
 
     backToHistory(item: DesignHistoryProp) {
         this.data = item.data;
-        console.log(this.data);
         this.data$.next(this.data);
     }
 }

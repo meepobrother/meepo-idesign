@@ -11,6 +11,8 @@ export interface DesignLibraryProp {
     setting?: DesignComponentProp<any>;
     name?: string;
     uuid?: string;
+    props?: any,
+    title?: string;
 }
 
 export interface DesignHistoryProp{

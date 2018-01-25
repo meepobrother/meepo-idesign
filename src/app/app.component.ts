@@ -1,6 +1,10 @@
-import { Component, ViewContainerRef, OnInit, Injector } from '@angular/core';
+import {
+  Component, ViewContainerRef,
+  OnInit, Injector, ComponentFactoryResolver
+} from '@angular/core';
 import { ViewEncapsulation } from '@angular/core';
 import { DESIGN_COMPONENTS } from './design/design.service';
+import { NgModuleRef } from '@angular/core';
 
 @Component({
   selector: 'app-root',
@@ -10,10 +14,6 @@ import { DESIGN_COMPONENTS } from './design/design.service';
 })
 export class AppComponent implements OnInit {
   title = 'app';
-  constructor(
-    private view: ViewContainerRef,
-    private injector: Injector
-  ) { }
-
+  constructor() { }
   ngOnInit() { }
 }

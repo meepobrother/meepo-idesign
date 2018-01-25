@@ -4007,9 +4007,9 @@ ng-packagr@^1.6.0:
     uglify-js "^3.0.7"
     vinyl-fs "^2.4.4"
 
-ng-react-component@^1.0.6:
-  version "1.0.6"
-  resolved "https://registry.yarnpkg.com/ng-react-component/-/ng-react-component-1.0.6.tgz#093851039fd65a1fee3184f7ebaef845a7f05642"
+ng-react-component@^1.0.9:
+  version "1.0.9"
+  resolved "https://registry.yarnpkg.com/ng-react-component/-/ng-react-component-1.0.9.tgz#84f44537e7f906b5ec9da3ca6649d2201023d9f8"
 
 no-case@^2.2.0:
   version "2.3.2"

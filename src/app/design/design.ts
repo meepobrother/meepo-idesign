@@ -32,9 +32,11 @@ export class DesignPreviewComponent implements OnInit {
     @Output() onClick: EventEmitter<any> = new EventEmitter();
     components: DesignLibraryProp[] = [];
     historys: DesignHistoryProp[];
+
     constructor(
         private history: DesignService
     ) { }
+
     ngOnInit() {
         // 最后一次操作
         this.historys = this.history.getHistory();
@@ -50,12 +52,15 @@ export class DesignPreviewComponent implements OnInit {
             this.history.data$.next(this.historys[0].data);
         }
     }
+
     _onClick(e: DesignLibraryProp) {
         this.onClick.emit(e);
     }
+
     _showMore(e: DesignLibraryProp) {
         console.log('显示操作提示');
     }
+
     addComponent(name: string) {
         const com = this.history.getComponentByName(name);
         try {
@@ -66,6 +71,7 @@ export class DesignPreviewComponent implements OnInit {
             console.log('undefined err', err);
         }
     }
+
     removeComponent(uuid: string) {
         let idx: number = 0;
         this.components.map((com: DesignLibraryProp, index: number) => {
@@ -148,12 +154,22 @@ export class DesignComponent implements OnInit {
     @ViewChild(DesignPreviewComponent) _preview: DesignPreviewComponent;
     @ViewChild(DesignHistoryComponent) _history: DesignHistoryComponent;
 
-    constructor() { }
+    constructor(
+        private history: DesignService
+    ) { }
     ngOnInit() {
 
-     }
+    }
 
     setSetting(com: DesignLibraryProp) {
         this._setting.setSetting(com);
     }
+
+    saveToHistory() {
+        this._preview.updateCache();
+    }
+
+    previewToHistory() { }
+
+    postToHistory() { }
 }

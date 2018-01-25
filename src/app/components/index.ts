@@ -1,5 +1,5 @@
-import { Test1Component } from "./test1";
-import { Test2Component } from "./test2";
+import { Test1Component, Test1SettingComponent } from "./test1";
+import { Test2Component, Test2SettingComponent } from "./test2";
 import { DesignLibraryProp } from '../design/types';
 import { Type } from '@angular/core';
 const componentsSet: DesignLibraryProp[] = [];
@@ -9,23 +9,33 @@ componentsSet.push({
     preview: {
         component: Test1Component
     }, setting: {
-        component: Test1Component
+        component: Test1SettingComponent
     },
-    name: 'test1'
+    props: {
+        title: 'title1'
+    },
+    name: 'test1',
+    title: '测试1'
 });
 componentsSet.push({
     preview: {
         component: Test2Component
     },
     setting: {
-        component: Test2Component
+        component: Test2SettingComponent
     },
-    name: 'test2'
+    props: {
+        title: 'title2'
+    },
+    name: 'test2',
+    title: '测试2'
 });
 
 export const entryComponents: Type<any>[] = [
     Test1Component,
-    Test2Component
+    Test1SettingComponent,
+    Test2Component,
+    Test2SettingComponent
 ];
 
 export const components: DesignLibraryProp[] = componentsSet;

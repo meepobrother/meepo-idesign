@@ -53,4 +53,40 @@
         background: gray;
         flex: 1;
     }
+    &-footer {
+        position: fixed;
+        bottom: 0px;
+        left: 0px;
+        right: 0px;
+        height: 60px;
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+        align-items: center;
+        background: rgba(0, 0, 0, .5);
+        &-save,
+        &-preview,
+        &-post {
+            width: 8em;
+            text-align: center;
+            height: 100%;
+            line-height: 60px;
+        }
+        &-save {
+            background: #c74a06;
+        }
+        &-preview {
+            background: #004fbf;
+        }
+        &-post {
+            background: #0d7355;
+        }
+        a {
+            text-decoration: none;
+            color: #fff;
+            &:hover {
+                text-decoration: none;
+            }
+        }
+    }
 }
