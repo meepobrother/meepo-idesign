@@ -10,19 +10,25 @@ import {
 } from '@angular/core';
 import { ReactComponent } from 'ng-react-component';
 import { fromEvent } from 'meepo-common';
-import { DesignLibraryProp } from './types';
+import { DesignLibraryProp, DesignLibraryService } from './types';
 import { DesignService } from './design.service';
 import { KeyValueChanges } from '@angular/core';
+
+
 @Directive({ selector: '[ngComponent]' })
 export class NgComponentDirective implements OnChanges {
     viewContainerRef: ViewContainerRef;
     componentRef: ComponentRef<ReactComponent<any, any>>;
     moduleRef: any;
+    // 组件列表
     @Input() ngComponent: NgIterable<DesignLibraryProp>;
-
+    // 是否预览
     @Input() ngComponentPreview: boolean;
+    // state
     @Input() ngComponentState: any;
+    // class
     @Input() ngComponentClass: any;
+    // style
     @Input() ngComponentStyle: any;
     // 是否可以拖拽
     @Input() ngComponentDrag: any;
@@ -38,7 +44,8 @@ export class NgComponentDirective implements OnChanges {
         private _viewContainerRef: ViewContainerRef,
         private _template: TemplateRef<any>,
         private differs: IterableDiffers,
-        private history: DesignService
+        private history: DesignService,
+        private librarys: DesignLibraryService
     ) {
         this.viewContainerRef = _viewContainerRef;
     }
@@ -63,12 +70,13 @@ export class NgComponentDirective implements OnChanges {
 
     private createComponent(item: IterableChangeRecord<DesignLibraryProp>, currentIndex) {
         try {
-            const props: DesignLibraryProp = item.item;
+            const designLibraryProp: DesignLibraryProp = item.item;
             let component: Type<any>;
+            const libs = this.librarys.get(designLibraryProp.name);
             if (this.ngComponentPreview) {
-                component = props.preview.component;
+                component = libs.view;
             } else {
-                component = props.setting.component;
+                component = libs.setting;
             }
             const elInjector = this.viewContainerRef.parentInjector;
             const componentFactoryResolver: ComponentFactoryResolver = this.moduleRef ? this.moduleRef.componentFactoryResolver :
@@ -80,17 +88,17 @@ export class NgComponentDirective implements OnChanges {
                 currentIndex,
                 elInjector
             );
-            componentRef.instance.props = props.props;
+            // designLibraryProp.props = JSON.parse(JSON.stringify(designLibraryProp.props));
+            componentRef.instance.props = designLibraryProp.props;
             componentRef.instance.onClick.subscribe(res => {
-                this.ngComponentClick && this.ngComponentClick(props)
+                this.ngComponentClick && this.ngComponentClick(designLibraryProp)
             });
             componentRef.instance.setClass(this.ngComponentClass);
             componentRef.instance.setStyle(this.ngComponentStyle);
-
             this.setDrage(componentRef.instance);
             this.setDrop(componentRef.instance);
-            props.uuid = componentRef.instance.guid;
-            const instanceComponent = new InstanceComponent(componentRef.instance.guid, props);
+            designLibraryProp.uuid = componentRef.instance.guid;
+            const instanceComponent = new InstanceComponent(componentRef.instance.guid, designLibraryProp);
             this.instances.push(instanceComponent);
         } catch (err) { }
     }

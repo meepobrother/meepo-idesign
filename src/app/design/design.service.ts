@@ -1,12 +1,18 @@
 import { Injectable, InjectionToken, Inject, Injector } from '@angular/core';
 export const historyKey = 'historyKey';
-import { DesignHistoryProp, DesignLibraryProp } from './types';
+import { DesignHistoryProp, DesignLibraryProp, DesignLibraryService } from './types';
 import { Subject } from 'rxjs/Subject';
 export const DESIGN_COMPONENTS = new InjectionToken('DESIGN_COMPONENTS');
-
+import { flatten } from 'meepo-common';
 @Injectable()
 export class DesignService {
-    historys: DesignHistoryProp[] = [];
+    _historys: DesignHistoryProp[] = [];
+    set historys(val: DesignHistoryProp[]) {
+        this._historys = val;
+    }
+    get historys() {
+        return this._historys || [];
+    }
     history$: Subject<DesignHistoryProp[]> = new Subject();
 
     data: DesignLibraryProp[] = [];
@@ -21,17 +27,10 @@ export class DesignService {
 
     constructor(
         private injector: Injector,
-        @Inject(DESIGN_COMPONENTS) _allcomponents: any
-    ) { }
-
-    setComponents() {
-        this.components = this.injector.get(DESIGN_COMPONENTS) as DesignLibraryProp[][];
-        this.allComponents = [];
-        this.components.map(coms => {
-            coms.forEach(com => {
-                this.allComponents.push(com);
-            });
-        });
+        @Inject(DESIGN_COMPONENTS) _allcomponents: any,
+        private library: DesignLibraryService
+    ) { 
+        this.allComponents = flatten(_allcomponents);
     }
 
     removeComponentByUuid(uuid: string) {
@@ -58,7 +57,8 @@ export class DesignService {
     getHistory(): DesignHistoryProp[] {
         let local = localStorage.getItem(historyKey);
         if (local) {
-            return JSON.parse(local) as DesignHistoryProp[];
+            const items = JSON.parse(local) as DesignHistoryProp[];
+            return items;
         } else {
             return [];
         }
@@ -73,8 +73,15 @@ export class DesignService {
         this.history$.next(this.historys);
     }
 
-    backToHistory(item: DesignHistoryProp) {
+    backToHistory(item: DesignHistoryProp = null) {
+        if (!item) {
+            item = this.getHistory()[0];
+        }
         this.data = item.data;
         this.data$.next(this.data);
     }
+}
+
+function type(val: any): string {
+    return typeof val;
 }

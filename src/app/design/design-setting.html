@@ -1,6 +1,5 @@
-<div *ngIf="item">
-    <ng-container *ngComponentOutlet="item.setting.component"></ng-container>
-</div>
+
+<ng-container *ngComponent="[item]"></ng-container>
 
 <div class="meepo-design-setting-empty" *ngIf="!item">
     请选择要编辑的页面元素

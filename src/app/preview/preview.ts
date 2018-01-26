@@ -17,25 +17,14 @@ export class IpreviewComponent extends ReactComponent<any, any> {
         ele: ElementRef
     ) {
         super(differs, ele, render);
+        this.history.data$.subscribe(res=>{
+            console.log(res);
+            this.components = res;
+        });
     }
     ngOnInit() {
-        const history = this.history.getHistory()[0];
-        const components = history.data;
-        components.map(res => {
-            res.preview = this.getComponentByName(res.name)
-        });
-        this.components = components;
+        this.history.backToHistory();
     }
     onStateChange() { }
     onPropsChange() { }
-
-    getComponentByName(name: string) {
-        let com: any;
-        PreviewComponents.map(res => {
-            if (res.name === name) {
-                com = res;
-            }
-        });
-        return com;
-    }
 }

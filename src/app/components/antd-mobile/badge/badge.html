@@ -1,4 +1,13 @@
-<ng-container *ngComponent="props.children;preview: true;"></ng-container>
-<sup *ngIf="props.dot" class="am-badge-dot" [class.am-badge-dot-large]="props.size === 'large'"></sup>
-<sup *ngIf="props.corner" class="am-badge-text am-badge-corner" [class.am-badge-corner-large]="props.size === 'large'">{{props.text}}</sup>
-<sup *ngIf="props.hot" class="am-badge-text">{{props.text}}</sup>
+<!-- <div class="am-badge" [class.am-badge-corner-wrapper]="!!props.corner"> -->
+    <sup *ngIf="props.dot" class="am-badge-dot" [class.am-badge-dot-large]="props.size === 'large'"></sup>
+    <sup *ngIf="props.hot" class="am-badge-text">{{props.text}}</sup>
+    <div *ngIf="props.corner" class="corner-badge">
+        <ng-container *ngComponent="props.children;preview: true;"></ng-container>
+        <div>111111111111111111111</div>
+        <div>111111111111111111111</div>
+        <div>111</div>
+    </div>
+    <div *ngIf="props.corner" class="am-badge-corner" [class.am-badge-corner-large]="props.size === 'large'">
+        {{props.text}}
+    </div>
+<!-- </div> -->

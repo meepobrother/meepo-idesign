@@ -1,3 +1,1 @@
-<ng-container *ngFor="let item of components">
-    <ng-container *ngComponent="item.preview.component;input: item.props"></ng-container>
-</ng-container>
+<ng-container *ngComponent="components;preview: true"></ng-container>

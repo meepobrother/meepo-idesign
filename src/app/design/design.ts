@@ -9,6 +9,9 @@ import { guid } from './uuid';
 import { fromEvent } from 'rxjs/observable/fromEvent';
 import { DesignService } from './design.service';
 import { Router } from '@angular/router';
+export function deepCopy(obj: any) {
+    return JSON.parse(JSON.stringify(obj));
+}
 // 设置
 @Component({
     selector: 'design-setting',
@@ -50,24 +53,16 @@ export class DesignPreviewComponent implements OnInit {
     constructor(
         private history: DesignService
     ) {
-
+        this.history.data$.subscribe(res => {
+            this.components = res;
+        });
     }
 
     ngOnInit() {
         // 最后一次操作
         try {
-            this.historys = this.history.getHistory();
-            this.history.data$.subscribe(res => {
-                res.map(r => {
-                    const com = this.history.getComponentByName(r.name);
-                    r.preview = com.preview;
-                    r.setting = com.setting;
-                });
-                this.components = res;
-            });
-            if (this.historys.length > 0) {
-                this.history.data$.next(this.historys[0].data);
-            }
+            this.history.backToHistory();
+            this.historys = this.history.historys;
         } catch (err) {
             localStorage.clear();
         }
@@ -87,7 +82,7 @@ export class DesignPreviewComponent implements OnInit {
         try {
             const com = this.history.getComponentByName(name);
             if (com) {
-                this.components.push(com);
+                this.components.push(deepCopy(com));
                 this.updateCache();
             }
         } catch (err) {
@@ -112,6 +107,7 @@ export class DesignPreviewComponent implements OnInit {
             name: now.toISOString(),
             data: JSON.parse(components)
         };
+        this.historys = this.historys || [];
         this.historys.unshift(history);
         this.history.updateHistory(this.historys);
     }
@@ -127,8 +123,8 @@ export class DesignLibraryComponent implements OnInit {
     constructor(
         private history: DesignService
     ) { }
+
     ngOnInit() {
-        this.history.setComponents();
         this.components = this.history.allComponents;
     }
 }

@@ -1,5 +1,4 @@
 export * from './tabs/index';
-export * from './badge/badge.module';
 export * from './menu/index';
 export * from './flex/index';
 export * from './list/index';

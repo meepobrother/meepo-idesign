@@ -4,10 +4,14 @@
 @import "~weui/dist/style/weui.min.css";
 @import "~devices.css/dist/devices.min.css";
 @import "~devices.css/dist/spectre.min.css";
-
 html,
 body,
 app-root {
     display: block;
     height: 100%;
+}
+
+antd-badge {
+    display: inline-block;
+    position: relative;
 }

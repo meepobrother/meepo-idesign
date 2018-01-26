@@ -3792,9 +3792,9 @@ media-typer@0.3.0:
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/media-typer/-/media-typer-0.3.0.tgz#8710d7af0aa626f8fffa1ce00168545263255748"
 
-meepo-common@^1.1.6:
-  version "1.1.6"
-  resolved "https://registry.yarnpkg.com/meepo-common/-/meepo-common-1.1.6.tgz#55a5aef290731d4a9b39aba19443cd39bcd75a1f"
+meepo-common@^1.1.7:
+  version "1.1.7"
+  resolved "https://registry.yarnpkg.com/meepo-common/-/meepo-common-1.1.7.tgz#c72ed49a674547ff31c43560f3b8c86e970126ee"
 
 mem@^1.1.0:
   version "1.1.0"

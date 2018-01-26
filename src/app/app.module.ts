@@ -7,12 +7,16 @@ import { FormsModule } from '@angular/forms';
 import { AppComponent } from './app.component';
 import { FlexHoverDirective } from './hover';
 import { IDesignModule } from './design/design.module';
-import { components, entryComponents } from './components/index';
+import { components, entryComponents, libraryComponents, PreviewComponents } from './components/index';
+
 import { DESIGN_COMPONENTS } from './design/design.service';
-import { IPreviewModule } from './preview/preview.module';
+import { IpreviewComponent } from './preview/preview';
+import { DESIGN_LIBRARYS } from './design/types';
+
 @NgModule({
   declarations: [
     AppComponent,
+    IpreviewComponent,
     FlexHoverDirective,
     ...entryComponents,
   ],
@@ -22,9 +26,9 @@ import { IPreviewModule } from './preview/preview.module';
       path: '',
       pathMatch: 'full',
       redirectTo: 'design'
-    },{
+    }, {
       path: 'preview',
-      loadChildren: 'app/preview/preview.module#IPreviewModule'
+      component: IpreviewComponent
     }], { useHash: true }),
     IDesignModule,
     FormsModule
@@ -33,6 +37,11 @@ import { IPreviewModule } from './preview/preview.module';
     {
       provide: DESIGN_COMPONENTS,
       useValue: components,
+      multi: true
+    },
+    {
+      provide: DESIGN_LIBRARYS,
+      useValue: libraryComponents,
       multi: true
     }
   ],

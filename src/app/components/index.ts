@@ -7,32 +7,23 @@ const componentsSet: DesignLibraryProp[] = [];
 
 // 添加库
 componentsSet.push({
-    preview: {
-        component: AntdBadgeComponent
-    }, setting: {
-        component: BadgeSettingComponent
-    },
+    name: 'badge',
     props: {
         text: '0',
         hot: true,
         children: []
     },
-    name: 'badge',
-    title: '徽标数'
+    title: '徽标数',
+    children: []
 });
 componentsSet.push({
-    preview: {
-        component: Test2Component
-    },
-    setting: {
-        component: Test2SettingComponent
-    },
     props: {
         title: 'title2',
         children: []
     },
     name: 'test2',
-    title: '测试2'
+    title: '测试2',
+    children: []
 });
 
 export const entryComponents: Type<any>[] = [
@@ -55,3 +46,19 @@ export const PreviewComponents = [
         component: Test2Component
     }
 ];
+
+export interface SettingAndView {
+    setting: Type<any>;
+    view: Type<any>;
+}
+
+export interface SettingAndViewS {
+    [key: string]: SettingAndView;
+}
+
+export const libraryComponents: SettingAndViewS = {
+    badge: {
+        view: AntdBadgeComponent,
+        setting: BadgeSettingComponent
+    }
+}

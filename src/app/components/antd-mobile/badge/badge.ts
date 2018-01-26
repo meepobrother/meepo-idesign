@@ -35,7 +35,7 @@ export class AntdBadgePropsDefault implements AntdBadgeProps {
     constructor() { }
 }
 @Component({
-    selector: 'antd-badge',
+    selector: 'span.am-badge',
     templateUrl: './badge.html',
     encapsulation: ViewEncapsulation.None,
     styleUrls: ['./badge.less']
@@ -43,12 +43,7 @@ export class AntdBadgePropsDefault implements AntdBadgeProps {
 export class AntdBadgeComponent extends ReactComponent<AntdBadgeProps, any> implements AfterContentInit {
     scrollNumberCls: string;
     badgeCls: string;
-    @HostBinding('class.am-badge') _badge: boolean = true;
-    @HostBinding('class.am-badge-not-a-wrapper') _notAWrapper: boolean = false;
-    @HostBinding('class.am-badge-corner-wrapper') _cornerWrapper: boolean = false;
-    @HostBinding('class.am-badge-hot') _hot: boolean = false;
-    @HostBinding('class.am-badge-corner-wrapper-large') _cornerWrapperLarge: boolean = false;
-
+    @HostBinding('class.am-badge-corner-wrapper') _corner: boolean = false;
     constructor(
         private differs: KeyValueDiffers,
         ele: ElementRef,
@@ -58,25 +53,18 @@ export class AntdBadgeComponent extends ReactComponent<AntdBadgeProps, any> impl
     }
 
     ngAfterContentInit() {
-        this.reactRender();
+        this.doChange();
     }
 
-    private reactRender() {
-        const { children, prefixCls, dot, size, corner, hot, className, text } = this.props;
-        this.props.text = typeof this.props.text === 'number'
-            && this.props.text > this.props.overflowCount ?
-            `${this.props.overflowCount}+` : this.props.text;
-        this._cornerWrapper = this.props.corner;
-        this._notAWrapper = !children;
-        this._hot = !!this.props.hot;
-        this._cornerWrapperLarge = this.props.corner && (this.props.size === 'large');
+    private doChange() {
+        this._corner = !!this.props.corner;
     }
 
     onStateChange(changes: KeyValueChanges<string, any>) {
-        this.reactRender();
+        this.doChange();
     }
 
     onPropsChange(changes: KeyValueChanges<string, any>) {
-        this.reactRender();
+        this.doChange();
     }
 }
