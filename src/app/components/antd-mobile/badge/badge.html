@@ -1,4 +1,4 @@
-<!-- <div class="am-badge" [class.am-badge-corner-wrapper]="!!props.corner"> -->
+<div class="am-badge" [class.am-badge-corner-wrapper]="!!props.corner">
     <sup *ngIf="props.dot" class="am-badge-dot" [class.am-badge-dot-large]="props.size === 'large'"></sup>
     <sup *ngIf="props.hot" class="am-badge-text">{{props.text}}</sup>
     <div *ngIf="props.corner" class="corner-badge">
@@ -10,4 +10,9 @@
     <div *ngIf="props.corner" class="am-badge-corner" [class.am-badge-corner-large]="props.size === 'large'">
         {{props.text}}
     </div>
-<!-- </div> -->
+</div>
+
+<span class="am-badge am-badge-corner-wrapper">
+    <div class="corner-badge">Use corner prop</div>
+    <sup class="am-badge-corner">促</sup>
+</span>

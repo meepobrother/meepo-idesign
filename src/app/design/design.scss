@@ -2,7 +2,7 @@
     display: flex;
     height: 100%;
     width: 100%;
-    .editing{
+    .editing {
         cursor: pointer;
     }
     &-history,
@@ -99,6 +99,18 @@
         overflow: auto;
         .device {
             margin: 0 auto;
+        }
+        &-deletor {
+            height: 120px;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            background: gray;
+            color: #fff;
+            margin-bottom: 10px;
+            margin-left: 10px;
+            margin-right: 10px;
         }
         &-iphone {
             margin: 0 auto;

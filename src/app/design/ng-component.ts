@@ -100,6 +100,7 @@ export class NgComponentDirective implements OnChanges {
             designLibraryProp.uuid = componentRef.instance.guid;
             const instanceComponent = new InstanceComponent(componentRef.instance.guid, designLibraryProp);
             this.instances.push(instanceComponent);
+            console.log(componentRef);
         } catch (err) { }
     }
 

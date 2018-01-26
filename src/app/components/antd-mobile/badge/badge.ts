@@ -35,7 +35,7 @@ export class AntdBadgePropsDefault implements AntdBadgeProps {
     constructor() { }
 }
 @Component({
-    selector: 'span.am-badge',
+    selector: 'am-badge',
     templateUrl: './badge.html',
     encapsulation: ViewEncapsulation.None,
     styleUrls: ['./badge.less']

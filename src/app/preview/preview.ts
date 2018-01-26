@@ -18,7 +18,6 @@ export class IpreviewComponent extends ReactComponent<any, any> {
     ) {
         super(differs, ele, render);
         this.history.data$.subscribe(res=>{
-            console.log(res);
             this.components = res;
         });
     }
