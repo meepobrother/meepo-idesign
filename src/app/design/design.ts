@@ -1,7 +1,7 @@
 import {
     Component, OnInit, ViewChild, ElementRef,
     Host, Optional, Injectable, Output, EventEmitter,
-    InjectionToken
+    InjectionToken, Inject
 } from '@angular/core';
 import { HostBinding, ViewEncapsulation } from '@angular/core';
 import { DesignLibraryProp, DesignHistoryProp } from './types';
@@ -155,14 +155,18 @@ export class DesignHistoryComponent implements OnInit {
         this.history.backToHistory(item);
     }
 }
-
+export const DESIGN_PAGES = new InjectionToken('DESIGN_PAGES');
 @Component({
     selector: 'design-pages',
     templateUrl: './design-pages.html'
 })
 export class DesignPagesComponent implements OnInit {
     pages: any[] = [];
-    constructor() { }
+    constructor(
+        @Inject(DESIGN_PAGES) pages: any[]
+    ) {
+        this.pages = pages;
+    }
     ngOnInit() { }
 }
 

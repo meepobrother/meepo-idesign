@@ -30,7 +30,15 @@ import { DESIGN_LIBRARYS } from './design/types';
       path: 'preview',
       component: IpreviewComponent
     }], { useHash: true }),
-    IDesignModule,
+    IDesignModule.forRoot([{
+      title: '任务大厅'
+    }, {
+      title: '发单页面'
+    }, {
+      title: '个人中心'
+    }, {
+      title: '跑腿认证'
+    }]),
     FormsModule
   ],
   providers: [

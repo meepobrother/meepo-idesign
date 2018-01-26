@@ -1,4 +1,7 @@
-import { NgModule, ModuleWithProviders, Optional, SkipSelf, Injector } from '@angular/core';
+import {
+    NgModule, ModuleWithProviders, Optional,
+    SkipSelf, Injector, ModuleWithComponentFactories,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { DesignLibraryProp, DesignLibraryService } from './types';
@@ -8,7 +11,8 @@ import { NgComponentDirective } from './ng-component';
 import {
     DesignLibraryComponent, DesignComponent,
     DesignHistoryComponent, DesignPreviewComponent,
-    DesignSettingComponent, DesignPagesComponent
+    DesignSettingComponent, DesignPagesComponent,
+    DESIGN_PAGES
 } from './design';
 import { CanDropDirective, CanDragDirective } from './drop-drag';
 @NgModule({
@@ -36,4 +40,14 @@ import { CanDropDirective, CanDragDirective } from './drop-drag';
         DesignLibraryService
     ],
 })
-export class IDesignModule { }
+export class IDesignModule {
+    static forRoot(pages: any[] = []): ModuleWithProviders {
+        return {
+            ngModule: IDesignModule,
+            providers: [{
+                provide: DESIGN_PAGES,
+                useValue: pages
+            }]
+        }
+    }
+}
