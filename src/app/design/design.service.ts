@@ -14,6 +14,11 @@ export class DesignService {
 
     allComponents: DesignLibraryProp[] = [];
     components: DesignLibraryProp[][];
+
+
+    previewComponents: DesignLibraryProp[] = [];
+    previewComponents$: Subject<any> = new Subject();
+
     constructor(
         private injector: Injector,
         @Inject(DESIGN_COMPONENTS) _allcomponents: any
@@ -27,6 +32,17 @@ export class DesignService {
                 this.allComponents.push(com);
             });
         });
+    }
+
+    removeComponentByUuid(uuid: string) {
+        let thisIndex: any;
+        this.previewComponents.map((res: DesignLibraryProp, index: number) => {
+            if (res.uuid === uuid) {
+                thisIndex = index;
+            }
+        });
+        this.previewComponents.splice(thisIndex, 1);
+        this.previewComponents$.next(this.previewComponents);
     }
 
     getComponentByName(name: string): DesignLibraryProp {

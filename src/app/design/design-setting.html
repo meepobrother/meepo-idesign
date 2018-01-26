@@ -1,5 +1,5 @@
 <div *ngIf="item">
-    <ng-container *ngComponent="item.setting.component;input: item.props"></ng-container>
+    <ng-container *ngComponentOutlet="item.setting.component"></ng-container>
 </div>
 
 <div class="meepo-design-setting-empty" *ngIf="!item">

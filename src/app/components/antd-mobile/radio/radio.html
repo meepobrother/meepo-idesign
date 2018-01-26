@@ -1,0 +1,26 @@
+<div class="am-list-thumb" *ngIf="_thumb && !thumbRef">
+    <img [src]="_thumb" />
+</div>
+<ng-container *ngIf="thumbRef">
+    <div class="am-list-thumb">
+        <ng-container *ngTemplateOutlet="thumbRef"></ng-container>
+    </div>
+</ng-container>
+<div class="am-list-line" [class.am-list-line-multiple]="_multiple">
+    <div class="am-list-content">
+        <ng-content></ng-content>
+        <div class="{{_name}}-brief" *ngIf="brief">
+            <ng-container *ngTemplateOutlet="brief"></ng-container>
+        </div>
+    </div>
+    <div class="am-list-extra">
+        <label class="am-radio-wrapper">
+            <span class="am-radio am-radio-checked">
+                <input type="radio" class="am-radio-input">
+                <span class="am-radio-inner"></span>
+            </span>
+        </label>
+    </div>
+    <div [listArrow]="_arrow"></div>
+</div>
+<div listRipple style="display: none;"></div>

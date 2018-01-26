@@ -1,0 +1,11 @@
+<div #content class="am-list-view-scrollview-content">
+    <ng-content></ng-content>
+    <div style="position: relative;top: 0px;">
+        <div class="am-list-footer" #loadingTip>
+            <div style="padding: 10px; text-align: center;color: gray;">
+                <span *ngIf="loading">加载中...</span>
+                <span *ngIf="!loading">加载完成</span>
+            </div>
+        </div>
+    </div>
+</div>

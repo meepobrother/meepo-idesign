@@ -1,0 +1,24 @@
+<div class="{{_name}}-thumb" *ngIf="_thumb && !thumbRef">
+    <img [src]="_thumb" />
+</div>
+<ng-container *ngIf="thumbRef">
+    <div class="{{_name}}-thumb">
+        <ng-container *ngTemplateOutlet="thumbRef"></ng-container>
+    </div>
+</ng-container>
+<div class="am-list-line" [class.am-list-line-multiple]="_multiple">
+    <div class="{{_name}}-content">
+        <ng-content></ng-content>
+        <div class="{{_name}}-brief" *ngIf="brief">
+            <ng-container *ngTemplateOutlet="brief"></ng-container>
+        </div>
+    </div>
+    <div class="{{_name}}-extra" *ngIf="extra && extraType === 'string'">
+        {{extra}}
+    </div>
+    <div class="{{_name}}-extra" *ngIf="extra && extraType !== 'string'">
+        <ng-container *ngTemplateOutlet="extra"></ng-container>
+    </div>
+    <div [listArrow]="_arrow"></div>
+</div>
+<div listRipple style="display: none;"></div>

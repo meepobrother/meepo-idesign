@@ -1,0 +1,44 @@
+<div class="weui-cells weui-cells_form">
+    <div class="weui-cell weui-cell_switch">
+        <div class="weui-cell__bd">营销样式</div>
+        <div class="weui-cell__ft">
+            <input class="weui-switch" [(ngModel)]="props.hot" type="checkbox">
+        </div>
+    </div>
+    <div class="weui-cell weui-cell_switch">
+        <div class="weui-cell__bd">置于角落</div>
+        <div class="weui-cell__ft">
+            <input class="weui-switch" [(ngModel)]="props.corner" type="checkbox">
+        </div>
+    </div>
+    <div class="weui-cell weui-cell_switch">
+        <div class="weui-cell__bd">小红点</div>
+        <div class="weui-cell__ft">
+            <input class="weui-switch" [(ngModel)]="props.dot" type="checkbox">
+        </div>
+    </div>
+    <div class="weui-cell">
+        <div class="weui-cell__hd">
+            <label class="weui-label">文字</label>
+        </div>
+        <div class="weui-cell__bd">
+            <input class="weui-input" type="text" [(ngModel)]="props.text" placeholder="请输入显示文字">
+        </div>
+    </div>
+    <div class="weui-cell">
+        <div class="weui-cell__hd">
+            <label class="weui-label">封顶数</label>
+        </div>
+        <div class="weui-cell__bd">
+            <input class="weui-input" type="text" [(ngModel)]="props.overflowCount" placeholder="请输入封顶数">
+        </div>
+    </div>
+    <div class="weui-cell weui-cell_select">
+        <div class="weui-cell__bd">
+            <select class="weui-select" [(ngModel)]="props.size">
+                <option value="large">大</option>
+                <option value="small">小</option>
+            </select>
+        </div>
+    </div>
+</div>

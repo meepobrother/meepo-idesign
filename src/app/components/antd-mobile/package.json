@@ -1,0 +1,21 @@
+{
+    "name": "ng-antd-mobile",
+    "version": "1.0.5",
+    "repository": "https://github.com/meepobrother/ng-antd-mobile.git",
+    "author": "david <david@spektrakel.de>",
+    "license": "MIT",
+    "private": false,
+    "peerDependencies": {
+        "@angular/core": "*",
+        "@angular/common": "*",
+        "meepo-utils": "*"
+    },
+    "ngPackage": {
+        "$schema": "../node_modules/ng-packagr/ng-package.schema.json",
+        "dest": "../dist/ng-antd-mobile",
+        "workingDirectory": "../.ng_build",
+        "lib": {
+            "entryFile": "./public_api.ts"
+        }
+    }
+}

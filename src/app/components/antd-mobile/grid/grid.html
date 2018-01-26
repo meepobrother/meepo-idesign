@@ -1,0 +1,5 @@
+<flex *ngFor="let group of groups;index as row;" justify="center" align="stretch">
+    <grid-item [ngStyle]="itemStyle" [active]="activeClassName" *ngFor="let item of group;index as col;">
+        <ng-container *ngTemplateOutlet="tpl;context: {$implicit: item.data, index: item.index}"></ng-container>
+    </grid-item>
+</flex>

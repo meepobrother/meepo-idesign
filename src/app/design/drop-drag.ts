@@ -1,4 +1,7 @@
-import { Directive, ElementRef, Renderer2, OnInit, EventEmitter } from '@angular/core';
+import {
+    Directive, Component, ElementRef, Renderer2,
+    OnInit, EventEmitter, TemplateRef
+} from '@angular/core';
 import { fromEvent } from 'rxjs/observable/fromEvent';
 import { HostBinding } from '@angular/core';
 import { ViewContainerRef, ComponentRef, Input, Output } from '@angular/core';
@@ -43,8 +46,9 @@ export class CanDragDirective implements OnInit {
         fromEvent(this.ele.nativeElement, 'dragstart').subscribe((ev: DragEvent) => {
             ev.dataTransfer.setData("name", this.canDrag);
         });
-        fromEvent(this.ele.nativeElement, 'dragend').subscribe(res=>{
+        fromEvent(this.ele.nativeElement, 'dragend').subscribe(res => {
             this.canDragChange.emit(this.canDrag);
         });
     }
 }
+

@@ -1,0 +1,15 @@
+<div class="am-notice-bar" *ngIf="open" role="alert">
+    <div class="am-notice-bar-icon" *ngIf="icon">
+        <ng-container *ngTemplateOutlet="icon"></ng-container>
+    </div>
+    <div class="am-notice-bar-content">
+        <div class="am-notice-bar-marquee-wrap " role="marquee" style="overflow: hidden;">
+            <div class="am-notice-bar-marquee" #marquee [style.right.px]="right">
+                <ng-content></ng-content>
+            </div>
+        </div>
+    </div>
+    <div class="am-notice-bar-operation" (click)="doAction()" aria-label="close" role="button" *ngIf="action">
+        <ng-container *ngTemplateOutlet="action"></ng-container>
+    </div>
+</div>

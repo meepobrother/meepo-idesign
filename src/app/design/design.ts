@@ -30,7 +30,7 @@ export class DesignSettingComponent implements OnInit {
 })
 export class DesignPreviewComponent implements OnInit {
     @HostBinding('class.meepo-design-preview') _preview: boolean = true;
-    @Output() onClick: EventEmitter<any> = new EventEmitter();
+    @Output() doClick: EventEmitter<any> = new EventEmitter();
     components: DesignLibraryProp[] = [];
     historys: DesignHistoryProp[];
 
@@ -41,30 +41,42 @@ export class DesignPreviewComponent implements OnInit {
         type: 'image'
     };
 
+    onClick: any = (e: DesignLibraryProp) => {
+        this.doClick.emit(e);
+    }
+
     isOpen: boolean = false;
 
     constructor(
         private history: DesignService
-    ) { }
+    ) {
+
+    }
 
     ngOnInit() {
         // 最后一次操作
-        this.historys = this.history.getHistory();
-        this.history.data$.subscribe(res => {
-            res.map(r => {
-                const com = this.history.getComponentByName(r.name);
-                r.preview = com.preview;
-                r.setting = com.setting;
+        try {
+            this.historys = this.history.getHistory();
+            this.history.data$.subscribe(res => {
+                res.map(r => {
+                    const com = this.history.getComponentByName(r.name);
+                    r.preview = com.preview;
+                    r.setting = com.setting;
+                });
+                this.components = res;
             });
+            if (this.historys.length > 0) {
+                this.history.data$.next(this.historys[0].data);
+            }
+        } catch (err) {
+            localStorage.clear();
+        }
+        this.history.previewComponents = this.components;
+
+        this.history.previewComponents$.subscribe(res => {
+            console.log(res);
             this.components = res;
         });
-        if (this.historys.length > 0) {
-            this.history.data$.next(this.historys[0].data);
-        }
-    }
-
-    _onClick(e: DesignLibraryProp) {
-        this.onClick.emit(e);
     }
 
     _showMore(e: DesignLibraryProp) {
@@ -72,11 +84,12 @@ export class DesignPreviewComponent implements OnInit {
     }
 
     addComponent(name: string) {
-        const com = this.history.getComponentByName(name);
         try {
-            com.uuid = guid();
-            this.components.push(com);
-            this.updateCache();
+            const com = this.history.getComponentByName(name);
+            if (com) {
+                this.components.push(com);
+                this.updateCache();
+            }
         } catch (err) {
             console.log('undefined err', err);
         }

@@ -1,0 +1,25 @@
+<div class="{{_name}}-thumb" *ngIf="_thumb && !thumbRef">
+    <img [src]="_thumb" />
+</div>
+<ng-container *ngIf="thumbRef">
+    <div class="{{_name}}-thumb">
+        <ng-container *ngTemplateOutlet="thumbRef"></ng-container>
+    </div>
+</ng-container>
+<div class="am-list-line" [class.am-list-line-multiple]="_multiple">
+    <div class="am-input-label am-input-label-{{labelNumber}}">
+        <ng-content></ng-content>
+    </div>
+    <div class="am-input-control">
+        <input #input [attr.name]="name" [attr.placeholder]="placeholder" [attr.value]="value" [attr.type]="type">
+    </div>
+    <div class="am-input-extra" (click)="_onExtra($event)" *ngIf="extra && extraType === 'string'">
+        {{extra}}
+    </div>
+    <div class="am-input-extra" (click)="_onExtra($event)" *ngIf="extra && extraType !== 'string'">
+        <ng-container *ngTemplateOutlet="extra"></ng-container>
+    </div>
+    <div class="am-input-clear" *ngIf="clear" (click)="_onClear($event)"></div>
+    <div class="am-input-error-extra" (click)="_onError($event)"></div>
+</div>
+<div listRipple style="display: none;"></div>

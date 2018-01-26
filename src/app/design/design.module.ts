@@ -25,13 +25,13 @@ import { CanDropDirective, CanDragDirective } from './drop-drag';
         DesignLibraryComponent, DesignComponent,
         DesignHistoryComponent, DesignPreviewComponent,
         DesignSettingComponent, CanDropDirective, CanDragDirective,
-        NgComponentDirective, DesignPagesComponent
+        NgComponentDirective, DesignPagesComponent,
     ],
     declarations: [
         DesignLibraryComponent, DesignComponent,
         DesignHistoryComponent, DesignPreviewComponent,
         DesignSettingComponent, CanDropDirective, CanDragDirective,
-        NgComponentDirective, DesignPagesComponent
+        NgComponentDirective, DesignPagesComponent,
     ],
     providers: [
         {

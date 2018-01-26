@@ -1,0 +1,4 @@
+<ng-container *ngComponent="props.children;preview: true;"></ng-container>
+<sup *ngIf="props.dot" class="am-badge-dot" [class.am-badge-dot-large]="props.size === 'large'"></sup>
+<sup *ngIf="props.corner" class="am-badge-text am-badge-corner" [class.am-badge-corner-large]="props.size === 'large'">{{props.text}}</sup>
+<sup *ngIf="props.hot" class="am-badge-text">{{props.text}}</sup>

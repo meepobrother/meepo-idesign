@@ -1,4 +1,4 @@
-import { Component, OnInit, KeyValueDiffers } from '@angular/core';
+import { Component, OnInit, KeyValueDiffers, ElementRef, Renderer2 } from '@angular/core';
 import { ReactComponent } from 'ng-react-component';
 import { DesignService } from '../design/design.service';
 import { PreviewComponents } from '../components/index';
@@ -12,9 +12,11 @@ export class IpreviewComponent extends ReactComponent<any, any> {
     components: any[] = [];
     constructor(
         differs: KeyValueDiffers,
-        private history: DesignService
+        private history: DesignService,
+        render: Renderer2,
+        ele: ElementRef
     ) {
-        super(differs);
+        super(differs, ele, render);
     }
     ngOnInit() {
         const history = this.history.getHistory()[0];
@@ -29,8 +31,8 @@ export class IpreviewComponent extends ReactComponent<any, any> {
 
     getComponentByName(name: string) {
         let com: any;
-        PreviewComponents.map(res=>{
-            if(res.name === name){
+        PreviewComponents.map(res => {
+            if (res.name === name) {
                 com = res;
             }
         });

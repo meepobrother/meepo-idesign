@@ -1,0 +1,21 @@
+{
+    "name": "ng-antd-mobile-notice-bar",
+    "version": "1.0.0-alpha.0",
+    "repository": "https://github.com/meepobrother/ng-antd-mobile.git",
+    "author": "david <david@spektrakel.de>",
+    "license": "MIT",
+    "private": false,
+    "peerDependencies": {
+        "@angular/core": "*",
+        "@angular/common": "*",
+        "meepo-utils": "*"
+    },
+    "ngPackage": {
+        "$schema": "../../../node_modules/ng-packagr/ng-package.schema.json",
+        "dest": "./dist/ng-antd-mobile-notice-bar",
+        "workingDirectory": "./.ng_build",
+        "lib": {
+            "entryFile": "./index.ts"
+        }
+    }
+}

@@ -1,0 +1,13 @@
+<div [class]="tabsBarWrapClass">
+    <div [class]="tabbsDefaultBar">
+        <div [class]="prefixCls + '-default-bar-content'">
+            <ng-container *ngFor="let bar of bars;index as i;">
+                <ng-container *ngTemplateOutlet="bar.tpl;context:{$implicit:i}"></ng-container>
+            </ng-container>
+            <div [class]="barUnderlineClass" [style.left.%]="(activeIndex/bars.length) * 100" [style.width.%]="(1/bars.length) * 100"></div>
+        </div>
+    </div>
+</div>
+<div [class]="tabsContentWrapClass">
+    <ng-container *ngTemplateOutlet="page?.tpl"></ng-container>
+</div>

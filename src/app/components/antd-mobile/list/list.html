@@ -1,0 +1,13 @@
+<ng-container *ngIf="header">
+    <div listHeader>
+        <ng-container *ngTemplateOutlet="header"></ng-container>
+    </div>
+</ng-container>
+<div class="am-list-body">
+    <ng-content></ng-content>
+</div>
+<ng-container *ngIf="footer">
+    <div listFooter>
+        <ng-container *ngTemplateOutlet="footer"></ng-container>
+    </div>
+</ng-container>

@@ -1,0 +1,34 @@
+```html
+<tabs [activeIndex]="'2'">
+    <tab-item>
+        测试1
+        <tab-panel>
+            <div class="tab-panel">测试1</div>
+        </tab-panel>
+    </tab-item>
+    <tab-item>
+        测试2
+        <tab-panel>
+            测试2
+        </tab-panel>
+    </tab-item>
+    <tab-item>
+        测试3
+        <tab-panel>
+            测试3
+        </tab-panel>
+    </tab-item>
+    <tab-item>
+        测试4
+        <tab-panel>
+            测试4
+        </tab-panel>
+    </tab-item>
+    <tab-item>
+        测试5
+        <tab-panel>
+            测试5
+        </tab-panel>
+    </tab-item>
+</tabs>
+```
