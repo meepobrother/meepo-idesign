@@ -11,7 +11,7 @@ import { components, entryComponents, libraryComponents, PreviewComponents } fro
 
 import { DESIGN_COMPONENTS } from './design/design.service';
 import { IpreviewComponent } from './preview/preview';
-import { DESIGN_LIBRARYS } from './design/types';
+import { DESIGN_LIBRARYS } from 'meepo-idesign-share';
 
 @NgModule({
   declarations: [

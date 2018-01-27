@@ -1,9 +1,11 @@
 import { Injectable, InjectionToken, Inject, Injector } from '@angular/core';
 export const historyKey = 'historyKey';
-import { DesignHistoryProp, DesignLibraryProp, DesignLibraryService } from './types';
+import { DesignHistoryProp, DesignLibraryProp, DesignLibraryService } from 'meepo-idesign-share';
 import { Subject } from 'rxjs/Subject';
 export const DESIGN_COMPONENTS = new InjectionToken('DESIGN_COMPONENTS');
-import { flatten } from 'meepo-common';
+function flatten<T>(arr: T[][]): T[] {
+    return Array.prototype.concat.apply([], arr);
+}
 @Injectable()
 export class DesignService {
     _historys: DesignHistoryProp[] = [];

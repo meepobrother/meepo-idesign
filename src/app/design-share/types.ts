@@ -1,5 +1,7 @@
 import { Type, Injector, NgModuleFactory } from '@angular/core';
-
+function flatten<T>(arr: T[][]): T[] {
+    return Array.prototype.concat.apply([], arr);
+}
 // 页面组件结构
 export interface DesignLibraryProp {
     children: DesignLibraryProp[];
@@ -15,10 +17,8 @@ export interface DesignHistoryProp {
     data: DesignLibraryProp[];
 }
 
-import { flatten } from 'meepo-common';
 import { Injectable, InjectionToken, Inject } from '@angular/core';
 export const DESIGN_LIBRARYS = new InjectionToken('DESIGN_LIBRARYS');
-
 
 @Injectable()
 export class DesignApiService {

@@ -4,7 +4,7 @@ import {
     InjectionToken, Inject
 } from '@angular/core';
 import { HostBinding, ViewEncapsulation } from '@angular/core';
-import { DesignLibraryProp, DesignHistoryProp } from './types';
+import { DesignLibraryProp, DesignHistoryProp } from 'meepo-idesign-share';
 import { guid } from './uuid';
 import { fromEvent } from 'rxjs/observable/fromEvent';
 import { DesignService } from './design.service';

@@ -14,6 +14,11 @@
     "lib": [
       "es2017",
       "dom"
-    ]
+    ],
+    "paths": {
+      "meepo-idesign-share": [
+        "./publish/meepo-idesign-share"
+      ]
+    }
   }
 }

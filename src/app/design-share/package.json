@@ -1,7 +1,7 @@
 {
-    "name": "meepo-idesign",
+    "name": "meepo-idesign-share",
     "version": "1.0.3",
-    "repository": "https://github.com/meepobrother/meepo-idesign.git",
+    "repository": "https://github.com/meepobrother/meepo-idesign-share.git",
     "author": "imeepos <1037483576@qq.com>",
     "license": "MIT",
     "private": false,
@@ -12,10 +12,10 @@
     },
     "ngPackage": {
         "$schema": "./node_modules/ng-packagr/ng-package.schema.json",
-        "dest": "./publish/meepo-idesign",
+        "dest": "./publish/meepo-idesign-share",
         "workingDirectory": "./.ng_build",
         "lib": {
-            "entryFile": "./index.ts"
+            "entryFile": "./public_api.ts"
         }
     }
 }

@@ -9,11 +9,9 @@ import {
     IterableChanges
 } from '@angular/core';
 import { ReactComponent } from 'ng-react-component';
-import { fromEvent } from 'meepo-common';
+import { fromEvent } from 'rxjs/observable/fromEvent';
 import { DesignLibraryProp, DesignLibraryService } from './types';
-import { DesignService } from './design.service';
 import { KeyValueChanges } from '@angular/core';
-
 
 @Directive({ selector: '[ngComponent]' })
 export class NgComponentDirective implements OnChanges {
@@ -44,7 +42,6 @@ export class NgComponentDirective implements OnChanges {
         private _viewContainerRef: ViewContainerRef,
         private _template: TemplateRef<any>,
         private differs: IterableDiffers,
-        private history: DesignService,
         private librarys: DesignLibraryService
     ) {
         this.viewContainerRef = _viewContainerRef;
@@ -100,7 +97,6 @@ export class NgComponentDirective implements OnChanges {
             designLibraryProp.uuid = componentRef.instance.guid;
             const instanceComponent = new InstanceComponent(componentRef.instance.guid, designLibraryProp);
             this.instances.push(instanceComponent);
-            console.log(componentRef);
         } catch (err) { }
     }
 
@@ -146,7 +142,6 @@ export class NgComponentDirective implements OnChanges {
                 let props = this.getInstanceProps(data);
                 if (props) {
                     instance.props.children.push(props);
-                    this.history.removeComponentByUuid(data);
                 }
             }
         });

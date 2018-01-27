@@ -4,9 +4,9 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { DesignLibraryProp, DesignLibraryService } from './types';
+import { DesignLibraryProp, DesignLibraryService } from 'meepo-idesign-share';
 import { DESIGN_COMPONENTS, DesignService } from './design.service';
-import { NgComponentDirective } from './ng-component';
+import { IDesignComponentModule } from 'meepo-idesign-share';
 
 import {
     DesignLibraryComponent, DesignComponent,
@@ -21,19 +21,20 @@ import { CanDropDirective, CanDragDirective } from './drop-drag';
         RouterModule.forChild([{
             path: 'design',
             component: DesignComponent
-        }])
+        }]),
+        IDesignComponentModule
     ],
     exports: [
         DesignLibraryComponent, DesignComponent,
         DesignHistoryComponent, DesignPreviewComponent,
         DesignSettingComponent, CanDropDirective, CanDragDirective,
-        NgComponentDirective, DesignPagesComponent,
+        DesignPagesComponent, IDesignComponentModule
     ],
     declarations: [
         DesignLibraryComponent, DesignComponent,
         DesignHistoryComponent, DesignPreviewComponent,
         DesignSettingComponent, CanDropDirective, CanDragDirective,
-        NgComponentDirective, DesignPagesComponent,
+        DesignPagesComponent,
     ],
     providers: [
         DesignService,
