@@ -10,6 +10,7 @@ export interface DesignLibraryProp {
     props: any,
     state?: any,
     title: string;
+    father?: string;
 }
 // 历史记录结构
 export interface DesignHistoryProp {
@@ -17,30 +18,103 @@ export interface DesignHistoryProp {
     data: DesignLibraryProp[];
 }
 
+
+
+
 import { Injectable, InjectionToken, Inject } from '@angular/core';
+import { Subject } from 'rxjs/Subject';
+import { of } from 'rxjs/observable/of';
+import 'rxjs/add/operator/switchMap';
+import { guid } from './guid';
+
 export const DESIGN_LIBRARYS = new InjectionToken('DESIGN_LIBRARYS');
+export const instancesMap: Map<string, { setting: any, view: any }> = new Map();
+
+export class InstanceComponent {
+    constructor(
+        public guid: string,
+        public props: DesignLibraryProp,
+        public instance: any
+    ) { }
+}
 
 @Injectable()
 export class DesignApiService {
     constructor() { }
     // 获取一个页面参数
-    get(id: string) { }
+    get(id: string) {
+        return instancesMap.get(id);
+    }
     // 保存一个页面参数
-    save(data: any, id: string) { }
+    save(instance: any, designLibraryProp: any, isPreview) {
+        const instanceComponent = new InstanceComponent(instance.guid, designLibraryProp, instance);
+        if (isPreview) {
+            let map = instancesMap.get(instance.guid);
+            if (map) {
+                map.view = instanceComponent;
+            } else {
+                map = {
+                    setting: null,
+                    view: instanceComponent
+                }
+            }
+            instancesMap.set(instance.guid, map);
+        } else {
+            let map = instancesMap.get(instance.guid);
+            if (map) {
+                map.setting = instanceComponent;
+            } else {
+                map = {
+                    setting: instanceComponent,
+                    view: null
+                }
+            }
+            instancesMap.set(instance.guid, map);
+        }
+    }
 }
 export const DESIGN_COMPONENTS = new InjectionToken('DESIGN_COMPONENTS');
+import 'rxjs/add/operator/map';
+
 @Injectable()
 export class DesignPropsService {
     // 所有props
     props: any[] = [];
     // 当前页面
-    pageProps: any[] = [];
+    pageProps: DesignLibraryProp[] = [];
     // 设置
-    settingProps: any = {};
+    _settingProps: DesignLibraryProp;
+    set settingProps(val: DesignLibraryProp) {
+        this._settingProps = val;
+        try {
+            if (!this._settingProps) { 
+                this.fathersProps = [];
+            }
+            this.fathers = this.getFather(this.settingProps);
+            if (this.fathers && this.fathers.length > 0) {
+                this.fathersProps = [];
+                this.fathers.map(res => {
+                    const props = this.getPropsByUid(res);
+                    if (props) {
+                        this.fathersProps.push(props);
+                    }
+                });
+            }
+        } catch (err) { }
+    }
+    get settingProps() {
+        return this._settingProps;
+    }
+    instance: any;
+    // 多级
+    fathers: any;
+    fathersProps: DesignLibraryProp[] = [];
 
     historyKey: string = 'historyKey';
     // 历史记录
     historys: any[] = [];
+
+    removePosition: number[] = [];
 
     constructor(
         @Inject(DESIGN_COMPONENTS) props: any
@@ -63,21 +137,91 @@ export class DesignPropsService {
         return com;
     }
 
-    addPropByName(name: string){
+    addPropByName(name: string, father?: string) {
         const com = this.getPropsByName(name);
-        this.pageProps.push(com);
+        const deepCopyCom: DesignLibraryProp = this.deepCopy(com);
+        deepCopyCom.uuid = guid();
+        deepCopyCom.father = father || '';
+        this.pageProps.push(deepCopyCom);
         this.updateHistory();
     }
 
+    addPropsToInstanceByName(name: string) {
+        let props = this.getPropsByName(name);
+        if (props) {
+            const deepProps = this.deepCopy(props);
+            deepProps.father = this.instance.guid;
+            deepProps.uuid = guid();
+            this.instance.props.children = this.instance.props.children || [];
+            this.instance.props.children.push(deepProps);
+        }
+    }
+
+    toFatherProps() {
+        console.log(this.fathersProps);
+    }
+
+    deepCopy(obj: any) {
+        try {
+            return JSON.parse(JSON.stringify(obj));
+        } catch (err) {
+            console.dir(obj);
+        }
+    }
+
+    private isGuid(name: string) {
+        return name.indexOf('guid_') > -1;
+    }
+
+    private trimGuid(name: string) {
+        return name.replace('guid_', '');
+    }
+
     removePropsByUid(uuid: string) {
-        let thisIndex: any;
-        this.pageProps.map((res: DesignLibraryProp, index: number) => {
-            if (res.uuid === uuid) {
-                thisIndex = index;
+        uuid = this.trimGuid(uuid);
+        let props = this.getPropsByUid(uuid);
+        if (props) {
+            if (props.father) {
+                let father: any = this.getPropsByUid(props.father);
+                let index = father.props.children.indexOf(props);
+                if (index > -1) {
+                    father.props.children.splice(index, 1);
+                }
+            } else {
+                let index = this.pageProps.indexOf(props);
+                if (index > -1) {
+                    this.pageProps.splice(index, 1);
+                }
             }
-        });
-        this.pageProps.splice(thisIndex, 1);
+        }
         this.updateHistory();
+    }
+
+    getFather(props: DesignLibraryProp, ids: any[] = []) {
+        ids.push(props.uuid);
+        if (props.father) {
+            let father = this.getPropsByUid(props.father);
+            if (father) {
+                ids = this.getFather((<DesignLibraryProp>father), ids);
+            }
+        }
+        return ids;
+    }
+
+    getPropsByUid(uuid: string, data?: DesignLibraryProp[]): DesignLibraryProp | false {
+        data = data || this.pageProps;
+        for (let i = 0; i < data.length; i++) {
+            const item = data[i];
+            if (item.uuid + '' === uuid + '') {
+                return item;
+            } else if (item.props.children) {
+                const res = this.getPropsByUid(uuid, item.props.children);
+                if (res) {
+                    return res;
+                }
+            }
+        }
+        return false;
     }
 
     getHistory(): DesignHistoryProp[] {
@@ -116,7 +260,6 @@ export class DesignLibraryService {
         @Inject(DESIGN_LIBRARYS) components: any
     ) {
         this.components = flatten(components);
-        console.log('DesignLibraryService', this.components);
     }
     get(name: string) {
         let com: any;

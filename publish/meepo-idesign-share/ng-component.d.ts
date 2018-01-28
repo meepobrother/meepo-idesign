@@ -1,13 +1,16 @@
-import { ComponentRef, OnChanges, SimpleChanges, ViewContainerRef, TemplateRef, IterableDiffers, NgIterable, Renderer2 } from '@angular/core';
+import { ComponentRef, OnChanges, SimpleChanges, ViewContainerRef, TemplateRef, IterableDiffers, NgIterable, Renderer2, InjectionToken } from '@angular/core';
 import { ReactComponent } from 'ng-react-component';
-import { DesignLibraryProp, DesignLibraryService, DesignPropsService } from './types';
+import { DesignLibraryProp, DesignLibraryService, DesignPropsService, DesignApiService } from './types';
+export declare const DRAG_DROP_ALL: InjectionToken<{}>;
 export declare class NgComponentDirective implements OnChanges {
     private _viewContainerRef;
     private _template;
     private differs;
     private librarys;
+    private api;
     private props;
     private render;
+    private dragDropAll;
     viewContainerRef: ViewContainerRef;
     componentRef: ComponentRef<ReactComponent<any, any>>;
     moduleRef: any;
@@ -18,21 +21,18 @@ export declare class NgComponentDirective implements OnChanges {
     ngComponentStyle: any;
     ngComponentDrag: any;
     ngComponentDrop: any;
-    ngComponentClick: (sm: any) => {};
+    ngComponentInstance: any;
+    ngComponentClick: (sm: any, instance: any) => {};
     instances: any[];
     private _differ;
-    constructor(_viewContainerRef: ViewContainerRef, _template: TemplateRef<any>, differs: IterableDiffers, librarys: DesignLibraryService, props: DesignPropsService, render: Renderer2);
+    constructor(_viewContainerRef: ViewContainerRef, _template: TemplateRef<any>, differs: IterableDiffers, librarys: DesignLibraryService, api: DesignApiService, props: DesignPropsService, render: Renderer2, dragDropAll: boolean);
     ngDoCheck(): void;
     private createComponent(item, currentIndex);
     ngOnChanges(changes: SimpleChanges): void;
     private setDrage(instance);
     private isGuid(name);
     private trimGuid(name);
+    private deepCopy(obj);
     private setDrop(instance);
     private getInstanceProps(uuid);
-}
-export declare class InstanceComponent {
-    guid: string;
-    props: DesignLibraryProp;
-    constructor(guid: string, props: DesignLibraryProp);
 }

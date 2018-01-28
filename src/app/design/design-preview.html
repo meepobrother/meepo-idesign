@@ -1,4 +1,4 @@
-<div class="meepo-design-preview-deletor">
+<div class="meepo-design-preview-deletor" canDrop (canDropChange)="removeComponent($event)">
     垃圾桶，将废弃组件拖入此间！
 </div>
 <div class="device device-iphone-8" [ngClass]="directives.name">

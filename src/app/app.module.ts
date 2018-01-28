@@ -14,7 +14,7 @@ import { DESIGN_COMPONENTS } from 'meepo-idesign-share';
 import { IpreviewComponent } from './preview/preview';
 import { We7RouterModule } from 'meepo-we7-router';
 
-import { both as flexBoth, entrys as flexEntrys, preview as flexPreview } from 'weui-flex';
+import { both as flexBoth, entrys as flexEntrys, preview as flexPreview } from './components/weui-flex/public_api';
 
 import { DESIGN_LIBRARYS, IDesignComponentModule } from 'meepo-idesign-share';
 
@@ -46,7 +46,7 @@ import { DESIGN_LIBRARYS, IDesignComponentModule } from 'meepo-idesign-share';
       title: '跑腿认证'
     }]),
     FormsModule,
-    IDesignComponentModule.forRoot([])
+    IDesignComponentModule.forRoot([],true)
   ],
   providers: [
     {

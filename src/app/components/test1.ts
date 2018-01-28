@@ -3,9 +3,10 @@ import { ReactComponent } from 'ng-react-component';
 
 export interface Test1Props {
     title?: string;
+    children: any[];
 }
 export interface Test1State {
-
+    children: any[];
 }
 @Component({
     selector: 'test1',
@@ -16,7 +17,7 @@ export class Test1Component extends ReactComponent<Test1Props, Test1State> imple
         super(differs, ele, render);
     }
     ngOnInit() {
-        this.props = this.props || {};
+        this.props = this.props || {} as Test1Props;
     }
     onPropsChange() { }
     onStateChange() { }
@@ -32,7 +33,7 @@ export class Test1SettingComponent extends ReactComponent<Test1Props, Test1State
         super(differs, ele, render);
     }
     ngOnInit() {
-        this.props = this.props || {};
+        this.props = this.props || {} as Test1Props;
     }
     onPropsChange() { }
     onStateChange() { }

@@ -76,22 +76,54 @@ var DesignPropsService = (function () {
      */
     DesignPropsService.prototype.addPropByName = function (name) {
         var /** @type {?} */ com = this.getPropsByName(name);
-        this.pageProps.push(com);
+        this.pageProps.push(this.deepCopy(com));
         this.updateHistory();
     };
     /**
-     * @param {?} uuid
+     * @param {?} obj
      * @return {?}
      */
-    DesignPropsService.prototype.removePropsByUid = function (uuid) {
-        var /** @type {?} */ thisIndex;
-        this.pageProps.map(function (res, index) {
+    DesignPropsService.prototype.deepCopy = function (obj) {
+        return JSON.parse(JSON.stringify(obj));
+    };
+    /**
+     * @param {?} name
+     * @return {?}
+     */
+    DesignPropsService.prototype.isGuid = function (name) {
+        return name.indexOf('guid_') > -1;
+    };
+    /**
+     * @param {?} name
+     * @return {?}
+     */
+    DesignPropsService.prototype.trimGuid = function (name) {
+        return name.replace('guid_', '');
+    };
+    /**
+     * @param {?} uuid
+     * @param {?=} father
+     * @return {?}
+     */
+    DesignPropsService.prototype.removePropsByUid = function (uuid, father) {
+        father = father || this.pageProps;
+        uuid = this.trimGuid(uuid);
+        var /** @type {?} */ thisIndex = 0;
+        for (var /** @type {?} */ key = 0; key < father.length; key++) {
+            var /** @type {?} */ res = father[key];
             if (res.uuid === uuid) {
-                thisIndex = index;
+                thisIndex = key + 1;
+                break;
             }
-        });
-        this.pageProps.splice(thisIndex, 1);
-        this.updateHistory();
+            else if (res.children && res.children.length > 0) {
+                this.removePropsByUid(uuid, res.children);
+            }
+        }
+        console.log('remove', thisIndex);
+        if (thisIndex > 0) {
+            this.pageProps.splice(thisIndex - 1, 1);
+            this.updateHistory();
+        }
     };
     /**
      * @return {?}
@@ -180,6 +212,7 @@ DesignLibraryService.ctorParameters = function () {
         { type: undefined, decorators: [{ type: Inject, args: [DESIGN_LIBRARYS,] },] },
     ];
 };
+var DRAG_DROP_ALL = new InjectionToken('DRAG_DROP_ALL');
 var NgComponentDirective = (function () {
     /**
      * @param {?} _viewContainerRef
@@ -187,13 +220,17 @@ var NgComponentDirective = (function () {
      * @param {?} differs
      * @param {?} librarys
      * @param {?} props
+     * @param {?} render
+     * @param {?} dragDropAll
      */
-    function NgComponentDirective(_viewContainerRef, _template, differs, librarys, props) {
+    function NgComponentDirective(_viewContainerRef, _template, differs, librarys, props, render, dragDropAll) {
         this._viewContainerRef = _viewContainerRef;
         this._template = _template;
         this.differs = differs;
         this.librarys = librarys;
         this.props = props;
+        this.render = render;
+        this.dragDropAll = dragDropAll;
         this.instances = [];
         this.viewContainerRef = _viewContainerRef;
     }
@@ -255,10 +292,10 @@ var NgComponentDirective = (function () {
                 });
                 componentRef.instance.setClass(this.ngComponentClass);
                 componentRef.instance.setStyle(this.ngComponentStyle);
-                if (this.ngComponentDrag) {
+                if (this.ngComponentDrag || this.dragDropAll) {
                     this.setDrage(componentRef.instance);
                 }
-                if (this.ngComponentDrop) {
+                if (this.ngComponentDrop || this.dragDropAll) {
                     this.setDrop(componentRef.instance);
                 }
                 designLibraryProp_1.uuid = componentRef.instance.guid;
@@ -299,15 +336,33 @@ var NgComponentDirective = (function () {
         var /** @type {?} */ uuid;
         fromEvent$1(ele, 'dragstart').subscribe(function (ev) {
             uuid = instance.guid;
-            ev.dataTransfer.setData("name", instance.guid);
-        });
-        fromEvent$1(ele, 'dragleave').subscribe(function (ev) {
-            // dragend 删除这一个
+            ev.dataTransfer.setData("name", 'guid_' + instance.guid);
         });
         fromEvent$1(ele, 'dragend').subscribe(function (ev) {
             // dragend 删除这一个
             // this.history.removeComponentByUuid(uuid);
         });
+    };
+    /**
+     * @param {?} name
+     * @return {?}
+     */
+    NgComponentDirective.prototype.isGuid = function (name) {
+        return name.indexOf('guid_') > -1;
+    };
+    /**
+     * @param {?} name
+     * @return {?}
+     */
+    NgComponentDirective.prototype.trimGuid = function (name) {
+        return name.replace('guid_', '');
+    };
+    /**
+     * @param {?} obj
+     * @return {?}
+     */
+    NgComponentDirective.prototype.deepCopy = function (obj) {
+        return JSON.parse(JSON.stringify(obj));
     };
     /**
      * @param {?} instance
@@ -320,21 +375,29 @@ var NgComponentDirective = (function () {
             ev.preventDefault();
             ev.stopPropagation();
             var /** @type {?} */ data = ev.dataTransfer.getData("name");
-            if (!instance.guid) {
+            var /** @type {?} */ uuid = _this.trimGuid(data);
+            if (!_this.isGuid(data)) {
                 // 获取props
                 var /** @type {?} */ props = _this.props.getPropsByName(data);
-                instance.props.children.push(props);
+                instance.props.children = instance.props.children || [];
+                instance.props.children.push(_this.deepCopy(props));
             }
-            else if (instance.guid !== data) {
+            else if (uuid !== instance.guid) {
                 // 移动已存在props
-                var /** @type {?} */ props = _this.getInstanceProps(data);
+                var /** @type {?} */ props = _this.getInstanceProps(uuid);
                 if (props) {
-                    instance.props.children.push(props);
+                    instance.props.children.push(_this.deepCopy(props));
                 }
             }
         });
+        fromEvent$1(ele, 'dragleave').subscribe(function (ev) {
+            // dragend 删除这一个
+            _this.render.removeStyle(ele, 'dashed');
+            ev.preventDefault();
+            ev.stopPropagation();
+        });
         fromEvent$1(ele, 'dragover').subscribe(function (ev) {
-            ele.style.bor;
+            _this.render.setStyle(ele, 'dashed', '1px lodash red');
             ev.preventDefault();
             ev.stopPropagation();
         });
@@ -367,6 +430,8 @@ NgComponentDirective.ctorParameters = function () {
         { type: IterableDiffers, },
         { type: DesignLibraryService, },
         { type: DesignPropsService, },
+        { type: Renderer2, },
+        { type: undefined, decorators: [{ type: Inject, args: [DRAG_DROP_ALL,] },] },
     ];
 };
 NgComponentDirective.propDecorators = {
@@ -395,15 +460,22 @@ var IDesignComponentModule = (function () {
     }
     /**
      * @param {?} coms
+     * @param {?=} dragDropAll
      * @return {?}
      */
-    IDesignComponentModule.forRoot = function (coms) {
+    IDesignComponentModule.forRoot = function (coms, dragDropAll) {
+        if (dragDropAll === void 0) {
+            dragDropAll = false;
+        }
         return {
             ngModule: IDesignComponentModule,
             providers: [{
                     provide: DESIGN_LIBRARYS,
                     useValue: coms,
                     multi: true
+                }, {
+                    provide: DRAG_DROP_ALL,
+                    useValue: dragDropAll
                 }]
         };
     };
@@ -443,17 +515,19 @@ var DesignSettingComponent = (function () {
     DesignSettingComponent.prototype.ngOnInit = function () { };
     /**
      * @param {?} com
+     * @param {?=} instance
      * @return {?}
      */
-    DesignSettingComponent.prototype.setSetting = function (com) {
+    DesignSettingComponent.prototype.setSetting = function (com, instance) {
         this.item = com;
+        this.instance = instance;
     };
     return DesignSettingComponent;
 }());
 DesignSettingComponent.decorators = [
     { type: Component, args: [{
                 selector: 'design-setting',
-                template: "\n\n      <ng-container *ngComponent=\"[item]\"></ng-container>\n\n      <div class=\"meepo-design-setting-empty\" *ngIf=\"!item\">\n          \u8BF7\u9009\u62E9\u8981\u7F16\u8F91\u7684\u9875\u9762\u5143\u7D20\n      </div>\n    "
+                template: "\n\n      <ng-container *ngComponent=\"[item];instance: instance;\"></ng-container>\n\n      <div class=\"meepo-design-setting-empty\" *ngIf=\"!item\">\n          \u8BF7\u9009\u62E9\u8981\u7F16\u8F91\u7684\u9875\u9762\u5143\u7D20\n      </div>\n    "
             },] },
 ];
 /**
@@ -478,8 +552,8 @@ var DesignPreviewComponent = (function () {
             src: './assets/img/bg-03.jpg',
             type: 'image'
         };
-        this.onClick = function (e) {
-            _this.doClick.emit(e);
+        this.onClick = function (e, instance) {
+            _this.doClick.emit({ props: e, instance: instance });
         };
         this.isOpen = false;
     }
@@ -513,7 +587,7 @@ var DesignPreviewComponent = (function () {
 DesignPreviewComponent.decorators = [
     { type: Component, args: [{
                 selector: 'design-preview',
-                template: "\n      <div class=\"meepo-design-preview-deletor\">\n          \u5783\u573E\u6876\uFF0C\u5C06\u5E9F\u5F03\u7EC4\u4EF6\u62D6\u5165\u6B64\u95F4\uFF01\n      </div>\n      <div class=\"device device-iphone-8\" [ngClass]=\"directives.name\">\n          <div class=\"device-frame\">\n              <div class=\"meepo-design-preview-container device-content\" canDrop (canDropChange)=\"addComponent($event)\">\n                  <ng-container *ngComponent=\"\n                      props.pageProps;\n                      preview: true;\n                      click: onClick;\n                      class: {'editing':true};\n                      drag: true;\n                      drop: true;\n                  \"></ng-container>\n              </div>\n          </div>\n          <div class=\"device-stripe\"></div>\n          <div class=\"device-header\"></div>\n          <div class=\"device-sensors\"></div>\n          <div class=\"device-btns\"></div>\n          <div class=\"device-power\"></div>\n          <div class=\"device-home\"></div>\n      </div>\n    "
+                template: "\n      <div class=\"meepo-design-preview-deletor\" canDrop (canDropChange)=\"removeComponent($event)\">\n          \u5783\u573E\u6876\uFF0C\u5C06\u5E9F\u5F03\u7EC4\u4EF6\u62D6\u5165\u6B64\u95F4\uFF01\n      </div>\n      <div class=\"device device-iphone-8\" [ngClass]=\"directives.name\">\n          <div class=\"device-frame\">\n              <div class=\"meepo-design-preview-container device-content\" canDrop (canDropChange)=\"addComponent($event)\">\n                  <ng-container *ngComponent=\"\n                      props.pageProps;\n                      preview: true;\n                      click: onClick;\n                      class: {'editing':true};\n                      drag: true;\n                      drop: true;\n                  \"></ng-container>\n              </div>\n          </div>\n          <div class=\"device-stripe\"></div>\n          <div class=\"device-header\"></div>\n          <div class=\"device-sensors\"></div>\n          <div class=\"device-btns\"></div>\n          <div class=\"device-power\"></div>\n          <div class=\"device-home\"></div>\n      </div>\n    "
             },] },
 ];
 /**
@@ -648,7 +722,7 @@ var DesignComponent = (function () {
      * @return {?}
      */
     DesignComponent.prototype.setSetting = function (com) {
-        this._setting.setSetting(com);
+        this._setting.setSetting(com.props, com.instance);
     };
     /**
      * @return {?}

@@ -1,5 +1,20 @@
 import { ComponentFactoryResolver, Directive, Inject, Injectable, InjectionToken, Input, IterableDiffers, NgModule, Renderer2, TemplateRef, ViewContainerRef } from '@angular/core';
 import { fromEvent as fromEvent$1 } from 'rxjs/observable/fromEvent';
+import 'rxjs/add/operator/switchMap';
+import 'rxjs/add/operator/map';
+
+/**
+ * @return {?}
+ */
+function guid() {
+    /**
+     * @return {?}
+     */
+    function S4() {
+        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+    }
+    return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
+}
 
 /**
  * @template T
@@ -10,19 +25,63 @@ function flatten(arr) {
     return Array.prototype.concat.apply([], arr);
 }
 const DESIGN_LIBRARYS = new InjectionToken('DESIGN_LIBRARYS');
+const instancesMap = new Map();
+class InstanceComponent {
+    /**
+     * @param {?} guid
+     * @param {?} props
+     * @param {?} instance
+     */
+    constructor(guid$$1, props, instance) {
+        this.guid = guid$$1;
+        this.props = props;
+        this.instance = instance;
+    }
+}
 class DesignApiService {
     constructor() { }
     /**
      * @param {?} id
      * @return {?}
      */
-    get(id) { }
+    get(id) {
+        return instancesMap.get(id);
+    }
     /**
-     * @param {?} data
-     * @param {?} id
+     * @param {?} instance
+     * @param {?} designLibraryProp
+     * @param {?} isPreview
      * @return {?}
      */
-    save(data, id) { }
+    save(instance, designLibraryProp, isPreview) {
+        const /** @type {?} */ instanceComponent = new InstanceComponent(instance.guid, designLibraryProp, instance);
+        if (isPreview) {
+            let /** @type {?} */ map$$1 = instancesMap.get(instance.guid);
+            if (map$$1) {
+                map$$1.view = instanceComponent;
+            }
+            else {
+                map$$1 = {
+                    setting: null,
+                    view: instanceComponent
+                };
+            }
+            instancesMap.set(instance.guid, map$$1);
+        }
+        else {
+            let /** @type {?} */ map$$1 = instancesMap.get(instance.guid);
+            if (map$$1) {
+                map$$1.setting = instanceComponent;
+            }
+            else {
+                map$$1 = {
+                    setting: instanceComponent,
+                    view: null
+                };
+            }
+            instancesMap.set(instance.guid, map$$1);
+        }
+    }
 }
 DesignApiService.decorators = [
     { type: Injectable },
@@ -41,11 +100,11 @@ class DesignPropsService {
         this.props = [];
         // 当前页面
         this.pageProps = [];
-        // 设置
-        this.settingProps = {};
+        this.fathersProps = [];
         this.historyKey = 'historyKey';
         // 历史记录
         this.historys = [];
+        this.removePosition = [];
         this.props = flatten(props);
         try {
             this.backToHistory();
@@ -53,6 +112,35 @@ class DesignPropsService {
         catch (err) {
             localStorage.clear();
         }
+    }
+    /**
+     * @param {?} val
+     * @return {?}
+     */
+    set settingProps(val) {
+        this._settingProps = val;
+        try {
+            if (!this._settingProps) {
+                this.fathersProps = [];
+            }
+            this.fathers = this.getFather(this.settingProps);
+            if (this.fathers && this.fathers.length > 0) {
+                this.fathersProps = [];
+                this.fathers.map(res => {
+                    const /** @type {?} */ props = this.getPropsByUid(res);
+                    if (props) {
+                        this.fathersProps.push(props);
+                    }
+                });
+            }
+        }
+        catch (err) { }
+    }
+    /**
+     * @return {?}
+     */
+    get settingProps() {
+        return this._settingProps;
     }
     /**
      * @param {?} name
@@ -69,26 +157,122 @@ class DesignPropsService {
     }
     /**
      * @param {?} name
+     * @param {?=} father
      * @return {?}
      */
-    addPropByName(name) {
+    addPropByName(name, father) {
         const /** @type {?} */ com = this.getPropsByName(name);
-        this.pageProps.push(com);
+        const /** @type {?} */ deepCopyCom = this.deepCopy(com);
+        deepCopyCom.uuid = guid();
+        deepCopyCom.father = father || '';
+        this.pageProps.push(deepCopyCom);
         this.updateHistory();
+    }
+    /**
+     * @param {?} name
+     * @return {?}
+     */
+    addPropsToInstanceByName(name) {
+        let /** @type {?} */ props = this.getPropsByName(name);
+        if (props) {
+            const /** @type {?} */ deepProps = this.deepCopy(props);
+            deepProps.father = this.instance.guid;
+            deepProps.uuid = guid();
+            this.instance.props.children = this.instance.props.children || [];
+            this.instance.props.children.push(deepProps);
+        }
+    }
+    /**
+     * @return {?}
+     */
+    toFatherProps() {
+        console.log(this.fathersProps);
+    }
+    /**
+     * @param {?} obj
+     * @return {?}
+     */
+    deepCopy(obj) {
+        try {
+            return JSON.parse(JSON.stringify(obj));
+        }
+        catch (err) {
+            console.dir(obj);
+        }
+    }
+    /**
+     * @param {?} name
+     * @return {?}
+     */
+    isGuid(name) {
+        return name.indexOf('guid_') > -1;
+    }
+    /**
+     * @param {?} name
+     * @return {?}
+     */
+    trimGuid(name) {
+        return name.replace('guid_', '');
     }
     /**
      * @param {?} uuid
      * @return {?}
      */
     removePropsByUid(uuid) {
-        let /** @type {?} */ thisIndex;
-        this.pageProps.map((res, index) => {
-            if (res.uuid === uuid) {
-                thisIndex = index;
+        uuid = this.trimGuid(uuid);
+        let /** @type {?} */ props = this.getPropsByUid(uuid);
+        if (props) {
+            if (props.father) {
+                let /** @type {?} */ father = this.getPropsByUid(props.father);
+                let /** @type {?} */ index = father.props.children.indexOf(props);
+                if (index > -1) {
+                    father.props.children.splice(index, 1);
+                }
             }
-        });
-        this.pageProps.splice(thisIndex, 1);
+            else {
+                let /** @type {?} */ index = this.pageProps.indexOf(props);
+                if (index > -1) {
+                    this.pageProps.splice(index, 1);
+                }
+            }
+        }
         this.updateHistory();
+    }
+    /**
+     * @param {?} props
+     * @param {?=} ids
+     * @return {?}
+     */
+    getFather(props, ids = []) {
+        ids.push(props.uuid);
+        if (props.father) {
+            let /** @type {?} */ father = this.getPropsByUid(props.father);
+            if (father) {
+                ids = this.getFather(((father)), ids);
+            }
+        }
+        return ids;
+    }
+    /**
+     * @param {?} uuid
+     * @param {?=} data
+     * @return {?}
+     */
+    getPropsByUid(uuid, data) {
+        data = data || this.pageProps;
+        for (let /** @type {?} */ i = 0; i < data.length; i++) {
+            const /** @type {?} */ item = data[i];
+            if (item.uuid + '' === uuid + '') {
+                return item;
+            }
+            else if (item.props.children) {
+                const /** @type {?} */ res = this.getPropsByUid(uuid, item.props.children);
+                if (res) {
+                    return res;
+                }
+            }
+        }
+        return false;
     }
     /**
      * @return {?}
@@ -143,7 +327,6 @@ class DesignLibraryService {
     constructor(components) {
         this.components = [];
         this.components = flatten(components);
-        console.log('DesignLibraryService', this.components);
     }
     /**
      * @param {?} name
@@ -169,22 +352,27 @@ DesignLibraryService.ctorParameters = () => [
     { type: undefined, decorators: [{ type: Inject, args: [DESIGN_LIBRARYS,] },] },
 ];
 
+const DRAG_DROP_ALL = new InjectionToken('DRAG_DROP_ALL');
 class NgComponentDirective {
     /**
      * @param {?} _viewContainerRef
      * @param {?} _template
      * @param {?} differs
      * @param {?} librarys
+     * @param {?} api
      * @param {?} props
      * @param {?} render
+     * @param {?} dragDropAll
      */
-    constructor(_viewContainerRef, _template, differs, librarys, props, render) {
+    constructor(_viewContainerRef, _template, differs, librarys, api, props, render, dragDropAll) {
         this._viewContainerRef = _viewContainerRef;
         this._template = _template;
         this.differs = differs;
         this.librarys = librarys;
+        this.api = api;
         this.props = props;
         this.render = render;
+        this.dragDropAll = dragDropAll;
         this.instances = [];
         this.viewContainerRef = _viewContainerRef;
     }
@@ -233,26 +421,36 @@ class NgComponentDirective {
                 const /** @type {?} */ componentFactory = componentFactoryResolver.resolveComponentFactory(component);
                 const /** @type {?} */ componentRef = this.viewContainerRef.createComponent(componentFactory, currentIndex, elInjector);
                 // designLibraryProp.props = JSON.parse(JSON.stringify(designLibraryProp.props));
+                const { instance } = componentRef;
                 if (designLibraryProp.props) {
-                    componentRef.instance.props = designLibraryProp.props;
+                    instance.props = designLibraryProp.props;
                 }
                 if (designLibraryProp.state) {
-                    componentRef.instance.state = designLibraryProp.state;
+                    instance.state = designLibraryProp.state;
                 }
-                componentRef.instance.onClick.subscribe(res => {
-                    this.ngComponentClick && this.ngComponentClick(designLibraryProp);
+                instance.onClick.subscribe((ev) => {
+                    if (this.ngComponentPreview) {
+                        this.props.settingProps = designLibraryProp;
+                        this.props.instance = instance;
+                    }
                 });
-                componentRef.instance.setClass(this.ngComponentClass);
-                componentRef.instance.setStyle(this.ngComponentStyle);
-                if (this.ngComponentDrag) {
-                    this.setDrage(componentRef.instance);
+                instance.setClass(this.ngComponentClass);
+                instance.setStyle(this.ngComponentStyle);
+                instance.instance = this.ngComponentInstance;
+                if (this.ngComponentDrag || this.dragDropAll) {
+                    this.setDrage(instance);
                 }
-                if (this.ngComponentDrop) {
-                    this.setDrop(componentRef.instance);
+                if (this.ngComponentDrop || this.dragDropAll) {
+                    this.setDrop(instance);
                 }
-                designLibraryProp.uuid = componentRef.instance.guid;
-                const /** @type {?} */ instanceComponent = new InstanceComponent(componentRef.instance.guid, designLibraryProp);
-                this.instances.push(instanceComponent);
+                if (designLibraryProp.uuid) {
+                    instance.guid = designLibraryProp.uuid;
+                }
+                else {
+                    designLibraryProp.uuid = instance.guid = guid();
+                }
+                // api
+                this.api.save(instance, designLibraryProp, this.ngComponentPreview);
             }
         }
         catch (err) {
@@ -289,6 +487,7 @@ class NgComponentDirective {
         fromEvent$1(ele, 'dragstart').subscribe((ev) => {
             uuid = instance.guid;
             ev.dataTransfer.setData("name", 'guid_' + instance.guid);
+            ev.stopPropagation();
         });
         fromEvent$1(ele, 'dragend').subscribe((ev) => {
             // dragend 删除这一个
@@ -310,6 +509,19 @@ class NgComponentDirective {
         return name.replace('guid_', '');
     }
     /**
+     * @param {?} obj
+     * @return {?}
+     */
+    deepCopy(obj) {
+        try {
+            return JSON.parse(JSON.stringify(obj));
+        }
+        catch (err) {
+            console.dir(err);
+            return {};
+        }
+    }
+    /**
      * @param {?} instance
      * @return {?}
      */
@@ -320,18 +532,23 @@ class NgComponentDirective {
             ev.stopPropagation();
             var /** @type {?} */ data = ev.dataTransfer.getData("name");
             var /** @type {?} */ uuid = this.trimGuid(data);
-            console.log(instance, data);
             if (!this.isGuid(data)) {
                 // 获取props
                 const /** @type {?} */ props = this.props.getPropsByName(data);
                 instance.props.children = instance.props.children || [];
-                instance.props.children.push(props);
+                const /** @type {?} */ deepProps = this.deepCopy(props);
+                // 记录上级
+                deepProps.father = instance.guid;
+                instance.props.children.push(deepProps);
+                this.props.instance.props.children.push(deepProps);
             }
             else if (uuid !== instance.guid) {
                 // 移动已存在props
                 let /** @type {?} */ props = this.getInstanceProps(uuid);
                 if (props) {
-                    instance.props.children.push(props);
+                    const /** @type {?} */ deepProps = this.deepCopy(props);
+                    deepProps.father = instance.guid;
+                    instance.props.children.push(deepProps);
                 }
             }
         });
@@ -372,8 +589,10 @@ NgComponentDirective.ctorParameters = () => [
     { type: TemplateRef, },
     { type: IterableDiffers, },
     { type: DesignLibraryService, },
+    { type: DesignApiService, },
     { type: DesignPropsService, },
     { type: Renderer2, },
+    { type: undefined, decorators: [{ type: Inject, args: [DRAG_DROP_ALL,] },] },
 ];
 NgComponentDirective.propDecorators = {
     'ngComponent': [{ type: Input },],
@@ -383,31 +602,26 @@ NgComponentDirective.propDecorators = {
     'ngComponentStyle': [{ type: Input },],
     'ngComponentDrag': [{ type: Input },],
     'ngComponentDrop': [{ type: Input },],
+    'ngComponentInstance': [{ type: Input },],
     'ngComponentClick': [{ type: Input },],
 };
-class InstanceComponent {
-    /**
-     * @param {?} guid
-     * @param {?} props
-     */
-    constructor(guid, props) {
-        this.guid = guid;
-        this.props = props;
-    }
-}
 
 class IDesignComponentModule {
     /**
      * @param {?} coms
+     * @param {?=} dragDropAll
      * @return {?}
      */
-    static forRoot(coms) {
+    static forRoot(coms, dragDropAll = false) {
         return {
             ngModule: IDesignComponentModule,
             providers: [{
                     provide: DESIGN_LIBRARYS,
                     useValue: coms,
                     multi: true
+                }, {
+                    provide: DRAG_DROP_ALL,
+                    useValue: dragDropAll
                 }]
         };
     }
@@ -437,5 +651,5 @@ IDesignComponentModule.ctorParameters = () => [];
  * Generated bundle index. Do not edit.
  */
 
-export { IDesignComponentModule, NgComponentDirective, InstanceComponent, DesignApiService, DesignLibraryService, DESIGN_LIBRARYS, DesignPropsService, DESIGN_COMPONENTS };
+export { IDesignComponentModule, NgComponentDirective, DesignApiService, DesignLibraryService, DESIGN_LIBRARYS, DesignPropsService, DESIGN_COMPONENTS, DRAG_DROP_ALL as ɵa };
 //# sourceMappingURL=meepo-idesign-share.js.map

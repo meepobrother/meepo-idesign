@@ -8,6 +8,7 @@ import { DesignLibraryProp, DesignHistoryProp, DesignLibraryService, DesignProps
 import { guid } from './uuid';
 import { fromEvent } from 'rxjs/observable/fromEvent';
 import { Router } from '@angular/router';
+import { ReactComponent } from 'ng-react-component';
 export function deepCopy(obj: any) {
     return JSON.parse(JSON.stringify(obj));
 }
@@ -19,10 +20,30 @@ export function deepCopy(obj: any) {
 export class DesignSettingComponent implements OnInit {
     @HostBinding('class.meepo-design-setting') _setting: boolean = true;
     item: DesignLibraryProp;
-    constructor() { }
+    instance: ReactComponent<any, any>;
+    constructor(
+        private props: DesignPropsService
+    ) { }
     ngOnInit() { }
-    setSetting(com: DesignLibraryProp) {
+    setSetting(com: DesignLibraryProp, instance?: any) {
         this.item = com;
+        this.instance = instance;
+    }
+
+    setTopProps() {
+        this.props.settingProps = null;
+    }
+
+    setItemProps(item: any) { 
+        this.props.settingProps = item;
+    }
+
+    addComponent(e: any) {
+        this.props.addPropsToInstanceByName(e);
+    }
+
+    toFatherProps(e: any) {
+        this.props.toFatherProps();
     }
 }
 // 预览
@@ -40,8 +61,8 @@ export class DesignPreviewComponent implements OnInit {
         type: 'image'
     };
 
-    onClick: any = (e: DesignLibraryProp) => {
-        this.doClick.emit(e);
+    onClick: any = (e: DesignLibraryProp, instance: any) => {
+        this.doClick.emit({ props: e, instance: instance });
     }
 
     isOpen: boolean = false;
@@ -139,8 +160,8 @@ export class DesignComponent implements OnInit {
 
     }
 
-    setSetting(com: DesignLibraryProp) {
-        this._setting.setSetting(com);
+    setSetting(com: { props: DesignLibraryProp, instance: any }) {
+        this._setting.setSetting(com.props, com.instance);
     }
 
     saveToHistory() {

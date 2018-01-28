@@ -1,5 +1,19 @@
 import { ComponentFactoryResolver, Directive, Inject, Injectable, InjectionToken, Input, IterableDiffers, NgModule, Renderer2, TemplateRef, ViewContainerRef } from '@angular/core';
 import { fromEvent as fromEvent$1 } from 'rxjs/observable/fromEvent';
+import 'rxjs/add/operator/switchMap';
+import 'rxjs/add/operator/map';
+/**
+ * @return {?}
+ */
+function guid() {
+    /**
+     * @return {?}
+     */
+    function S4() {
+        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+    }
+    return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
+}
 /**
  * @template T
  * @param {?} arr
@@ -9,6 +23,20 @@ function flatten(arr) {
     return Array.prototype.concat.apply([], arr);
 }
 var DESIGN_LIBRARYS = new InjectionToken('DESIGN_LIBRARYS');
+var instancesMap = new Map();
+var InstanceComponent = (function () {
+    /**
+     * @param {?} guid
+     * @param {?} props
+     * @param {?} instance
+     */
+    function InstanceComponent(guid$$1, props, instance) {
+        this.guid = guid$$1;
+        this.props = props;
+        this.instance = instance;
+    }
+    return InstanceComponent;
+}());
 var DesignApiService = (function () {
     function DesignApiService() {
     }
@@ -16,13 +44,44 @@ var DesignApiService = (function () {
      * @param {?} id
      * @return {?}
      */
-    DesignApiService.prototype.get = function (id) { };
+    DesignApiService.prototype.get = function (id) {
+        return instancesMap.get(id);
+    };
     /**
-     * @param {?} data
-     * @param {?} id
+     * @param {?} instance
+     * @param {?} designLibraryProp
+     * @param {?} isPreview
      * @return {?}
      */
-    DesignApiService.prototype.save = function (data, id) { };
+    DesignApiService.prototype.save = function (instance, designLibraryProp, isPreview) {
+        var /** @type {?} */ instanceComponent = new InstanceComponent(instance.guid, designLibraryProp, instance);
+        if (isPreview) {
+            var /** @type {?} */ map$$1 = instancesMap.get(instance.guid);
+            if (map$$1) {
+                map$$1.view = instanceComponent;
+            }
+            else {
+                map$$1 = {
+                    setting: null,
+                    view: instanceComponent
+                };
+            }
+            instancesMap.set(instance.guid, map$$1);
+        }
+        else {
+            var /** @type {?} */ map$$1 = instancesMap.get(instance.guid);
+            if (map$$1) {
+                map$$1.setting = instanceComponent;
+            }
+            else {
+                map$$1 = {
+                    setting: instanceComponent,
+                    view: null
+                };
+            }
+            instancesMap.set(instance.guid, map$$1);
+        }
+    };
     return DesignApiService;
 }());
 DesignApiService.decorators = [
@@ -42,11 +101,11 @@ var DesignPropsService = (function () {
         this.props = [];
         // 当前页面
         this.pageProps = [];
-        // 设置
-        this.settingProps = {};
+        this.fathersProps = [];
         this.historyKey = 'historyKey';
         // 历史记录
         this.historys = [];
+        this.removePosition = [];
         this.props = flatten(props);
         try {
             this.backToHistory();
@@ -55,6 +114,40 @@ var DesignPropsService = (function () {
             localStorage.clear();
         }
     }
+    Object.defineProperty(DesignPropsService.prototype, "settingProps", {
+        /**
+         * @return {?}
+         */
+        get: function () {
+            return this._settingProps;
+        },
+        /**
+         * @param {?} val
+         * @return {?}
+         */
+        set: function (val) {
+            var _this = this;
+            this._settingProps = val;
+            try {
+                if (!this._settingProps) {
+                    this.fathersProps = [];
+                }
+                this.fathers = this.getFather(this.settingProps);
+                if (this.fathers && this.fathers.length > 0) {
+                    this.fathersProps = [];
+                    this.fathers.map(function (res) {
+                        var /** @type {?} */ props = _this.getPropsByUid(res);
+                        if (props) {
+                            _this.fathersProps.push(props);
+                        }
+                    });
+                }
+            }
+            catch (err) { }
+        },
+        enumerable: true,
+        configurable: true
+    });
     /**
      * @param {?} name
      * @return {?}
@@ -70,26 +163,123 @@ var DesignPropsService = (function () {
     };
     /**
      * @param {?} name
+     * @param {?=} father
      * @return {?}
      */
-    DesignPropsService.prototype.addPropByName = function (name) {
+    DesignPropsService.prototype.addPropByName = function (name, father) {
         var /** @type {?} */ com = this.getPropsByName(name);
-        this.pageProps.push(com);
+        var /** @type {?} */ deepCopyCom = this.deepCopy(com);
+        deepCopyCom.uuid = guid();
+        deepCopyCom.father = father || '';
+        this.pageProps.push(deepCopyCom);
         this.updateHistory();
+    };
+    /**
+     * @param {?} name
+     * @return {?}
+     */
+    DesignPropsService.prototype.addPropsToInstanceByName = function (name) {
+        var /** @type {?} */ props = this.getPropsByName(name);
+        if (props) {
+            var /** @type {?} */ deepProps = this.deepCopy(props);
+            deepProps.father = this.instance.guid;
+            deepProps.uuid = guid();
+            this.instance.props.children = this.instance.props.children || [];
+            this.instance.props.children.push(deepProps);
+        }
+    };
+    /**
+     * @return {?}
+     */
+    DesignPropsService.prototype.toFatherProps = function () {
+        console.log(this.fathersProps);
+    };
+    /**
+     * @param {?} obj
+     * @return {?}
+     */
+    DesignPropsService.prototype.deepCopy = function (obj) {
+        try {
+            return JSON.parse(JSON.stringify(obj));
+        }
+        catch (err) {
+            console.dir(obj);
+        }
+    };
+    /**
+     * @param {?} name
+     * @return {?}
+     */
+    DesignPropsService.prototype.isGuid = function (name) {
+        return name.indexOf('guid_') > -1;
+    };
+    /**
+     * @param {?} name
+     * @return {?}
+     */
+    DesignPropsService.prototype.trimGuid = function (name) {
+        return name.replace('guid_', '');
     };
     /**
      * @param {?} uuid
      * @return {?}
      */
     DesignPropsService.prototype.removePropsByUid = function (uuid) {
-        var /** @type {?} */ thisIndex;
-        this.pageProps.map(function (res, index) {
-            if (res.uuid === uuid) {
-                thisIndex = index;
+        uuid = this.trimGuid(uuid);
+        var /** @type {?} */ props = this.getPropsByUid(uuid);
+        if (props) {
+            if (props.father) {
+                var /** @type {?} */ father = this.getPropsByUid(props.father);
+                var /** @type {?} */ index = father.props.children.indexOf(props);
+                if (index > -1) {
+                    father.props.children.splice(index, 1);
+                }
             }
-        });
-        this.pageProps.splice(thisIndex, 1);
+            else {
+                var /** @type {?} */ index = this.pageProps.indexOf(props);
+                if (index > -1) {
+                    this.pageProps.splice(index, 1);
+                }
+            }
+        }
         this.updateHistory();
+    };
+    /**
+     * @param {?} props
+     * @param {?=} ids
+     * @return {?}
+     */
+    DesignPropsService.prototype.getFather = function (props, ids) {
+        if (ids === void 0) { ids = []; }
+        ids.push(props.uuid);
+        if (props.father) {
+            var /** @type {?} */ father = this.getPropsByUid(props.father);
+            if (father) {
+                ids = this.getFather(((father)), ids);
+            }
+        }
+        return ids;
+    };
+    /**
+     * @param {?} uuid
+     * @param {?=} data
+     * @return {?}
+     */
+    DesignPropsService.prototype.getPropsByUid = function (uuid, data) {
+        data = data || this.pageProps;
+        for (var /** @type {?} */ i = 0; i < data.length; i++) {
+            var /** @type {?} */ item = data[i];
+            if (item.uuid + '' === uuid + '') {
+                return item;
+            }
+            else if (item.props.children) {
+                var /** @type {?} */ res = this.getPropsByUid(uuid, item.props.children);
+                if (res) {
+                    return res;
+                }
+            }
+        }
+        return false;
     };
     /**
      * @return {?}
@@ -146,7 +336,6 @@ var DesignLibraryService = (function () {
     function DesignLibraryService(components) {
         this.components = [];
         this.components = flatten(components);
-        console.log('DesignLibraryService', this.components);
     }
     /**
      * @param {?} name
@@ -172,22 +361,27 @@ DesignLibraryService.decorators = [
 DesignLibraryService.ctorParameters = function () { return [
     { type: undefined, decorators: [{ type: Inject, args: [DESIGN_LIBRARYS,] },] },
 ]; };
+var DRAG_DROP_ALL = new InjectionToken('DRAG_DROP_ALL');
 var NgComponentDirective = (function () {
     /**
      * @param {?} _viewContainerRef
      * @param {?} _template
      * @param {?} differs
      * @param {?} librarys
+     * @param {?} api
      * @param {?} props
      * @param {?} render
+     * @param {?} dragDropAll
      */
-    function NgComponentDirective(_viewContainerRef, _template, differs, librarys, props, render) {
+    function NgComponentDirective(_viewContainerRef, _template, differs, librarys, api, props, render, dragDropAll) {
         this._viewContainerRef = _viewContainerRef;
         this._template = _template;
         this.differs = differs;
         this.librarys = librarys;
+        this.api = api;
         this.props = props;
         this.render = render;
+        this.dragDropAll = dragDropAll;
         this.instances = [];
         this.viewContainerRef = _viewContainerRef;
     }
@@ -238,26 +432,36 @@ var NgComponentDirective = (function () {
                 var /** @type {?} */ componentFactory = componentFactoryResolver.resolveComponentFactory(component);
                 var /** @type {?} */ componentRef = this.viewContainerRef.createComponent(componentFactory, currentIndex, elInjector);
                 // designLibraryProp.props = JSON.parse(JSON.stringify(designLibraryProp.props));
+                var instance_1 = componentRef.instance;
                 if (designLibraryProp_1.props) {
-                    componentRef.instance.props = designLibraryProp_1.props;
+                    instance_1.props = designLibraryProp_1.props;
                 }
                 if (designLibraryProp_1.state) {
-                    componentRef.instance.state = designLibraryProp_1.state;
+                    instance_1.state = designLibraryProp_1.state;
                 }
-                componentRef.instance.onClick.subscribe(function (res) {
-                    _this.ngComponentClick && _this.ngComponentClick(designLibraryProp_1);
+                instance_1.onClick.subscribe(function (ev) {
+                    if (_this.ngComponentPreview) {
+                        _this.props.settingProps = designLibraryProp_1;
+                        _this.props.instance = instance_1;
+                    }
                 });
-                componentRef.instance.setClass(this.ngComponentClass);
-                componentRef.instance.setStyle(this.ngComponentStyle);
-                if (this.ngComponentDrag) {
-                    this.setDrage(componentRef.instance);
+                instance_1.setClass(this.ngComponentClass);
+                instance_1.setStyle(this.ngComponentStyle);
+                instance_1.instance = this.ngComponentInstance;
+                if (this.ngComponentDrag || this.dragDropAll) {
+                    this.setDrage(instance_1);
                 }
-                if (this.ngComponentDrop) {
-                    this.setDrop(componentRef.instance);
+                if (this.ngComponentDrop || this.dragDropAll) {
+                    this.setDrop(instance_1);
                 }
-                designLibraryProp_1.uuid = componentRef.instance.guid;
-                var /** @type {?} */ instanceComponent = new InstanceComponent(componentRef.instance.guid, designLibraryProp_1);
-                this.instances.push(instanceComponent);
+                if (designLibraryProp_1.uuid) {
+                    instance_1.guid = designLibraryProp_1.uuid;
+                }
+                else {
+                    designLibraryProp_1.uuid = instance_1.guid = guid();
+                }
+                // api
+                this.api.save(instance_1, designLibraryProp_1, this.ngComponentPreview);
             }
         }
         catch (err) {
@@ -294,6 +498,7 @@ var NgComponentDirective = (function () {
         fromEvent$1(ele, 'dragstart').subscribe(function (ev) {
             uuid = instance.guid;
             ev.dataTransfer.setData("name", 'guid_' + instance.guid);
+            ev.stopPropagation();
         });
         fromEvent$1(ele, 'dragend').subscribe(function (ev) {
             // dragend 删除这一个
@@ -315,6 +520,19 @@ var NgComponentDirective = (function () {
         return name.replace('guid_', '');
     };
     /**
+     * @param {?} obj
+     * @return {?}
+     */
+    NgComponentDirective.prototype.deepCopy = function (obj) {
+        try {
+            return JSON.parse(JSON.stringify(obj));
+        }
+        catch (err) {
+            console.dir(err);
+            return {};
+        }
+    };
+    /**
      * @param {?} instance
      * @return {?}
      */
@@ -326,18 +544,23 @@ var NgComponentDirective = (function () {
             ev.stopPropagation();
             var /** @type {?} */ data = ev.dataTransfer.getData("name");
             var /** @type {?} */ uuid = _this.trimGuid(data);
-            console.log(instance, data);
             if (!_this.isGuid(data)) {
                 // 获取props
                 var /** @type {?} */ props = _this.props.getPropsByName(data);
                 instance.props.children = instance.props.children || [];
-                instance.props.children.push(props);
+                var /** @type {?} */ deepProps = _this.deepCopy(props);
+                // 记录上级
+                deepProps.father = instance.guid;
+                instance.props.children.push(deepProps);
+                _this.props.instance.props.children.push(deepProps);
             }
             else if (uuid !== instance.guid) {
                 // 移动已存在props
                 var /** @type {?} */ props = _this.getInstanceProps(uuid);
                 if (props) {
-                    instance.props.children.push(props);
+                    var /** @type {?} */ deepProps = _this.deepCopy(props);
+                    deepProps.father = instance.guid;
+                    instance.props.children.push(deepProps);
                 }
             }
         });
@@ -379,8 +602,10 @@ NgComponentDirective.ctorParameters = function () { return [
     { type: TemplateRef, },
     { type: IterableDiffers, },
     { type: DesignLibraryService, },
+    { type: DesignApiService, },
     { type: DesignPropsService, },
     { type: Renderer2, },
+    { type: undefined, decorators: [{ type: Inject, args: [DRAG_DROP_ALL,] },] },
 ]; };
 NgComponentDirective.propDecorators = {
     'ngComponent': [{ type: Input },],
@@ -390,33 +615,28 @@ NgComponentDirective.propDecorators = {
     'ngComponentStyle': [{ type: Input },],
     'ngComponentDrag': [{ type: Input },],
     'ngComponentDrop': [{ type: Input },],
+    'ngComponentInstance': [{ type: Input },],
     'ngComponentClick': [{ type: Input },],
 };
-var InstanceComponent = (function () {
-    /**
-     * @param {?} guid
-     * @param {?} props
-     */
-    function InstanceComponent(guid, props) {
-        this.guid = guid;
-        this.props = props;
-    }
-    return InstanceComponent;
-}());
 var IDesignComponentModule = (function () {
     function IDesignComponentModule() {
     }
     /**
      * @param {?} coms
+     * @param {?=} dragDropAll
      * @return {?}
      */
-    IDesignComponentModule.forRoot = function (coms) {
+    IDesignComponentModule.forRoot = function (coms, dragDropAll) {
+        if (dragDropAll === void 0) { dragDropAll = false; }
         return {
             ngModule: IDesignComponentModule,
             providers: [{
                     provide: DESIGN_LIBRARYS,
                     useValue: coms,
                     multi: true
+                }, {
+                    provide: DRAG_DROP_ALL,
+                    useValue: dragDropAll
                 }]
         };
     };
@@ -445,5 +665,5 @@ IDesignComponentModule.ctorParameters = function () { return []; };
 /**
  * Generated bundle index. Do not edit.
  */
-export { IDesignComponentModule, NgComponentDirective, InstanceComponent, DesignApiService, DesignLibraryService, DESIGN_LIBRARYS, DesignPropsService, DESIGN_COMPONENTS };
+export { IDesignComponentModule, NgComponentDirective, DesignApiService, DesignLibraryService, DESIGN_LIBRARYS, DesignPropsService, DESIGN_COMPONENTS, DRAG_DROP_ALL as ɵa };
 //# sourceMappingURL=meepo-idesign-share.es5.js.map

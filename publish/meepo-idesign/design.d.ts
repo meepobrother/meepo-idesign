@@ -1,13 +1,15 @@
 import { OnInit, EventEmitter, InjectionToken } from '@angular/core';
 import { DesignLibraryProp, DesignHistoryProp, DesignPropsService } from 'meepo-idesign-share';
 import { Router } from '@angular/router';
+import { ReactComponent } from 'ng-react-component';
 export declare function deepCopy(obj: any): any;
 export declare class DesignSettingComponent implements OnInit {
     _setting: boolean;
     item: DesignLibraryProp;
+    instance: ReactComponent<any, any>;
     constructor();
     ngOnInit(): void;
-    setSetting(com: DesignLibraryProp): void;
+    setSetting(com: DesignLibraryProp, instance?: any): void;
 }
 export declare class DesignPreviewComponent implements OnInit {
     props: DesignPropsService;
@@ -55,7 +57,10 @@ export declare class DesignComponent implements OnInit {
     activeHistory: boolean;
     constructor(props: DesignPropsService, router: Router);
     ngOnInit(): void;
-    setSetting(com: DesignLibraryProp): void;
+    setSetting(com: {
+        props: DesignLibraryProp;
+        instance: any;
+    }): void;
     saveToHistory(): void;
     previewToHistory(): void;
     postToHistory(): void;

@@ -16,9 +16,5 @@ export class AppComponent implements OnInit {
   constructor(
     public props: DesignPropsService
   ) { }
-  ngOnInit() {
-    setTimeout(() => {
-      console.log(this.props);
-    }, 5000);
-  }
+  ngOnInit() {}
 }

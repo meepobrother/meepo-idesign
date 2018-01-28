@@ -1,6 +1,10 @@
+<ng-container *ngComponent="[props.settingProps];instance: props.instance">
 
-<ng-container *ngComponent="[item]"></ng-container>
-
-<div class="meepo-design-setting-empty" *ngIf="!item">
-    请选择要编辑的页面元素
+</ng-container>
+<div class="meepo-design-setting-nav" *ngIf="props.fathersProps">
+    <a href="javascript:;" (click)="setTopProps()" style="order: -99999;">顶级></a>
+    <a href="javascript:;" (click)="setItemProps(item)" [style.order]="-i" *ngFor="let item of props.fathersProps;index as i;">{{item.title}}></a>
+</div>
+<div class="meepo-design-setting-drop" canDrop (canDropChange)="addComponent($event)">
+    可将元素拖拽到此处
 </div>

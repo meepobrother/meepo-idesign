@@ -21,6 +21,7 @@ export interface AntdButtonProps {
     loading?: boolean;
     style?: any;
     text?: string;
+    children: any[];
 }
 
 @Component({

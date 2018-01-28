@@ -6,13 +6,14 @@ import {
     Type, ViewContainerRef, Output, OnInit, ComponentFactory,
     HostListener, EventEmitter, TemplateRef,
     IterableDiffers, NgIterable, IterableDiffer, IterableChangeRecord,
-    IterableChanges, Renderer2
+    IterableChanges, Renderer2, InjectionToken, Inject
 } from '@angular/core';
 import { ReactComponent } from 'ng-react-component';
 import { fromEvent } from 'rxjs/observable/fromEvent';
-import { DesignLibraryProp, DesignLibraryService, DesignPropsService } from './types';
+import { DesignLibraryProp, DesignLibraryService, DesignPropsService, DesignApiService } from './types';
 import { KeyValueChanges } from '@angular/core';
-
+import { guid } from './guid';
+export const DRAG_DROP_ALL = new InjectionToken('DRAG_DROP_ALL');
 @Directive({ selector: '[ngComponent]' })
 export class NgComponentDirective implements OnChanges {
     viewContainerRef: ViewContainerRef;
@@ -32,8 +33,9 @@ export class NgComponentDirective implements OnChanges {
     @Input() ngComponentDrag: any;
     // 是否可以放置
     @Input() ngComponentDrop: any;
+    @Input() ngComponentInstance: any;
 
-    @Input() ngComponentClick: (sm: any) => {};
+    @Input() ngComponentClick: (sm: any, instance: any) => {};
 
     instances: any[] = [];
 
@@ -43,8 +45,10 @@ export class NgComponentDirective implements OnChanges {
         private _template: TemplateRef<any>,
         private differs: IterableDiffers,
         private librarys: DesignLibraryService,
+        private api: DesignApiService,
         private props: DesignPropsService,
-        private render: Renderer2
+        private render: Renderer2,
+        @Inject(DRAG_DROP_ALL) private dragDropAll: boolean
     ) {
         this.viewContainerRef = _viewContainerRef;
     }
@@ -89,26 +93,35 @@ export class NgComponentDirective implements OnChanges {
                     elInjector
                 );
                 // designLibraryProp.props = JSON.parse(JSON.stringify(designLibraryProp.props));
+                const { instance } = componentRef;
                 if (designLibraryProp.props) {
-                    componentRef.instance.props = designLibraryProp.props;
+                    instance.props = designLibraryProp.props;
                 }
                 if (designLibraryProp.state) {
-                    componentRef.instance.state = designLibraryProp.state;
+                    instance.state = designLibraryProp.state;
                 }
-                componentRef.instance.onClick.subscribe(res => {
-                    this.ngComponentClick && this.ngComponentClick(designLibraryProp)
+                instance.onClick.subscribe((ev: MouseEvent) => {
+                    if (this.ngComponentPreview) {
+                        this.props.settingProps = designLibraryProp;
+                        this.props.instance = instance;
+                    }
                 });
-                componentRef.instance.setClass(this.ngComponentClass);
-                componentRef.instance.setStyle(this.ngComponentStyle);
-                if (this.ngComponentDrag) {
-                    this.setDrage(componentRef.instance);
+                instance.setClass(this.ngComponentClass);
+                instance.setStyle(this.ngComponentStyle);
+                instance.instance = this.ngComponentInstance;
+                if (this.ngComponentDrag || this.dragDropAll) {
+                    this.setDrage(instance);
                 }
-                if (this.ngComponentDrop) {
-                    this.setDrop(componentRef.instance);
+                if (this.ngComponentDrop || this.dragDropAll) {
+                    this.setDrop(instance);
                 }
-                designLibraryProp.uuid = componentRef.instance.guid;
-                const instanceComponent = new InstanceComponent(componentRef.instance.guid, designLibraryProp);
-                this.instances.push(instanceComponent);
+                if (designLibraryProp.uuid) {
+                    instance.guid = designLibraryProp.uuid;
+                } else {
+                    designLibraryProp.uuid = instance.guid = guid();
+                }
+                // api
+                this.api.save(instance, designLibraryProp, this.ngComponentPreview);
             }
         } catch (err) {
             console.log(`${this.ngComponentPreview ? 'preview' : 'setting'} is not fond`, item);
@@ -137,6 +150,7 @@ export class NgComponentDirective implements OnChanges {
         fromEvent(ele, 'dragstart').subscribe((ev: DragEvent) => {
             uuid = instance.guid;
             ev.dataTransfer.setData("name", 'guid_' + instance.guid);
+            ev.stopPropagation();
         });
         fromEvent(ele, 'dragend').subscribe((ev: DragEvent) => {
             // dragend 删除这一个
@@ -152,6 +166,15 @@ export class NgComponentDirective implements OnChanges {
         return name.replace('guid_', '');
     }
 
+    private deepCopy(obj: any) {
+        try {
+            return JSON.parse(JSON.stringify(obj));
+        } catch (err) {
+            console.dir(err);
+            return {};
+        }
+    }
+
     private setDrop(instance: ReactComponent<any, any>) {
         const ele = instance.ele.nativeElement;
         fromEvent(ele, 'drop').subscribe((ev: DragEvent) => {
@@ -159,17 +182,22 @@ export class NgComponentDirective implements OnChanges {
             ev.stopPropagation();
             var data = ev.dataTransfer.getData("name");
             var uuid = this.trimGuid(data);
-            console.log(instance, data);
             if (!this.isGuid(data)) {
                 // 获取props
                 const props = this.props.getPropsByName(data);
                 instance.props.children = instance.props.children || [];
-                instance.props.children.push(props);
-            } else if(uuid !== instance.guid){
+                const deepProps = this.deepCopy(props);
+                // 记录上级
+                deepProps.father = instance.guid;
+                instance.props.children.push(deepProps);
+                this.props.instance.props.children.push(deepProps)
+            } else if (uuid !== instance.guid) {
                 // 移动已存在props
                 let props = this.getInstanceProps(uuid);
                 if (props) {
-                    instance.props.children.push(props);
+                    const deepProps = this.deepCopy(props);
+                    deepProps.father = instance.guid;
+                    instance.props.children.push(deepProps);
                 }
             }
         });
@@ -197,9 +225,3 @@ export class NgComponentDirective implements OnChanges {
     }
 }
 
-export class InstanceComponent {
-    constructor(
-        public guid: string,
-        public props: DesignLibraryProp
-    ) { }
-}
