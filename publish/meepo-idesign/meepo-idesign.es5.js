@@ -1,8 +1,7 @@
-import { Component, ComponentFactoryResolver, Directive, ElementRef, EventEmitter, HostBinding, Inject, Injectable, InjectionToken, Injector, Input, IterableDiffers, NgModule, Output, Renderer2, TemplateRef, ViewChild, ViewContainerRef, ViewEncapsulation } from '@angular/core';
+import { Component, ComponentFactoryResolver, Directive, ElementRef, EventEmitter, HostBinding, Inject, Injectable, InjectionToken, Input, IterableDiffers, NgModule, Output, Renderer2, TemplateRef, ViewChild, ViewContainerRef, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { fromEvent as fromEvent$1 } from 'rxjs/observable/fromEvent';
-import { Subject as Subject$1 } from 'rxjs/Subject';
 /**
  * @template T
  * @param {?} arr
@@ -12,6 +11,140 @@ function flatten(arr) {
     return Array.prototype.concat.apply([], arr);
 }
 var DESIGN_LIBRARYS = new InjectionToken('DESIGN_LIBRARYS');
+var DesignApiService = (function () {
+    function DesignApiService() {
+    }
+    /**
+     * @param {?} id
+     * @return {?}
+     */
+    DesignApiService.prototype.get = function (id) { };
+    /**
+     * @param {?} data
+     * @param {?} id
+     * @return {?}
+     */
+    DesignApiService.prototype.save = function (data, id) { };
+    return DesignApiService;
+}());
+DesignApiService.decorators = [
+    { type: Injectable },
+];
+/**
+ * @nocollapse
+ */
+DesignApiService.ctorParameters = function () { return []; };
+var DESIGN_COMPONENTS = new InjectionToken('DESIGN_COMPONENTS');
+var DesignPropsService = (function () {
+    /**
+     * @param {?} props
+     */
+    function DesignPropsService(props) {
+        // 所有props
+        this.props = [];
+        // 当前页面
+        this.pageProps = [];
+        // 设置
+        this.settingProps = {};
+        this.historyKey = 'historyKey';
+        // 历史记录
+        this.historys = [];
+        this.props = flatten(props);
+        try {
+            this.backToHistory();
+        }
+        catch (err) {
+            localStorage.clear();
+        }
+    }
+    /**
+     * @param {?} name
+     * @return {?}
+     */
+    DesignPropsService.prototype.getPropsByName = function (name) {
+        var /** @type {?} */ com;
+        this.props.forEach(function (item) {
+            if (name === item.name) {
+                com = item;
+            }
+        });
+        return com;
+    };
+    /**
+     * @param {?} name
+     * @return {?}
+     */
+    DesignPropsService.prototype.addPropByName = function (name) {
+        var /** @type {?} */ com = this.getPropsByName(name);
+        this.pageProps.push(com);
+        this.updateHistory();
+    };
+    /**
+     * @param {?} uuid
+     * @return {?}
+     */
+    DesignPropsService.prototype.removePropsByUid = function (uuid) {
+        var /** @type {?} */ thisIndex;
+        this.pageProps.map(function (res, index) {
+            if (res.uuid === uuid) {
+                thisIndex = index;
+            }
+        });
+        this.pageProps.splice(thisIndex, 1);
+        this.updateHistory();
+    };
+    /**
+     * @return {?}
+     */
+    DesignPropsService.prototype.getHistory = function () {
+        var /** @type {?} */ local = localStorage.getItem(this.historyKey);
+        if (local) {
+            var /** @type {?} */ items = (JSON.parse(local));
+            return items;
+        }
+        else {
+            return [];
+        }
+    };
+    /**
+     * @return {?}
+     */
+    DesignPropsService.prototype.updateHistory = function () {
+        this.historys.unshift({
+            name: new Date().toISOString(),
+            data: this.pageProps
+        });
+        if (this.historys.length > 50) {
+            this.historys = this.historys.splice(this.historys.length, this.historys.length - 50);
+        }
+        localStorage.setItem(this.historyKey, JSON.stringify(this.historys));
+    };
+    /**
+     * @param {?=} item
+     * @return {?}
+     */
+    DesignPropsService.prototype.backToHistory = function (item) {
+        if (item === void 0) {
+            item = null;
+        }
+        if (!item) {
+            item = this.getHistory()[0];
+        }
+        this.pageProps = item.data;
+    };
+    return DesignPropsService;
+}());
+DesignPropsService.decorators = [
+    { type: Injectable },
+];
+/**
+ * @nocollapse
+ */
+DesignPropsService.ctorParameters = function () {
+    return [
+        { type: undefined, decorators: [{ type: Inject, args: [DESIGN_COMPONENTS,] },] },
+    ];
+};
 var DesignLibraryService = (function () {
     /**
      * @param {?} components
@@ -19,6 +152,7 @@ var DesignLibraryService = (function () {
     function DesignLibraryService(components) {
         this.components = [];
         this.components = flatten(components);
+        console.log('DesignLibraryService', this.components);
     }
     /**
      * @param {?} name
@@ -52,12 +186,14 @@ var NgComponentDirective = (function () {
      * @param {?} _template
      * @param {?} differs
      * @param {?} librarys
+     * @param {?} props
      */
-    function NgComponentDirective(_viewContainerRef, _template, differs, librarys) {
+    function NgComponentDirective(_viewContainerRef, _template, differs, librarys, props) {
         this._viewContainerRef = _viewContainerRef;
         this._template = _template;
         this.differs = differs;
         this.librarys = librarys;
+        this.props = props;
         this.instances = [];
         this.viewContainerRef = _viewContainerRef;
     }
@@ -93,33 +229,47 @@ var NgComponentDirective = (function () {
         var _this = this;
         try {
             var /** @type {?} */ designLibraryProp_1 = item.item;
-            var /** @type {?} */ component = void 0;
-            var /** @type {?} */ libs = this.librarys.get(designLibraryProp_1.name);
-            if (this.ngComponentPreview) {
-                component = libs.view;
+            if (designLibraryProp_1) {
+                var /** @type {?} */ component = void 0;
+                var /** @type {?} */ libs = this.librarys.get(designLibraryProp_1.name);
+                if (this.ngComponentPreview) {
+                    component = libs.view;
+                }
+                else {
+                    component = libs.setting;
+                }
+                var /** @type {?} */ elInjector = this.viewContainerRef.parentInjector;
+                var /** @type {?} */ componentFactoryResolver = this.moduleRef ? this.moduleRef.componentFactoryResolver :
+                    elInjector.get(ComponentFactoryResolver);
+                var /** @type {?} */ componentFactory = componentFactoryResolver.resolveComponentFactory(component);
+                var /** @type {?} */ componentRef = this.viewContainerRef.createComponent(componentFactory, currentIndex, elInjector);
+                // designLibraryProp.props = JSON.parse(JSON.stringify(designLibraryProp.props));
+                if (designLibraryProp_1.props) {
+                    componentRef.instance.props = designLibraryProp_1.props;
+                }
+                if (designLibraryProp_1.state) {
+                    componentRef.instance.state = designLibraryProp_1.state;
+                }
+                componentRef.instance.onClick.subscribe(function (res) {
+                    _this.ngComponentClick && _this.ngComponentClick(designLibraryProp_1);
+                });
+                componentRef.instance.setClass(this.ngComponentClass);
+                componentRef.instance.setStyle(this.ngComponentStyle);
+                if (this.ngComponentDrag) {
+                    this.setDrage(componentRef.instance);
+                }
+                if (this.ngComponentDrop) {
+                    this.setDrop(componentRef.instance);
+                }
+                designLibraryProp_1.uuid = componentRef.instance.guid;
+                var /** @type {?} */ instanceComponent = new InstanceComponent(componentRef.instance.guid, designLibraryProp_1);
+                this.instances.push(instanceComponent);
             }
-            else {
-                component = libs.setting;
-            }
-            var /** @type {?} */ elInjector = this.viewContainerRef.parentInjector;
-            var /** @type {?} */ componentFactoryResolver = this.moduleRef ? this.moduleRef.componentFactoryResolver :
-                elInjector.get(ComponentFactoryResolver);
-            var /** @type {?} */ componentFactory = componentFactoryResolver.resolveComponentFactory(component);
-            var /** @type {?} */ componentRef = this.viewContainerRef.createComponent(componentFactory, currentIndex, elInjector);
-            // designLibraryProp.props = JSON.parse(JSON.stringify(designLibraryProp.props));
-            componentRef.instance.props = designLibraryProp_1.props;
-            componentRef.instance.onClick.subscribe(function (res) {
-                _this.ngComponentClick && _this.ngComponentClick(designLibraryProp_1);
-            });
-            componentRef.instance.setClass(this.ngComponentClass);
-            componentRef.instance.setStyle(this.ngComponentStyle);
-            this.setDrage(componentRef.instance);
-            this.setDrop(componentRef.instance);
-            designLibraryProp_1.uuid = componentRef.instance.guid;
-            var /** @type {?} */ instanceComponent = new InstanceComponent(componentRef.instance.guid, designLibraryProp_1);
-            this.instances.push(instanceComponent);
         }
-        catch (err) { }
+        catch (err) {
+            console.log((this.ngComponentPreview ? 'preview' : 'setting') + " is not fond", item);
+            console.dir(err);
+        }
     };
     /**
      * @param {?} changes
@@ -170,8 +320,13 @@ var NgComponentDirective = (function () {
             ev.preventDefault();
             ev.stopPropagation();
             var /** @type {?} */ data = ev.dataTransfer.getData("name");
-            if (instance.guid !== data) {
-                // 自己放置自己 忽略 否则提示是放入内部还是互换位置
+            if (!instance.guid) {
+                // 获取props
+                var /** @type {?} */ props = _this.props.getPropsByName(data);
+                instance.props.children.push(props);
+            }
+            else if (instance.guid !== data) {
+                // 移动已存在props
                 var /** @type {?} */ props = _this.getInstanceProps(data);
                 if (props) {
                     instance.props.children.push(props);
@@ -211,6 +366,7 @@ NgComponentDirective.ctorParameters = function () {
         { type: TemplateRef, },
         { type: IterableDiffers, },
         { type: DesignLibraryService, },
+        { type: DesignPropsService, },
     ];
 };
 NgComponentDirective.propDecorators = {
@@ -237,6 +393,20 @@ var InstanceComponent = (function () {
 var IDesignComponentModule = (function () {
     function IDesignComponentModule() {
     }
+    /**
+     * @param {?} coms
+     * @return {?}
+     */
+    IDesignComponentModule.forRoot = function (coms) {
+        return {
+            ngModule: IDesignComponentModule,
+            providers: [{
+                    provide: DESIGN_LIBRARYS,
+                    useValue: coms,
+                    multi: true
+                }]
+        };
+    };
     return IDesignComponentModule;
 }());
 IDesignComponentModule.decorators = [
@@ -248,142 +418,21 @@ IDesignComponentModule.decorators = [
                 declarations: [
                     NgComponentDirective
                 ],
-                providers: [],
+                providers: [
+                    DesignApiService,
+                    DesignLibraryService,
+                    DesignPropsService
+                ],
             },] },
 ];
 /**
  * @nocollapse
  */
 IDesignComponentModule.ctorParameters = function () { return []; };
-var historyKey = 'historyKey';
-var DESIGN_COMPONENTS = new InjectionToken('DESIGN_COMPONENTS');
-/**
- * @template T
- * @param {?} arr
- * @return {?}
- */
-function flatten$1(arr) {
-    return Array.prototype.concat.apply([], arr);
-}
-var DesignService = (function () {
-    /**
-     * @param {?} injector
-     * @param {?} _allcomponents
-     * @param {?} library
-     */
-    function DesignService(injector, _allcomponents, library) {
-        this.injector = injector;
-        this.library = library;
-        this._historys = [];
-        this.history$ = new Subject$1();
-        this.data = [];
-        this.data$ = new Subject$1();
-        this.allComponents = [];
-        this.previewComponents = [];
-        this.previewComponents$ = new Subject$1();
-        this.allComponents = flatten$1(_allcomponents);
-    }
-    Object.defineProperty(DesignService.prototype, "historys", {
-        /**
-         * @return {?}
-         */
-        get: function () {
-            return this._historys || [];
-        },
-        /**
-         * @param {?} val
-         * @return {?}
-         */
-        set: function (val) {
-            this._historys = val;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    /**
-     * @param {?} uuid
-     * @return {?}
-     */
-    DesignService.prototype.removeComponentByUuid = function (uuid) {
-        var /** @type {?} */ thisIndex;
-        this.previewComponents.map(function (res, index) {
-            if (res.uuid === uuid) {
-                thisIndex = index;
-            }
-        });
-        this.previewComponents.splice(thisIndex, 1);
-        this.previewComponents$.next(this.previewComponents);
-    };
-    /**
-     * @param {?} name
-     * @return {?}
-     */
-    DesignService.prototype.getComponentByName = function (name) {
-        var /** @type {?} */ com;
-        this.allComponents.forEach(function (item) {
-            if (name === item.name) {
-                com = item;
-            }
-        });
-        return com;
-    };
-    /**
-     * @return {?}
-     */
-    DesignService.prototype.getHistory = function () {
-        var /** @type {?} */ local = localStorage.getItem(historyKey);
-        if (local) {
-            var /** @type {?} */ items = (JSON.parse(local));
-            return items;
-        }
-        else {
-            return [];
-        }
-    };
-    /**
-     * @param {?} data
-     * @return {?}
-     */
-    DesignService.prototype.updateHistory = function (data) {
-        this.historys = data;
-        if (this.historys.length > 50) {
-            this.historys = this.historys.splice(this.historys.length, this.historys.length - 50);
-        }
-        localStorage.setItem(historyKey, JSON.stringify(this.historys));
-        this.history$.next(this.historys);
-    };
-    /**
-     * @param {?=} item
-     * @return {?}
-     */
-    DesignService.prototype.backToHistory = function (item) {
-        if (item === void 0) { item = null; }
-        if (!item) {
-            item = this.getHistory()[0];
-        }
-        this.data = item.data;
-        this.data$.next(this.data);
-    };
-    return DesignService;
-}());
-DesignService.decorators = [
-    { type: Injectable },
-];
-/**
- * @nocollapse
- */
-DesignService.ctorParameters = function () { return [
-    { type: Injector, },
-    { type: undefined, decorators: [{ type: Inject, args: [DESIGN_COMPONENTS,] },] },
-    { type: DesignLibraryService, },
-]; };
 /**
  * @param {?} obj
  * @return {?}
  */
-function deepCopy(obj) {
-    return JSON.parse(JSON.stringify(obj));
-}
 var DesignSettingComponent = (function () {
     function DesignSettingComponent() {
         this._setting = true;
@@ -416,14 +465,13 @@ DesignSettingComponent.propDecorators = {
 };
 var DesignPreviewComponent = (function () {
     /**
-     * @param {?} history
+     * @param {?} props
      */
-    function DesignPreviewComponent(history) {
+    function DesignPreviewComponent(props) {
         var _this = this;
-        this.history = history;
+        this.props = props;
         this._preview = true;
         this.doClick = new EventEmitter();
-        this.components = [];
         this.directives = {
             name: 'device-iphone-8 device-gold',
             color: '',
@@ -434,29 +482,11 @@ var DesignPreviewComponent = (function () {
             _this.doClick.emit(e);
         };
         this.isOpen = false;
-        this.history.data$.subscribe(function (res) {
-            _this.components = res;
-        });
     }
     /**
      * @return {?}
      */
-    DesignPreviewComponent.prototype.ngOnInit = function () {
-        var _this = this;
-        // 最后一次操作
-        try {
-            this.history.backToHistory();
-            this.historys = this.history.historys;
-        }
-        catch (err) {
-            localStorage.clear();
-        }
-        this.history.previewComponents = this.components;
-        this.history.previewComponents$.subscribe(function (res) {
-            console.log(res);
-            _this.components = res;
-        });
-    };
+    DesignPreviewComponent.prototype.ngOnInit = function () { };
     /**
      * @param {?} e
      * @return {?}
@@ -469,58 +499,28 @@ var DesignPreviewComponent = (function () {
      * @return {?}
      */
     DesignPreviewComponent.prototype.addComponent = function (name) {
-        try {
-            var /** @type {?} */ com = this.history.getComponentByName(name);
-            if (com) {
-                this.components.push(deepCopy(com));
-                this.updateCache();
-            }
-        }
-        catch (err) {
-            console.log('undefined err', err);
-        }
+        this.props.addPropByName(name);
     };
     /**
      * @param {?} uuid
      * @return {?}
      */
     DesignPreviewComponent.prototype.removeComponent = function (uuid) {
-        var /** @type {?} */ idx = 0;
-        this.components.map(function (com, index) {
-            if (com.uuid === uuid) {
-                idx = index;
-            }
-        });
-        this.components.splice(idx, 1);
-        this.updateCache();
-    };
-    /**
-     * @return {?}
-     */
-    DesignPreviewComponent.prototype.updateCache = function () {
-        var /** @type {?} */ now = new Date();
-        var /** @type {?} */ components = JSON.stringify(this.components);
-        var /** @type {?} */ history = {
-            name: now.toISOString(),
-            data: JSON.parse(components)
-        };
-        this.historys = this.historys || [];
-        this.historys.unshift(history);
-        this.history.updateHistory(this.historys);
+        this.props.removePropsByUid(uuid);
     };
     return DesignPreviewComponent;
 }());
 DesignPreviewComponent.decorators = [
     { type: Component, args: [{
                 selector: 'design-preview',
-                template: "\n      <div class=\"meepo-design-preview-deletor\">\n          \u5783\u573E\u6876\uFF0C\u5C06\u5E9F\u5F03\u7EC4\u4EF6\u62D6\u5165\u6B64\u95F4\uFF01\n      </div>\n      <div class=\"device device-iphone-8\" [ngClass]=\"directives.name\">\n          <div class=\"device-frame\">\n              <div class=\"meepo-design-preview-container device-content\" canDrop (canDropChange)=\"addComponent($event)\">\n                  <ng-container *ngComponent=\"components;preview: true;click: onClick;class: {'editing':true}\"></ng-container>\n              </div>\n          </div>\n          <div class=\"device-stripe\"></div>\n          <div class=\"device-header\"></div>\n          <div class=\"device-sensors\"></div>\n          <div class=\"device-btns\"></div>\n          <div class=\"device-power\"></div>\n          <div class=\"device-home\"></div>\n      </div>\n    "
+                template: "\n      <div class=\"meepo-design-preview-deletor\">\n          \u5783\u573E\u6876\uFF0C\u5C06\u5E9F\u5F03\u7EC4\u4EF6\u62D6\u5165\u6B64\u95F4\uFF01\n      </div>\n      <div class=\"device device-iphone-8\" [ngClass]=\"directives.name\">\n          <div class=\"device-frame\">\n              <div class=\"meepo-design-preview-container device-content\" canDrop (canDropChange)=\"addComponent($event)\">\n                  <ng-container *ngComponent=\"\n                      props.pageProps;\n                      preview: true;\n                      click: onClick;\n                      class: {'editing':true};\n                      drag: true;\n                      drop: true;\n                  \"></ng-container>\n              </div>\n          </div>\n          <div class=\"device-stripe\"></div>\n          <div class=\"device-header\"></div>\n          <div class=\"device-sensors\"></div>\n          <div class=\"device-btns\"></div>\n          <div class=\"device-power\"></div>\n          <div class=\"device-home\"></div>\n      </div>\n    "
             },] },
 ];
 /**
  * @nocollapse
  */
 DesignPreviewComponent.ctorParameters = function () { return [
-    { type: DesignService, },
+    { type: DesignPropsService, },
 ]; };
 DesignPreviewComponent.propDecorators = {
     '_preview': [{ type: HostBinding, args: ['class.meepo-design-preview',] },],
@@ -528,10 +528,10 @@ DesignPreviewComponent.propDecorators = {
 };
 var DesignLibraryComponent = (function () {
     /**
-     * @param {?} history
+     * @param {?} props
      */
-    function DesignLibraryComponent(history) {
-        this.history = history;
+    function DesignLibraryComponent(props) {
+        this.props = props;
         this._library = true;
         this.components = [];
     }
@@ -539,7 +539,7 @@ var DesignLibraryComponent = (function () {
      * @return {?}
      */
     DesignLibraryComponent.prototype.ngOnInit = function () {
-        this.components = this.history.allComponents;
+        this.components = this.props.props;
     };
     return DesignLibraryComponent;
 }());
@@ -553,56 +553,49 @@ DesignLibraryComponent.decorators = [
  * @nocollapse
  */
 DesignLibraryComponent.ctorParameters = function () { return [
-    { type: DesignService, },
+    { type: DesignPropsService, },
 ]; };
 DesignLibraryComponent.propDecorators = {
     '_library': [{ type: HostBinding, args: ['class.meepo-design-library',] },],
 };
 var DesignHistoryComponent = (function () {
     /**
-     * @param {?} history
+     * @param {?} props
      */
-    function DesignHistoryComponent(history) {
-        this.history = history;
+    function DesignHistoryComponent(props) {
+        this.props = props;
         this._history = true;
-        this.items = [];
-        this.items = this.getLocal();
     }
     /**
      * @return {?}
      */
-    DesignHistoryComponent.prototype.ngOnInit = function () {
-        var _this = this;
-        this.history.history$.subscribe(function (res) {
-            _this.items = res;
-        });
-    };
+    DesignHistoryComponent.prototype.ngOnInit = function () { };
     /**
      * @return {?}
      */
     DesignHistoryComponent.prototype.getLocal = function () {
-        return this.history.getHistory();
+        return this.props.getHistory();
     };
     /**
      * @param {?} item
      * @return {?}
      */
     DesignHistoryComponent.prototype.backToHistory = function (item) {
-        this.history.backToHistory(item);
+        this.props.backToHistory(item);
     };
     return DesignHistoryComponent;
 }());
 DesignHistoryComponent.decorators = [
     { type: Component, args: [{
                 selector: 'design-history',
-                template: "\n      <ul>\n          <li  (click)=\"backToHistory(item)\" *ngFor=\"let item of items\">{{item.name}}</li>\n      </ul>\n    "
+                template: "\n      <ul>\n          <li  (click)=\"backToHistory(item)\" *ngFor=\"let item of props.historys\">{{item.name}}</li>\n      </ul>\n    "
             },] },
 ];
 /**
  * @nocollapse
  */
 DesignHistoryComponent.ctorParameters = function () { return [
-    { type: DesignService, },
+    { type: DesignPropsService, },
 ]; };
 DesignHistoryComponent.propDecorators = {
     '_history': [{ type: HostBinding, args: ['class.meepo-design-history',] },],
@@ -636,11 +629,11 @@ DesignPagesComponent.ctorParameters = function () { return [
 ]; };
 var DesignComponent = (function () {
     /**
-     * @param {?} history
+     * @param {?} props
      * @param {?} router
      */
-    function DesignComponent(history, router$$1) {
-        this.history = history;
+    function DesignComponent(props, router$$1) {
+        this.props = props;
         this.router = router$$1;
         this._design = true;
         this.activeHistory = false;
@@ -661,7 +654,7 @@ var DesignComponent = (function () {
      * @return {?}
      */
     DesignComponent.prototype.saveToHistory = function () {
-        this._preview.updateCache();
+        this.props.updateHistory();
     };
     /**
      * @return {?}
@@ -678,7 +671,7 @@ var DesignComponent = (function () {
 DesignComponent.decorators = [
     { type: Component, args: [{
                 selector: 'design',
-                template: "\n      <div class=\"meepo-design-left\">\n          <ul class=\"meepo-design-left-header\">\n              <li [class.active]=\"activeHistory\" (click)=\"activeHistory = true\">\u5386\u53F2\u8BB0\u5F55</li>\n              <li [class.active]=\"!activeHistory\" (click)=\"activeHistory = false\">\u9875\u9762\u7BA1\u7406</li>\n          </ul>\n          <div class=\"meepo-design-left-container\">\n              <design-history *ngIf=\"activeHistory\"></design-history>\n              <design-pages *ngIf=\"!activeHistory\"></design-pages>\n          </div>\n      </div>\n      <!-- <design-library></design-library> -->\n      <design-preview (doClick)=\"setSetting($event)\"></design-preview>\n      <design-setting></design-setting>\n\n      <div class=\"meepo-design-footer\">\n          <a href=\"javascript:;\" (click)=\"saveToHistory()\" class=\"meepo-design-footer-save\">\u4FDD\u5B58</a>\n          <a href=\"javascript:;\" (click)=\"previewToHistory()\" class=\"meepo-design-footer-preview\">\u9884\u89C8</a>\n          <a href=\"javascript:;\" (click)=\"postToHistory()\" class=\"meepo-design-footer-post\">\u751F\u6210</a>\n      </div>\n    ",
+                template: "\n      <div class=\"meepo-design-left\">\n          <ul class=\"meepo-design-left-header\">\n              <li [class.active]=\"activeHistory\" (click)=\"activeHistory = true\">\u5386\u53F2\u8BB0\u5F55</li>\n              <li [class.active]=\"!activeHistory\" (click)=\"activeHistory = false\">\u9875\u9762\u7BA1\u7406</li>\n          </ul>\n          <div class=\"meepo-design-left-container\">\n              <design-history *ngIf=\"activeHistory\"></design-history>\n              <design-pages *ngIf=\"!activeHistory\"></design-pages>\n          </div>\n      </div>\n      <design-library></design-library>\n      <design-preview (doClick)=\"setSetting($event)\"></design-preview>\n      <design-setting></design-setting>\n\n      <div class=\"meepo-design-footer\">\n          <a href=\"javascript:;\" (click)=\"saveToHistory()\" class=\"meepo-design-footer-save\">\u4FDD\u5B58</a>\n          <a href=\"javascript:;\" (click)=\"previewToHistory()\" class=\"meepo-design-footer-preview\">\u9884\u89C8</a>\n          <a href=\"javascript:;\" (click)=\"postToHistory()\" class=\"meepo-design-footer-post\">\u751F\u6210</a>\n      </div>\n    ",
                 styles: ["\n      .meepo-design {\n        display: -webkit-box;\n        display: -ms-flexbox;\n        display: flex;\n        height: 100%;\n        width: 100%; }\n        .meepo-design .editing {\n          cursor: pointer; }\n        .meepo-design-history, .meepo-design-library, .meepo-design-preview, .meepo-design-setting, .meepo-design-pages {\n          min-height: 80px;\n          position: relative; }\n        .meepo-design-left-container {\n          display: -webkit-box;\n          display: -ms-flexbox;\n          display: flex;\n          -webkit-box-orient: vertical;\n          -webkit-box-direction: normal;\n              -ms-flex-direction: column;\n                  flex-direction: column;\n          height: calc(100% - 44px);\n          overflow: auto;\n          width: 250px;\n          background: #efefef; }\n        .meepo-design-left-header {\n          list-style: none;\n          margin: 0px;\n          padding: 0px;\n          display: -webkit-box;\n          display: -ms-flexbox;\n          display: flex;\n          -webkit-box-orient: horizontal;\n          -webkit-box-direction: normal;\n              -ms-flex-direction: row;\n                  flex-direction: row; }\n          .meepo-design-left-header li {\n            text-align: center;\n            -webkit-box-flex: 1;\n                -ms-flex: 1;\n                    flex: 1;\n            height: 44px;\n            line-height: 44px;\n            margin: 0px; }\n            .meepo-design-left-header li.active {\n              background: #db4804;\n              color: #fff; }\n        .meepo-design-pages {\n          display: block;\n          background: #efefef;\n          width: 250px;\n          max-height: 100%;\n          overflow: auto; }\n        .meepo-design-history {\n          display: block;\n          background: #efefef;\n          width: 250px;\n          max-height: 100%;\n          overflow: auto; }\n          .meepo-design-history ul {\n            list-style: none;\n            margin: 0px;\n            padding: 0px; }\n            .meepo-design-history ul li {\n              line-height: 30px;\n              background: #efefef;\n              cursor: pointer; }\n              .meepo-design-history ul li:hover {\n                opacity: .8;\n                background: #fff; }\n        .meepo-design-library {\n          background: white;\n          width: 200px;\n          display: block;\n          overflow: auto; }\n          .meepo-design-library:after {\n            clear: both;\n            content: \" \"; }\n          .meepo-design-library .grid-item {\n            float: left;\n            width: 50%;\n            text-align: center;\n            line-height: 44px;\n            background: #efefef;\n            border: 1px solid #fff;\n            cursor: pointer; }\n            .meepo-design-library .grid-item:hover {\n              background: #ccc; }\n        .meepo-design-preview {\n          display: block;\n          background: #f3f3f3;\n          width: 400px;\n          max-height: 100%;\n          overflow: auto; }\n          .meepo-design-preview .device {\n            margin: 0 auto; }\n          .meepo-design-preview-deletor {\n            height: 120px;\n            display: -webkit-box;\n            display: -ms-flexbox;\n            display: flex;\n            -webkit-box-orient: horizontal;\n            -webkit-box-direction: normal;\n                -ms-flex-direction: row;\n                    flex-direction: row;\n            -webkit-box-pack: center;\n                -ms-flex-pack: center;\n                    justify-content: center;\n            -webkit-box-align: center;\n                -ms-flex-align: center;\n                    align-items: center;\n            background: gray;\n            color: #fff;\n            margin-bottom: 10px;\n            margin-left: 10px;\n            margin-right: 10px; }\n          .meepo-design-preview-iphone {\n            margin: 0 auto; }\n          .meepo-design-preview-container {\n            height: 100%;\n            position: absolute;\n            top: 0px;\n            left: 0px;\n            right: 0px;\n            bottom: 0px; }\n          .meepo-design-preview .device-content {\n            overflow: auto;\n            width: 100%;\n            height: 100%; }\n        .meepo-design-setting {\n          display: block;\n          background: #efefef;\n          -webkit-box-flex: 1;\n              -ms-flex: 1;\n                  flex: 1;\n          padding: 0 10px;\n          border-left: 10px solid #fff; }\n          .meepo-design-setting-empty {\n            height: 100%;\n            display: -webkit-box;\n            display: -ms-flexbox;\n            display: flex;\n            -webkit-box-orient: vertical;\n            -webkit-box-direction: normal;\n                -ms-flex-direction: column;\n                    flex-direction: column;\n            -webkit-box-pack: center;\n                -ms-flex-pack: center;\n                    justify-content: center;\n            -webkit-box-align: center;\n                -ms-flex-align: center;\n                    align-items: center;\n            font-size: .8em;\n            color: gray; }\n        .meepo-design-footer {\n          position: fixed;\n          bottom: 0px;\n          left: 0px;\n          right: 0px;\n          height: 60px;\n          display: -webkit-box;\n          display: -ms-flexbox;\n          display: flex;\n          -webkit-box-orient: horizontal;\n          -webkit-box-direction: normal;\n              -ms-flex-direction: row;\n                  flex-direction: row;\n          -webkit-box-pack: end;\n              -ms-flex-pack: end;\n                  justify-content: flex-end;\n          -webkit-box-align: center;\n              -ms-flex-align: center;\n                  align-items: center;\n          background: rgba(0, 0, 0, 0.5); }\n          .meepo-design-footer-save, .meepo-design-footer-preview, .meepo-design-footer-post {\n            width: 8em;\n            text-align: center;\n            height: 100%;\n            line-height: 60px; }\n          .meepo-design-footer-save {\n            background: #c74a06; }\n          .meepo-design-footer-preview {\n            background: #004fbf; }\n          .meepo-design-footer-post {\n            background: #0d7355; }\n          .meepo-design-footer a {\n            text-decoration: none;\n            color: #fff; }\n            .meepo-design-footer a:hover {\n              text-decoration: none; }\n    "],
                 encapsulation: ViewEncapsulation.None
             },] },
@@ -687,7 +680,7 @@ DesignComponent.decorators = [
  * @nocollapse
  */
 DesignComponent.ctorParameters = function () { return [
-    { type: DesignService, },
+    { type: DesignPropsService, },
     { type: Router, },
 ]; };
 DesignComponent.propDecorators = {
@@ -808,13 +801,13 @@ IDesignModule.decorators = [
                             path: 'design',
                             component: DesignComponent
                         }]),
-                    IDesignComponentModule
+                    IDesignComponentModule.forRoot([])
                 ],
                 exports: [
                     DesignLibraryComponent, DesignComponent,
                     DesignHistoryComponent, DesignPreviewComponent,
                     DesignSettingComponent, CanDropDirective, CanDragDirective,
-                    DesignPagesComponent, IDesignComponentModule
+                    DesignPagesComponent
                 ],
                 declarations: [
                     DesignLibraryComponent, DesignComponent,
@@ -822,10 +815,7 @@ IDesignModule.decorators = [
                     DesignSettingComponent, CanDropDirective, CanDragDirective,
                     DesignPagesComponent,
                 ],
-                providers: [
-                    DesignService,
-                    DesignLibraryService
-                ],
+                providers: [],
             },] },
 ];
 /**
@@ -835,5 +825,5 @@ IDesignModule.ctorParameters = function () { return []; };
 /**
  * Generated bundle index. Do not edit.
  */
-export { IDesignModule, DesignService, DESIGN_COMPONENTS, DESIGN_PAGES as ɵe, DesignComponent as ɵg, DesignHistoryComponent as ɵd, DesignLibraryComponent as ɵc, DesignPagesComponent as ɵf, DesignPreviewComponent as ɵb, DesignSettingComponent as ɵa, CanDragDirective as ɵi, CanDropDirective as ɵh };
+export { IDesignModule, DESIGN_PAGES as ɵe, DesignComponent as ɵg, DesignHistoryComponent as ɵd, DesignLibraryComponent as ɵc, DesignPagesComponent as ɵf, DesignPreviewComponent as ɵb, DesignSettingComponent as ɵa, CanDragDirective as ɵi, CanDropDirective as ɵh };
 //# sourceMappingURL=meepo-idesign.es5.js.map

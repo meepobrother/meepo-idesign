@@ -1,9 +1,9 @@
 /* You can add global styles to this file, and also import other style files */
 
 @import "~normalize.css";
-@import "~weui/dist/style/weui.min.css";
 @import "~devices.css/dist/devices.min.css";
 @import "~devices.css/dist/spectre.min.css";
+@import "~weui/dist/style/weui.min.css";
 html,
 body,
 app-root {
@@ -14,4 +14,15 @@ app-root {
 antd-badge {
     display: inline-block;
     position: relative;
+}
+
+.weui-flex {
+    min-height: 50px;
+    background: #efefef;
+}
+
+.weui-flex__item {
+    min-height: 50px;
+    background: gray;
+    margin: 1px;
 }

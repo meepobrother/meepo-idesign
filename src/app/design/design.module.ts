@@ -4,9 +4,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { DesignLibraryProp, DesignLibraryService } from 'meepo-idesign-share';
-import { DESIGN_COMPONENTS, DesignService } from './design.service';
-import { IDesignComponentModule } from 'meepo-idesign-share';
+import { DesignLibraryProp, DesignLibraryService, IDesignComponentModule } from 'meepo-idesign-share';
 
 import {
     DesignLibraryComponent, DesignComponent,
@@ -22,13 +20,13 @@ import { CanDropDirective, CanDragDirective } from './drop-drag';
             path: 'design',
             component: DesignComponent
         }]),
-        IDesignComponentModule
+        IDesignComponentModule.forRoot([])
     ],
     exports: [
         DesignLibraryComponent, DesignComponent,
         DesignHistoryComponent, DesignPreviewComponent,
         DesignSettingComponent, CanDropDirective, CanDragDirective,
-        DesignPagesComponent, IDesignComponentModule
+        DesignPagesComponent
     ],
     declarations: [
         DesignLibraryComponent, DesignComponent,
@@ -36,10 +34,7 @@ import { CanDropDirective, CanDragDirective } from './drop-drag';
         DesignSettingComponent, CanDropDirective, CanDragDirective,
         DesignPagesComponent,
     ],
-    providers: [
-        DesignService,
-        DesignLibraryService
-    ],
+    providers: [],
 })
 export class IDesignModule {
     static forRoot(pages: any[] = []): ModuleWithProviders {

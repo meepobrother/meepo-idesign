@@ -28,6 +28,86 @@ export class DesignApiService {
     // 保存一个页面参数
     save(data: any, id: string) { }
 }
+export const DESIGN_COMPONENTS = new InjectionToken('DESIGN_COMPONENTS');
+@Injectable()
+export class DesignPropsService {
+    // 所有props
+    props: any[] = [];
+    // 当前页面
+    pageProps: any[] = [];
+    // 设置
+    settingProps: any = {};
+
+    historyKey: string = 'historyKey';
+    // 历史记录
+    historys: any[] = [];
+
+    constructor(
+        @Inject(DESIGN_COMPONENTS) props: any
+    ) {
+        this.props = flatten(props);
+        try {
+            this.backToHistory();
+        } catch (err) {
+            localStorage.clear();
+        }
+    }
+
+    getPropsByName(name: string): DesignLibraryProp {
+        let com: DesignLibraryProp;
+        this.props.forEach((item) => {
+            if (name === item.name) {
+                com = item;
+            }
+        });
+        return com;
+    }
+
+    addPropByName(name: string){
+        const com = this.getPropsByName(name);
+        this.pageProps.push(com);
+        this.updateHistory();
+    }
+
+    removePropsByUid(uuid: string) {
+        let thisIndex: any;
+        this.pageProps.map((res: DesignLibraryProp, index: number) => {
+            if (res.uuid === uuid) {
+                thisIndex = index;
+            }
+        });
+        this.pageProps.splice(thisIndex, 1);
+        this.updateHistory();
+    }
+
+    getHistory(): DesignHistoryProp[] {
+        let local = localStorage.getItem(this.historyKey);
+        if (local) {
+            const items = JSON.parse(local) as DesignHistoryProp[];
+            return items;
+        } else {
+            return [];
+        }
+    }
+
+    updateHistory(): void {
+        this.historys.unshift({
+            name: new Date().toISOString(),
+            data: this.pageProps
+        });
+        if (this.historys.length > 50) {
+            this.historys = this.historys.splice(this.historys.length, this.historys.length - 50);
+        }
+        localStorage.setItem(this.historyKey, JSON.stringify(this.historys));
+    }
+
+    backToHistory(item: DesignHistoryProp = null) {
+        if (!item) {
+            item = this.getHistory()[0];
+        }
+        this.pageProps = item.data;
+    }
+}
 
 @Injectable()
 export class DesignLibraryService {
@@ -36,6 +116,7 @@ export class DesignLibraryService {
         @Inject(DESIGN_LIBRARYS) components: any
     ) {
         this.components = flatten(components);
+        console.log('DesignLibraryService', this.components);
     }
     get(name: string) {
         let com: any;

@@ -3796,9 +3796,17 @@ meepo-common@^1.1.7:
   version "1.1.7"
   resolved "https://registry.yarnpkg.com/meepo-common/-/meepo-common-1.1.7.tgz#c72ed49a674547ff31c43560f3b8c86e970126ee"
 
-meepo-idesign-share@^1.0.3:
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/meepo-idesign-share/-/meepo-idesign-share-1.0.3.tgz#38b760319c081465622e0d336cc73aab3119f541"
+meepo-idesign-share@^1.3.0:
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/meepo-idesign-share/-/meepo-idesign-share-1.3.0.tgz#641a85b0cd732cc72c3ff5bbbb297377434734ab"
+
+meepo-idesign@^1.1.8:
+  version "1.1.8"
+  resolved "https://registry.yarnpkg.com/meepo-idesign/-/meepo-idesign-1.1.8.tgz#c65267de44b4fcc89b1e573e8002dccd6b4be90a"
+
+meepo-we7-router@^1.1.8:
+  version "1.1.8"
+  resolved "https://registry.yarnpkg.com/meepo-we7-router/-/meepo-we7-router-1.1.8.tgz#9cdba615dc5f481664111524e5a2669d2508b675"
 
 mem@^1.1.0:
   version "1.1.0"
@@ -6655,6 +6663,10 @@ websocket-driver@>=0.5.1:
 websocket-extensions@>=0.1.1:
   version "0.1.3"
   resolved "https://registry.yarnpkg.com/websocket-extensions/-/websocket-extensions-0.1.3.tgz#5d2ff22977003ec687a4b87073dfbbac146ccf29"
+
+weui-flex@^1.4.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/weui-flex/-/weui-flex-1.4.0.tgz#5d7ff46d84ae43f5981b293ae8a1856cc3227ac6"
 
 weui@^1.1.2:
   version "1.1.2"

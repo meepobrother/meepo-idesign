@@ -1,6 +1,6 @@
 import { Component, OnInit, KeyValueDiffers, ElementRef, Renderer2 } from '@angular/core';
 import { ReactComponent } from 'ng-react-component';
-import { DesignService } from '../design/design.service';
+import { DesignPropsService } from 'meepo-idesign-share';
 import { PreviewComponents } from '../components/index';
 
 @Component({
@@ -9,17 +9,13 @@ import { PreviewComponents } from '../components/index';
     styleUrls: ['./preview.scss']
 })
 export class IpreviewComponent extends ReactComponent<any, any> {
-    components: any[] = [];
     constructor(
         differs: KeyValueDiffers,
-        private history: DesignService,
+        private history: DesignPropsService,
         render: Renderer2,
         ele: ElementRef
     ) {
         super(differs, ele, render);
-        this.history.data$.subscribe(res=>{
-            this.components = res;
-        });
     }
     ngOnInit() {
         this.history.backToHistory();

@@ -1,6 +1,5 @@
 import { OnInit, EventEmitter, InjectionToken } from '@angular/core';
-import { DesignLibraryProp, DesignHistoryProp } from 'meepo-idesign-share';
-import { DesignService } from './design.service';
+import { DesignLibraryProp, DesignHistoryProp, DesignPropsService } from 'meepo-idesign-share';
 import { Router } from '@angular/router';
 export declare function deepCopy(obj: any): any;
 export declare class DesignSettingComponent implements OnInit {
@@ -11,33 +10,29 @@ export declare class DesignSettingComponent implements OnInit {
     setSetting(com: DesignLibraryProp): void;
 }
 export declare class DesignPreviewComponent implements OnInit {
-    private history;
+    props: DesignPropsService;
     _preview: boolean;
     doClick: EventEmitter<any>;
-    components: DesignLibraryProp[];
-    historys: DesignHistoryProp[];
     directives: any;
     onClick: any;
     isOpen: boolean;
-    constructor(history: DesignService);
+    constructor(props: DesignPropsService);
     ngOnInit(): void;
     _showMore(e: DesignLibraryProp): void;
     addComponent(name: string): void;
     removeComponent(uuid: string): void;
-    updateCache(): void;
 }
 export declare class DesignLibraryComponent implements OnInit {
-    private history;
+    private props;
     _library: boolean;
     components: DesignLibraryProp[];
-    constructor(history: DesignService);
+    constructor(props: DesignPropsService);
     ngOnInit(): void;
 }
 export declare class DesignHistoryComponent implements OnInit {
-    history: DesignService;
+    props: DesignPropsService;
     _history: boolean;
-    items: DesignHistoryProp[];
-    constructor(history: DesignService);
+    constructor(props: DesignPropsService);
     ngOnInit(): void;
     getLocal(): DesignHistoryProp[];
     backToHistory(item: DesignHistoryProp): void;
@@ -49,7 +44,7 @@ export declare class DesignPagesComponent implements OnInit {
     ngOnInit(): void;
 }
 export declare class DesignComponent implements OnInit {
-    private history;
+    private props;
     private router;
     _design: boolean;
     _setting: DesignSettingComponent;
@@ -58,7 +53,7 @@ export declare class DesignComponent implements OnInit {
     _history: DesignHistoryComponent;
     _pages: DesignPagesComponent;
     activeHistory: boolean;
-    constructor(history: DesignService, router: Router);
+    constructor(props: DesignPropsService, router: Router);
     ngOnInit(): void;
     setSetting(com: DesignLibraryProp): void;
     saveToHistory(): void;

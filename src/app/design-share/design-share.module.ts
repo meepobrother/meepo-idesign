@@ -1,5 +1,7 @@
-import { NgModule } from '@angular/core';
+import { NgModule, ModuleWithProviders } from '@angular/core';
 import { NgComponentDirective } from './ng-component';
+import { DESIGN_LIBRARYS, DesignLibraryService, DesignApiService, DesignPropsService } from './types';
+
 @NgModule({
     imports: [],
     exports: [
@@ -8,6 +10,21 @@ import { NgComponentDirective } from './ng-component';
     declarations: [
         NgComponentDirective
     ],
-    providers: [],
+    providers: [
+        DesignApiService,
+        DesignLibraryService,
+        DesignPropsService
+    ],
 })
-export class IDesignComponentModule { }
+export class IDesignComponentModule {
+    public static forRoot(coms: any): ModuleWithProviders {
+        return {
+            ngModule: IDesignComponentModule,
+            providers: [{
+                provide: DESIGN_LIBRARYS,
+                useValue: coms,
+                multi: true
+            }]
+        }
+    }
+}

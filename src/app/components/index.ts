@@ -4,18 +4,21 @@ import { BadgeSettingComponent, AntdBadgeComponent } from './antd-mobile/badge';
 import { DesignLibraryProp } from 'meepo-idesign-share';
 import { Type } from '@angular/core';
 const componentsSet: DesignLibraryProp[] = [];
+import { both as flexBoth, entrys as flexEntrys, preview as flexPreview } from 'weui-flex';
 
-// 添加库
+export class ComponentSet {
+    constructor(
+        public name: string,
+        public title: string,
+        public children: any[] = [],
+        public props: any = {},
+        public state: any = {}
+    ) { }
+}
+// 添加库F
+componentsSet.push(new ComponentSet('weui-flex', 'flex容器'));
+componentsSet.push(new ComponentSet('weui-flex-item', 'flex项目'));
 
-componentsSet.push({
-    props: {
-        title: 'title2',
-        children: []
-    },
-    name: 'Flex',
-    title: 'Flex布局',
-    children: []
-});
 
 componentsSet.push({
     props: {

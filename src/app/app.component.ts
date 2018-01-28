@@ -3,9 +3,8 @@ import {
   OnInit, Injector, ComponentFactoryResolver
 } from '@angular/core';
 import { ViewEncapsulation } from '@angular/core';
-import { DESIGN_COMPONENTS } from './design/design.service';
 import { NgModuleRef } from '@angular/core';
-
+import { DesignPropsService } from 'meepo-idesign-share';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -14,6 +13,12 @@ import { NgModuleRef } from '@angular/core';
 })
 export class AppComponent implements OnInit {
   title = 'app';
-  constructor() { }
-  ngOnInit() { }
+  constructor(
+    public props: DesignPropsService
+  ) { }
+  ngOnInit() {
+    setTimeout(() => {
+      console.log(this.props);
+    }, 5000);
+  }
 }

@@ -6,12 +6,17 @@ import { FormsModule } from '@angular/forms';
 
 import { AppComponent } from './app.component';
 import { FlexHoverDirective } from './hover';
+
 import { IDesignModule } from './design/design.module';
 import { components, entryComponents, libraryComponents, PreviewComponents } from './components/index';
 
-import { DESIGN_COMPONENTS } from './design/design.service';
+import { DESIGN_COMPONENTS } from 'meepo-idesign-share';
 import { IpreviewComponent } from './preview/preview';
-import { DESIGN_LIBRARYS } from 'meepo-idesign-share';
+import { We7RouterModule } from 'meepo-we7-router';
+
+import { both as flexBoth, entrys as flexEntrys, preview as flexPreview } from 'weui-flex';
+
+import { DESIGN_LIBRARYS, IDesignComponentModule } from 'meepo-idesign-share';
 
 @NgModule({
   declarations: [
@@ -19,6 +24,7 @@ import { DESIGN_LIBRARYS } from 'meepo-idesign-share';
     IpreviewComponent,
     FlexHoverDirective,
     ...entryComponents,
+    ...flexEntrys
   ],
   imports: [
     BrowserModule,
@@ -39,7 +45,8 @@ import { DESIGN_LIBRARYS } from 'meepo-idesign-share';
     }, {
       title: '跑腿认证'
     }]),
-    FormsModule
+    FormsModule,
+    IDesignComponentModule.forRoot([])
   ],
   providers: [
     {
@@ -49,12 +56,13 @@ import { DESIGN_LIBRARYS } from 'meepo-idesign-share';
     },
     {
       provide: DESIGN_LIBRARYS,
-      useValue: libraryComponents,
+      useValue: [flexBoth],
       multi: true
     }
   ],
   entryComponents: [
-    ...entryComponents
+    ...entryComponents,
+    ...flexEntrys
   ],
   bootstrap: [AppComponent]
 })

@@ -1,4 +1,4 @@
-import { ComponentFactoryResolver, Directive, Inject, Injectable, InjectionToken, Input, IterableDiffers, NgModule, TemplateRef, ViewContainerRef } from '@angular/core';
+import { ComponentFactoryResolver, Directive, Inject, Injectable, InjectionToken, Input, IterableDiffers, NgModule, Renderer2, TemplateRef, ViewContainerRef } from '@angular/core';
 import { fromEvent as fromEvent$1 } from 'rxjs/observable/fromEvent';
 
 /**
@@ -31,6 +31,111 @@ DesignApiService.decorators = [
  * @nocollapse
  */
 DesignApiService.ctorParameters = () => [];
+const DESIGN_COMPONENTS = new InjectionToken('DESIGN_COMPONENTS');
+class DesignPropsService {
+    /**
+     * @param {?} props
+     */
+    constructor(props) {
+        // 所有props
+        this.props = [];
+        // 当前页面
+        this.pageProps = [];
+        // 设置
+        this.settingProps = {};
+        this.historyKey = 'historyKey';
+        // 历史记录
+        this.historys = [];
+        this.props = flatten(props);
+        try {
+            this.backToHistory();
+        }
+        catch (err) {
+            localStorage.clear();
+        }
+    }
+    /**
+     * @param {?} name
+     * @return {?}
+     */
+    getPropsByName(name) {
+        let /** @type {?} */ com;
+        this.props.forEach((item) => {
+            if (name === item.name) {
+                com = item;
+            }
+        });
+        return com;
+    }
+    /**
+     * @param {?} name
+     * @return {?}
+     */
+    addPropByName(name) {
+        const /** @type {?} */ com = this.getPropsByName(name);
+        this.pageProps.push(com);
+        this.updateHistory();
+    }
+    /**
+     * @param {?} uuid
+     * @return {?}
+     */
+    removePropsByUid(uuid) {
+        let /** @type {?} */ thisIndex;
+        this.pageProps.map((res, index) => {
+            if (res.uuid === uuid) {
+                thisIndex = index;
+            }
+        });
+        this.pageProps.splice(thisIndex, 1);
+        this.updateHistory();
+    }
+    /**
+     * @return {?}
+     */
+    getHistory() {
+        let /** @type {?} */ local = localStorage.getItem(this.historyKey);
+        if (local) {
+            const /** @type {?} */ items = (JSON.parse(local));
+            return items;
+        }
+        else {
+            return [];
+        }
+    }
+    /**
+     * @return {?}
+     */
+    updateHistory() {
+        this.historys.unshift({
+            name: new Date().toISOString(),
+            data: this.pageProps
+        });
+        if (this.historys.length > 50) {
+            this.historys = this.historys.splice(this.historys.length, this.historys.length - 50);
+        }
+        localStorage.setItem(this.historyKey, JSON.stringify(this.historys));
+    }
+    /**
+     * @param {?=} item
+     * @return {?}
+     */
+    backToHistory(item = null) {
+        if (!item) {
+            item = this.getHistory()[0];
+        }
+        this.pageProps = item.data;
+    }
+}
+DesignPropsService.decorators = [
+    { type: Injectable },
+];
+/**
+ * @nocollapse
+ */
+DesignPropsService.ctorParameters = () => [
+    { type: undefined, decorators: [{ type: Inject, args: [DESIGN_COMPONENTS,] },] },
+];
 class DesignLibraryService {
     /**
      * @param {?} components
@@ -38,6 +143,7 @@ class DesignLibraryService {
     constructor(components) {
         this.components = [];
         this.components = flatten(components);
+        console.log('DesignLibraryService', this.components);
     }
     /**
      * @param {?} name
@@ -69,12 +175,16 @@ class NgComponentDirective {
      * @param {?} _template
      * @param {?} differs
      * @param {?} librarys
+     * @param {?} props
+     * @param {?} render
      */
-    constructor(_viewContainerRef, _template, differs, librarys) {
+    constructor(_viewContainerRef, _template, differs, librarys, props, render) {
         this._viewContainerRef = _viewContainerRef;
         this._template = _template;
         this.differs = differs;
         this.librarys = librarys;
+        this.props = props;
+        this.render = render;
         this.instances = [];
         this.viewContainerRef = _viewContainerRef;
     }
@@ -108,33 +218,47 @@ class NgComponentDirective {
     createComponent(item, currentIndex) {
         try {
             const /** @type {?} */ designLibraryProp = item.item;
-            let /** @type {?} */ component;
-            const /** @type {?} */ libs = this.librarys.get(designLibraryProp.name);
-            if (this.ngComponentPreview) {
-                component = libs.view;
+            if (designLibraryProp) {
+                let /** @type {?} */ component;
+                const /** @type {?} */ libs = this.librarys.get(designLibraryProp.name);
+                if (this.ngComponentPreview) {
+                    component = libs.view;
+                }
+                else {
+                    component = libs.setting;
+                }
+                const /** @type {?} */ elInjector = this.viewContainerRef.parentInjector;
+                const /** @type {?} */ componentFactoryResolver = this.moduleRef ? this.moduleRef.componentFactoryResolver :
+                    elInjector.get(ComponentFactoryResolver);
+                const /** @type {?} */ componentFactory = componentFactoryResolver.resolveComponentFactory(component);
+                const /** @type {?} */ componentRef = this.viewContainerRef.createComponent(componentFactory, currentIndex, elInjector);
+                // designLibraryProp.props = JSON.parse(JSON.stringify(designLibraryProp.props));
+                if (designLibraryProp.props) {
+                    componentRef.instance.props = designLibraryProp.props;
+                }
+                if (designLibraryProp.state) {
+                    componentRef.instance.state = designLibraryProp.state;
+                }
+                componentRef.instance.onClick.subscribe(res => {
+                    this.ngComponentClick && this.ngComponentClick(designLibraryProp);
+                });
+                componentRef.instance.setClass(this.ngComponentClass);
+                componentRef.instance.setStyle(this.ngComponentStyle);
+                if (this.ngComponentDrag) {
+                    this.setDrage(componentRef.instance);
+                }
+                if (this.ngComponentDrop) {
+                    this.setDrop(componentRef.instance);
+                }
+                designLibraryProp.uuid = componentRef.instance.guid;
+                const /** @type {?} */ instanceComponent = new InstanceComponent(componentRef.instance.guid, designLibraryProp);
+                this.instances.push(instanceComponent);
             }
-            else {
-                component = libs.setting;
-            }
-            const /** @type {?} */ elInjector = this.viewContainerRef.parentInjector;
-            const /** @type {?} */ componentFactoryResolver = this.moduleRef ? this.moduleRef.componentFactoryResolver :
-                elInjector.get(ComponentFactoryResolver);
-            const /** @type {?} */ componentFactory = componentFactoryResolver.resolveComponentFactory(component);
-            const /** @type {?} */ componentRef = this.viewContainerRef.createComponent(componentFactory, currentIndex, elInjector);
-            // designLibraryProp.props = JSON.parse(JSON.stringify(designLibraryProp.props));
-            componentRef.instance.props = designLibraryProp.props;
-            componentRef.instance.onClick.subscribe(res => {
-                this.ngComponentClick && this.ngComponentClick(designLibraryProp);
-            });
-            componentRef.instance.setClass(this.ngComponentClass);
-            componentRef.instance.setStyle(this.ngComponentStyle);
-            this.setDrage(componentRef.instance);
-            this.setDrop(componentRef.instance);
-            designLibraryProp.uuid = componentRef.instance.guid;
-            const /** @type {?} */ instanceComponent = new InstanceComponent(componentRef.instance.guid, designLibraryProp);
-            this.instances.push(instanceComponent);
         }
-        catch (err) { }
+        catch (err) {
+            console.log(`${this.ngComponentPreview ? 'preview' : 'setting'} is not fond`, item);
+            console.dir(err);
+        }
     }
     /**
      * @param {?} changes
@@ -164,15 +288,26 @@ class NgComponentDirective {
         let /** @type {?} */ uuid;
         fromEvent$1(ele, 'dragstart').subscribe((ev) => {
             uuid = instance.guid;
-            ev.dataTransfer.setData("name", instance.guid);
-        });
-        fromEvent$1(ele, 'dragleave').subscribe((ev) => {
-            // dragend 删除这一个
+            ev.dataTransfer.setData("name", 'guid_' + instance.guid);
         });
         fromEvent$1(ele, 'dragend').subscribe((ev) => {
             // dragend 删除这一个
             // this.history.removeComponentByUuid(uuid);
         });
+    }
+    /**
+     * @param {?} name
+     * @return {?}
+     */
+    isGuid(name) {
+        return name.indexOf('guid_') > -1;
+    }
+    /**
+     * @param {?} name
+     * @return {?}
+     */
+    trimGuid(name) {
+        return name.replace('guid_', '');
     }
     /**
      * @param {?} instance
@@ -184,16 +319,30 @@ class NgComponentDirective {
             ev.preventDefault();
             ev.stopPropagation();
             var /** @type {?} */ data = ev.dataTransfer.getData("name");
-            if (instance.guid !== data) {
-                // 自己放置自己 忽略 否则提示是放入内部还是互换位置
-                let /** @type {?} */ props = this.getInstanceProps(data);
+            var /** @type {?} */ uuid = this.trimGuid(data);
+            console.log(instance, data);
+            if (!this.isGuid(data)) {
+                // 获取props
+                const /** @type {?} */ props = this.props.getPropsByName(data);
+                instance.props.children = instance.props.children || [];
+                instance.props.children.push(props);
+            }
+            else if (uuid !== instance.guid) {
+                // 移动已存在props
+                let /** @type {?} */ props = this.getInstanceProps(uuid);
                 if (props) {
                     instance.props.children.push(props);
                 }
             }
         });
+        fromEvent$1(ele, 'dragleave').subscribe((ev) => {
+            // dragend 删除这一个
+            this.render.removeStyle(ele, 'dashed');
+            ev.preventDefault();
+            ev.stopPropagation();
+        });
         fromEvent$1(ele, 'dragover').subscribe((ev) => {
-            ele.style.bor;
+            this.render.setStyle(ele, 'dashed', '1px lodash red');
             ev.preventDefault();
             ev.stopPropagation();
         });
@@ -223,6 +372,8 @@ NgComponentDirective.ctorParameters = () => [
     { type: TemplateRef, },
     { type: IterableDiffers, },
     { type: DesignLibraryService, },
+    { type: DesignPropsService, },
+    { type: Renderer2, },
 ];
 NgComponentDirective.propDecorators = {
     'ngComponent': [{ type: Input },],
@@ -246,6 +397,20 @@ class InstanceComponent {
 }
 
 class IDesignComponentModule {
+    /**
+     * @param {?} coms
+     * @return {?}
+     */
+    static forRoot(coms) {
+        return {
+            ngModule: IDesignComponentModule,
+            providers: [{
+                    provide: DESIGN_LIBRARYS,
+                    useValue: coms,
+                    multi: true
+                }]
+        };
+    }
 }
 IDesignComponentModule.decorators = [
     { type: NgModule, args: [{
@@ -256,7 +421,11 @@ IDesignComponentModule.decorators = [
                 declarations: [
                     NgComponentDirective
                 ],
-                providers: [],
+                providers: [
+                    DesignApiService,
+                    DesignLibraryService,
+                    DesignPropsService
+                ],
             },] },
 ];
 /**
@@ -268,5 +437,5 @@ IDesignComponentModule.ctorParameters = () => [];
  * Generated bundle index. Do not edit.
  */
 
-export { IDesignComponentModule, NgComponentDirective, InstanceComponent, DesignApiService, DesignLibraryService, DESIGN_LIBRARYS };
+export { IDesignComponentModule, NgComponentDirective, InstanceComponent, DesignApiService, DesignLibraryService, DESIGN_LIBRARYS, DesignPropsService, DESIGN_COMPONENTS };
 //# sourceMappingURL=meepo-idesign-share.js.map

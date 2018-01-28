@@ -4,6 +4,6 @@ cd ${currentDir}
 rm -rf dist
 
 $(npm bin)/ng-packagr -p ./src/app/design-share/package.json
-$(npm bin)/ng-packagr -p ./src/app/design/package.json
+# $(npm bin)/ng-packagr -p ./src/app/design/package.json
 
 

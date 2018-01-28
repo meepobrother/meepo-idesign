@@ -4,10 +4,9 @@ import {
     InjectionToken, Inject
 } from '@angular/core';
 import { HostBinding, ViewEncapsulation } from '@angular/core';
-import { DesignLibraryProp, DesignHistoryProp } from 'meepo-idesign-share';
+import { DesignLibraryProp, DesignHistoryProp, DesignLibraryService, DesignPropsService } from 'meepo-idesign-share';
 import { guid } from './uuid';
 import { fromEvent } from 'rxjs/observable/fromEvent';
-import { DesignService } from './design.service';
 import { Router } from '@angular/router';
 export function deepCopy(obj: any) {
     return JSON.parse(JSON.stringify(obj));
@@ -34,9 +33,6 @@ export class DesignSettingComponent implements OnInit {
 export class DesignPreviewComponent implements OnInit {
     @HostBinding('class.meepo-design-preview') _preview: boolean = true;
     @Output() doClick: EventEmitter<any> = new EventEmitter();
-    components: DesignLibraryProp[] = [];
-    historys: DesignHistoryProp[];
-
     directives: any = {
         name: 'device-iphone-8 device-gold',
         color: '',
@@ -49,67 +45,21 @@ export class DesignPreviewComponent implements OnInit {
     }
 
     isOpen: boolean = false;
-
     constructor(
-        private history: DesignService
-    ) {
-        this.history.data$.subscribe(res => {
-            this.components = res;
-        });
-    }
-
-    ngOnInit() {
-        // 最后一次操作
-        try {
-            this.history.backToHistory();
-            this.historys = this.history.historys;
-        } catch (err) {
-            localStorage.clear();
-        }
-        this.history.previewComponents = this.components;
-
-        this.history.previewComponents$.subscribe(res => {
-            console.log(res);
-            this.components = res;
-        });
-    }
+        public props: DesignPropsService
+    ) { }
+    ngOnInit() { }
 
     _showMore(e: DesignLibraryProp) {
         console.log('显示操作提示');
     }
 
     addComponent(name: string) {
-        try {
-            const com = this.history.getComponentByName(name);
-            if (com) {
-                this.components.push(deepCopy(com));
-                this.updateCache();
-            }
-        } catch (err) {
-            console.log('undefined err', err);
-        }
+        this.props.addPropByName(name);
     }
 
     removeComponent(uuid: string) {
-        let idx: number = 0;
-        this.components.map((com: DesignLibraryProp, index: number) => {
-            if (com.uuid === uuid) {
-                idx = index;
-            }
-        });
-        this.components.splice(idx, 1);
-        this.updateCache();
-    }
-    updateCache() {
-        const now = new Date();
-        const components = JSON.stringify(this.components)
-        const history: DesignHistoryProp = {
-            name: now.toISOString(),
-            data: JSON.parse(components)
-        };
-        this.historys = this.historys || [];
-        this.historys.unshift(history);
-        this.history.updateHistory(this.historys);
+        this.props.removePropsByUid(uuid);
     }
 }
 // 组件库
@@ -121,11 +71,11 @@ export class DesignLibraryComponent implements OnInit {
     @HostBinding('class.meepo-design-library') _library: boolean = true;
     components: DesignLibraryProp[] = [];
     constructor(
-        private history: DesignService
+        private props: DesignPropsService
     ) { }
 
     ngOnInit() {
-        this.components = this.history.allComponents;
+        this.components = this.props.props;
     }
 }
 // 操作历史
@@ -135,24 +85,17 @@ export class DesignLibraryComponent implements OnInit {
 })
 export class DesignHistoryComponent implements OnInit {
     @HostBinding('class.meepo-design-history') _history: boolean = true;
-    items: DesignHistoryProp[] = [];
     constructor(
-        public history: DesignService
-    ) {
-        this.items = this.getLocal();
-    }
-    ngOnInit() {
-        this.history.history$.subscribe(res => {
-            this.items = res;
-        });
-    }
+        public props: DesignPropsService
+    ) { }
+    ngOnInit() { }
 
     getLocal(): DesignHistoryProp[] {
-        return this.history.getHistory();
+        return this.props.getHistory();
     }
 
     backToHistory(item: DesignHistoryProp) {
-        this.history.backToHistory(item);
+        this.props.backToHistory(item);
     }
 }
 export const DESIGN_PAGES = new InjectionToken('DESIGN_PAGES');
@@ -189,7 +132,7 @@ export class DesignComponent implements OnInit {
     activeHistory: boolean = false;
 
     constructor(
-        private history: DesignService,
+        private props: DesignPropsService,
         private router: Router
     ) { }
     ngOnInit() {
@@ -201,7 +144,7 @@ export class DesignComponent implements OnInit {
     }
 
     saveToHistory() {
-        this._preview.updateCache();
+        this.props.updateHistory();
     }
 
     previewToHistory() {

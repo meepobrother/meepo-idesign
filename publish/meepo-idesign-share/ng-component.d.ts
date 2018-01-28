@@ -1,11 +1,13 @@
-import { ComponentRef, OnChanges, SimpleChanges, ViewContainerRef, TemplateRef, IterableDiffers, NgIterable } from '@angular/core';
+import { ComponentRef, OnChanges, SimpleChanges, ViewContainerRef, TemplateRef, IterableDiffers, NgIterable, Renderer2 } from '@angular/core';
 import { ReactComponent } from 'ng-react-component';
-import { DesignLibraryProp, DesignLibraryService } from './types';
+import { DesignLibraryProp, DesignLibraryService, DesignPropsService } from './types';
 export declare class NgComponentDirective implements OnChanges {
     private _viewContainerRef;
     private _template;
     private differs;
     private librarys;
+    private props;
+    private render;
     viewContainerRef: ViewContainerRef;
     componentRef: ComponentRef<ReactComponent<any, any>>;
     moduleRef: any;
@@ -19,11 +21,13 @@ export declare class NgComponentDirective implements OnChanges {
     ngComponentClick: (sm: any) => {};
     instances: any[];
     private _differ;
-    constructor(_viewContainerRef: ViewContainerRef, _template: TemplateRef<any>, differs: IterableDiffers, librarys: DesignLibraryService);
+    constructor(_viewContainerRef: ViewContainerRef, _template: TemplateRef<any>, differs: IterableDiffers, librarys: DesignLibraryService, props: DesignPropsService, render: Renderer2);
     ngDoCheck(): void;
     private createComponent(item, currentIndex);
     ngOnChanges(changes: SimpleChanges): void;
     private setDrage(instance);
+    private isGuid(name);
+    private trimGuid(name);
     private setDrop(instance);
     private getInstanceProps(uuid);
 }
