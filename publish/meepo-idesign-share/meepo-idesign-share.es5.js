@@ -1,7 +1,9 @@
-import { ComponentFactoryResolver, Directive, Inject, Injectable, InjectionToken, Input, IterableDiffers, NgModule, Renderer2, TemplateRef, ViewContainerRef } from '@angular/core';
+import { Component, ComponentFactoryResolver, Directive, Inject, Injectable, InjectionToken, Input, IterableDiffers, NgModule, Renderer2, TemplateRef, ViewContainerRef } from '@angular/core';
 import { fromEvent as fromEvent$1 } from 'rxjs/observable/fromEvent';
 import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/operator/map';
+import { ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 /**
  * @return {?}
  */
@@ -95,8 +97,10 @@ var DESIGN_COMPONENTS = new InjectionToken('DESIGN_COMPONENTS');
 var DesignPropsService = (function () {
     /**
      * @param {?} props
+     * @param {?} library
      */
-    function DesignPropsService(props) {
+    function DesignPropsService(props, library) {
+        this.library = library;
         // 所有props
         this.props = [];
         // 当前页面
@@ -149,6 +153,19 @@ var DesignPropsService = (function () {
         configurable: true
     });
     /**
+     * @param {?} designLibraryProp
+     * @param {?} instance
+     * @return {?}
+     */
+    DesignPropsService.prototype.setActiveSettingProps = function (designLibraryProp, instance) {
+        this.settingProps = designLibraryProp;
+        if (this.instance) {
+            this.instance.removeClass('is-focus');
+        }
+        this.instance = instance;
+        instance.addClass('is-focus');
+    };
+    /**
      * @param {?} name
      * @return {?}
      */
@@ -169,10 +186,19 @@ var DesignPropsService = (function () {
     DesignPropsService.prototype.addPropByName = function (name, father) {
         var /** @type {?} */ com = this.getPropsByName(name);
         var /** @type {?} */ deepCopyCom = this.deepCopy(com);
-        deepCopyCom.uuid = guid();
-        deepCopyCom.father = father || '';
-        this.pageProps.push(deepCopyCom);
-        this.updateHistory();
+        if (deepCopyCom) {
+            if (deepCopyCom.uuid) {
+                // 交换位置
+            }
+            else {
+                deepCopyCom.uuid = guid();
+                deepCopyCom.father = father || '';
+                var /** @type {?} */ lib = this.library.get(deepCopyCom.name);
+                deepCopyCom.props = new lib.default();
+                this.pageProps.push(deepCopyCom);
+                this.updateHistory();
+            }
+        }
     };
     /**
      * @param {?} name
@@ -181,11 +207,23 @@ var DesignPropsService = (function () {
     DesignPropsService.prototype.addPropsToInstanceByName = function (name) {
         var /** @type {?} */ props = this.getPropsByName(name);
         if (props) {
-            var /** @type {?} */ deepProps = this.deepCopy(props);
-            deepProps.father = this.instance.guid;
-            deepProps.uuid = guid();
-            this.instance.props.children = this.instance.props.children || [];
-            this.instance.props.children.push(deepProps);
+            if (this.instance) {
+                var /** @type {?} */ deepProps = this.deepCopy(props);
+                deepProps.father = this.instance.guid;
+                var /** @type {?} */ lib = this.library.get(deepProps.name);
+                deepProps.props = new lib.default();
+                deepProps.uuid = guid();
+                this.instance.props.children = this.instance.props.children || [];
+                this.instance.props.children.push(deepProps);
+            }
+            else {
+                var /** @type {?} */ deepProps = this.deepCopy(props);
+                deepProps.father = null;
+                var /** @type {?} */ lib = this.library.get(deepProps.name);
+                deepProps.props = new lib.default();
+                deepProps.uuid = guid();
+                this.pageProps.push(deepProps);
+            }
         }
     };
     /**
@@ -328,6 +366,7 @@ DesignPropsService.decorators = [
  */
 DesignPropsService.ctorParameters = function () { return [
     { type: undefined, decorators: [{ type: Inject, args: [DESIGN_COMPONENTS,] },] },
+    { type: DesignLibraryService, },
 ]; };
 var DesignLibraryService = (function () {
     /**
@@ -441,8 +480,8 @@ var NgComponentDirective = (function () {
                 }
                 instance_1.onClick.subscribe(function (ev) {
                     if (_this.ngComponentPreview) {
-                        _this.props.settingProps = designLibraryProp_1;
-                        _this.props.instance = instance_1;
+                        _this.props.setActiveSettingProps(designLibraryProp_1, instance_1);
+                        ev.stopPropagation();
                     }
                 });
                 instance_1.setClass(this.ngComponentClass);
@@ -452,7 +491,7 @@ var NgComponentDirective = (function () {
                     this.setDrage(instance_1);
                 }
                 if (this.ngComponentDrop || this.dragDropAll) {
-                    this.setDrop(instance_1);
+                    // this.setDrop(instance);
                 }
                 if (designLibraryProp_1.uuid) {
                     instance_1.guid = designLibraryProp_1.uuid;
@@ -618,6 +657,86 @@ NgComponentDirective.propDecorators = {
     'ngComponentInstance': [{ type: Input },],
     'ngComponentClick': [{ type: Input },],
 };
+var ShareColorComponent = (function () {
+    function ShareColorComponent() {
+    }
+    /**
+     * @return {?}
+     */
+    ShareColorComponent.prototype.ngOnInit = function () { };
+    return ShareColorComponent;
+}());
+ShareColorComponent.decorators = [
+    { type: Component, args: [{
+                selector: 'share-color',
+                template: "\n      <div class=\"row\" [formGroup]=\"props\">\n          <input type=\"color\" placeholder=\"\u80CC\u666F\u8272\" [formControlName]=\"'background-color'\">\n          <input type=\"color\" placeholder=\"\u524D\u666F\u8272\" [formControlName]=\"'color'\">\n      </div>\n    ",
+                styles: ["\n      .row {\n        display: -webkit-box;\n        display: -ms-flexbox;\n        display: flex;\n        -webkit-box-orient: horizontal;\n        -webkit-box-direction: normal;\n            -ms-flex-direction: row;\n                flex-direction: row;\n        width: 100%;\n        margin-top: 5px; }\n        .row input {\n          -webkit-box-flex: 1;\n              -ms-flex: 1;\n                  flex: 1;\n          width: 50%; }\n    "]
+            },] },
+];
+/**
+ * @nocollapse
+ */
+ShareColorComponent.ctorParameters = function () { return []; };
+ShareColorComponent.propDecorators = {
+    'props': [{ type: Input },],
+};
+var ShareSizeComponent = (function () {
+    function ShareSizeComponent() {
+    }
+    /**
+     * @return {?}
+     */
+    ShareSizeComponent.prototype.ngOnInit = function () { };
+    return ShareSizeComponent;
+}());
+ShareSizeComponent.decorators = [
+    { type: Component, args: [{
+                selector: 'share-size',
+                template: "\n      <div class=\"row\" [formGroup]=\"props\">\n          <input type=\"number\" placeholder=\"\u5BBD\u5EA6/%\" [formControlName]=\"'width.%'\">\n          <input type=\"number\" placeholder=\"\u9AD8\u5EA6/px\" [formControlName]=\"'height.px'\">\n      </div>\n    ",
+                styles: ["\n      .row {\n        display: -webkit-box;\n        display: -ms-flexbox;\n        display: flex;\n        -webkit-box-orient: horizontal;\n        -webkit-box-direction: normal;\n            -ms-flex-direction: row;\n                flex-direction: row;\n        width: 100%;\n        margin-top: 5px; }\n        .row input {\n          -webkit-box-flex: 1;\n              -ms-flex: 1;\n                  flex: 1;\n          width: 50%; }\n    "]
+            },] },
+];
+/**
+ * @nocollapse
+ */
+ShareSizeComponent.ctorParameters = function () { return []; };
+ShareSizeComponent.propDecorators = {
+    'props': [{ type: Input },],
+};
+var ShareBackgroundComponent = (function () {
+    function ShareBackgroundComponent() {
+    }
+    /**
+     * @return {?}
+     */
+    ShareBackgroundComponent.prototype.ngOnInit = function () { };
+    /**
+     * @param {?} e
+     * @return {?}
+     */
+    ShareBackgroundComponent.prototype.backgroundImageChange = function (e) {
+        this.props.get('background-image').setValue("url(" + e.target.value + ")");
+    };
+    return ShareBackgroundComponent;
+}());
+ShareBackgroundComponent.decorators = [
+    { type: Component, args: [{
+                selector: 'share-background',
+                template: "\n      <div class=\"row\" [formGroup]=\"props\">\n          <input type=\"text\" (change)=\"backgroundImageChange($event)\" [attr.value]=\"props.get('background-image').value\">\n          <input type=\"text\" [formControlName]=\"'background-size'\">\n          <input type=\"text\" [formControlName]=\"'background-repeat'\">\n          <input type=\"text\" [formControlName]=\"'background-position'\">\n      </div>\n    "
+            },] },
+];
+/**
+ * @nocollapse
+ */
+ShareBackgroundComponent.ctorParameters = function () { return []; };
+ShareBackgroundComponent.propDecorators = {
+    'props': [{ type: Input },],
+};
+var shareComponents = [
+    ShareColorComponent,
+    ShareSizeComponent,
+    ShareBackgroundComponent
+];
 var IDesignComponentModule = (function () {
     function IDesignComponentModule() {
     }
@@ -644,13 +763,16 @@ var IDesignComponentModule = (function () {
 }());
 IDesignComponentModule.decorators = [
     { type: NgModule, args: [{
-                imports: [],
+                imports: [
+                    CommonModule,
+                    ReactiveFormsModule
+                ],
                 exports: [
                     NgComponentDirective
-                ],
+                ].concat(shareComponents),
                 declarations: [
                     NgComponentDirective
-                ],
+                ].concat(shareComponents),
                 providers: [
                     DesignApiService,
                     DesignLibraryService,
@@ -665,5 +787,5 @@ IDesignComponentModule.ctorParameters = function () { return []; };
 /**
  * Generated bundle index. Do not edit.
  */
-export { IDesignComponentModule, NgComponentDirective, DesignApiService, DesignLibraryService, DESIGN_LIBRARYS, DesignPropsService, DESIGN_COMPONENTS, DRAG_DROP_ALL as ɵa };
+export { IDesignComponentModule, NgComponentDirective, DesignApiService, DesignLibraryService, DESIGN_LIBRARYS, DesignPropsService, DESIGN_COMPONENTS, ShareBackgroundComponent as ɵe, ShareColorComponent as ɵc, shareComponents as ɵb, ShareSizeComponent as ɵd, DRAG_DROP_ALL as ɵa };
 //# sourceMappingURL=meepo-idesign-share.es5.js.map

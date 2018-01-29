@@ -1,0 +1,6 @@
+<div class="row" [formGroup]="props">
+    <input type="text" (change)="backgroundImageChange($event)" [attr.value]="props.get('background-image').value">
+    <input type="text" [formControlName]="'background-size'">
+    <input type="text" [formControlName]="'background-repeat'">
+    <input type="text" [formControlName]="'background-position'">
+</div>

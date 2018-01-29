@@ -102,8 +102,8 @@ export class NgComponentDirective implements OnChanges {
                 }
                 instance.onClick.subscribe((ev: MouseEvent) => {
                     if (this.ngComponentPreview) {
-                        this.props.settingProps = designLibraryProp;
-                        this.props.instance = instance;
+                        this.props.setActiveSettingProps(designLibraryProp, instance);
+                        ev.stopPropagation();
                     }
                 });
                 instance.setClass(this.ngComponentClass);
@@ -113,7 +113,7 @@ export class NgComponentDirective implements OnChanges {
                     this.setDrage(instance);
                 }
                 if (this.ngComponentDrop || this.dragDropAll) {
-                    this.setDrop(instance);
+                    // this.setDrop(instance);
                 }
                 if (designLibraryProp.uuid) {
                     instance.guid = designLibraryProp.uuid;

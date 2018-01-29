@@ -4,7 +4,7 @@ import {
     InjectionToken, Inject
 } from '@angular/core';
 import { HostBinding, ViewEncapsulation } from '@angular/core';
-import { DesignLibraryProp, DesignHistoryProp, DesignLibraryService, DesignPropsService } from 'meepo-idesign-share';
+import { DesignLibraryProp, DesignHistoryProp, DesignLibraryService, DesignPropsService, DesignApiService } from 'meepo-idesign-share';
 import { guid } from './uuid';
 import { fromEvent } from 'rxjs/observable/fromEvent';
 import { Router } from '@angular/router';
@@ -22,7 +22,8 @@ export class DesignSettingComponent implements OnInit {
     item: DesignLibraryProp;
     instance: ReactComponent<any, any>;
     constructor(
-        private props: DesignPropsService
+        private props: DesignPropsService,
+        private api: DesignApiService
     ) { }
     ngOnInit() { }
     setSetting(com: DesignLibraryProp, instance?: any) {
@@ -33,13 +34,18 @@ export class DesignSettingComponent implements OnInit {
     setTopProps() {
         this.props.settingProps = null;
     }
-
-    setItemProps(item: any) { 
-        this.props.settingProps = item;
+    // 设置激活元素
+    setItemProps(item: any) {
+        const instance = this.api.get(item.uuid);
+        this.props.setActiveSettingProps(item, instance.view.instance);
     }
 
     addComponent(e: any) {
         this.props.addPropsToInstanceByName(e);
+    }
+
+    removeComponent(uuid: string) {
+        this.props.removePropsByUid(uuid);
     }
 
     toFatherProps(e: any) {
@@ -173,4 +179,8 @@ export class DesignComponent implements OnInit {
     }
 
     postToHistory() { }
+
+    removeComponent(uuid: string) {
+        this.props.removePropsByUid(uuid);
+    }
 }

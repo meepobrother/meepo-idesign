@@ -35,6 +35,7 @@ export declare class DesignApiService {
 export declare const DESIGN_COMPONENTS: InjectionToken<{}>;
 import 'rxjs/add/operator/map';
 export declare class DesignPropsService {
+    library: DesignLibraryService;
     props: any[];
     pageProps: DesignLibraryProp[];
     _settingProps: DesignLibraryProp;
@@ -45,7 +46,8 @@ export declare class DesignPropsService {
     historyKey: string;
     historys: any[];
     removePosition: number[];
-    constructor(props: any);
+    constructor(props: any, library: DesignLibraryService);
+    setActiveSettingProps(designLibraryProp: any, instance: any): void;
     getPropsByName(name: string): DesignLibraryProp;
     addPropByName(name: string, father?: string): void;
     addPropsToInstanceByName(name: string): void;

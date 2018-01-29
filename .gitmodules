@@ -1,0 +1,3 @@
+[submodule "src/app/components/weui-image"]
+	path = src/app/components/weui-image
+	url = https://github.com/meepobrother/weui-image.git

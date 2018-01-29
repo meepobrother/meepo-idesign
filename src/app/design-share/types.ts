@@ -87,7 +87,7 @@ export class DesignPropsService {
     set settingProps(val: DesignLibraryProp) {
         this._settingProps = val;
         try {
-            if (!this._settingProps) { 
+            if (!this._settingProps) {
                 this.fathersProps = [];
             }
             this.fathers = this.getFather(this.settingProps);
@@ -117,7 +117,8 @@ export class DesignPropsService {
     removePosition: number[] = [];
 
     constructor(
-        @Inject(DESIGN_COMPONENTS) props: any
+        @Inject(DESIGN_COMPONENTS) props: any,
+        public library: DesignLibraryService
     ) {
         this.props = flatten(props);
         try {
@@ -125,6 +126,15 @@ export class DesignPropsService {
         } catch (err) {
             localStorage.clear();
         }
+    }
+
+    setActiveSettingProps(designLibraryProp: any, instance: any) {
+        this.settingProps = designLibraryProp;
+        if (this.instance) {
+            this.instance.removeClass('is-focus');
+        }
+        this.instance = instance;
+        instance.addClass('is-focus');
     }
 
     getPropsByName(name: string): DesignLibraryProp {
@@ -140,20 +150,39 @@ export class DesignPropsService {
     addPropByName(name: string, father?: string) {
         const com = this.getPropsByName(name);
         const deepCopyCom: DesignLibraryProp = this.deepCopy(com);
-        deepCopyCom.uuid = guid();
-        deepCopyCom.father = father || '';
-        this.pageProps.push(deepCopyCom);
-        this.updateHistory();
+        if (deepCopyCom) {
+            if (deepCopyCom.uuid) {
+                // 交换位置
+            } else {
+                deepCopyCom.uuid = guid();
+                deepCopyCom.father = father || '';
+                const lib = this.library.get(deepCopyCom.name);
+                deepCopyCom.props = new lib.default();
+                this.pageProps.push(deepCopyCom);
+                this.updateHistory();
+            }
+        }
     }
 
     addPropsToInstanceByName(name: string) {
         let props = this.getPropsByName(name);
         if (props) {
-            const deepProps = this.deepCopy(props);
-            deepProps.father = this.instance.guid;
-            deepProps.uuid = guid();
-            this.instance.props.children = this.instance.props.children || [];
-            this.instance.props.children.push(deepProps);
+            if (this.instance) {
+                const deepProps = this.deepCopy(props);
+                deepProps.father = this.instance.guid;
+                const lib = this.library.get(deepProps.name);
+                deepProps.props = new lib.default();
+                deepProps.uuid = guid();
+                this.instance.props.children = this.instance.props.children || [];
+                this.instance.props.children.push(deepProps);
+            } else {
+                const deepProps = this.deepCopy(props);
+                deepProps.father = null;
+                const lib = this.library.get(deepProps.name);
+                deepProps.props = new lib.default();
+                deepProps.uuid = guid();
+                this.pageProps.push(deepProps);
+            }
         }
     }
 

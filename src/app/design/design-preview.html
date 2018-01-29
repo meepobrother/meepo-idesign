@@ -1,23 +1,11 @@
-<div class="meepo-design-preview-deletor" canDrop (canDropChange)="removeComponent($event)">
-    垃圾桶，将废弃组件拖入此间！
+<div style="min-height: 50px;position: relative;"></div>
+<div class="meepo-design-preview-iphone" canDrop (canDropChange)="addComponent($event)">
+    <ng-container *ngComponent="
+            props.pageProps;
+            preview: true;
+            click: onClick;
+            class: {'editing':true};
+            drag: true;
+        "></ng-container>
 </div>
-<div class="device device-iphone-8" [ngClass]="directives.name">
-    <div class="device-frame">
-        <div class="meepo-design-preview-container device-content" canDrop (canDropChange)="addComponent($event)">
-            <ng-container *ngComponent="
-                props.pageProps;
-                preview: true;
-                click: onClick;
-                class: {'editing':true};
-                drag: true;
-                drop: true;
-            "></ng-container>
-        </div>
-    </div>
-    <div class="device-stripe"></div>
-    <div class="device-header"></div>
-    <div class="device-sensors"></div>
-    <div class="device-btns"></div>
-    <div class="device-power"></div>
-    <div class="device-home"></div>
-</div>
+<div style="min-height: 50px;position: relative;"></div>

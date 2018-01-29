@@ -2,7 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { AppComponent } from './app.component';
 import { FlexHoverDirective } from './hover';
@@ -15,6 +15,8 @@ import { IpreviewComponent } from './preview/preview';
 import { We7RouterModule } from 'meepo-we7-router';
 
 import { both as flexBoth, entrys as flexEntrys, preview as flexPreview } from './components/weui-flex/public_api';
+import { both as imageBoth, entrys as imageEntrys, preview as imagePreview } from './components/weui-image/public_api';
+
 
 import { DESIGN_LIBRARYS, IDesignComponentModule } from 'meepo-idesign-share';
 
@@ -24,7 +26,8 @@ import { DESIGN_LIBRARYS, IDesignComponentModule } from 'meepo-idesign-share';
     IpreviewComponent,
     FlexHoverDirective,
     ...entryComponents,
-    ...flexEntrys
+    ...flexEntrys,
+    ...imageEntrys
   ],
   imports: [
     BrowserModule,
@@ -46,7 +49,8 @@ import { DESIGN_LIBRARYS, IDesignComponentModule } from 'meepo-idesign-share';
       title: '跑腿认证'
     }]),
     FormsModule,
-    IDesignComponentModule.forRoot([],true)
+    ReactiveFormsModule,
+    IDesignComponentModule.forRoot([], true)
   ],
   providers: [
     {
@@ -56,13 +60,14 @@ import { DESIGN_LIBRARYS, IDesignComponentModule } from 'meepo-idesign-share';
     },
     {
       provide: DESIGN_LIBRARYS,
-      useValue: [flexBoth],
+      useValue: [flexBoth, imageBoth],
       multi: true
     }
   ],
   entryComponents: [
     ...entryComponents,
-    ...flexEntrys
+    ...flexEntrys,
+    ...imageEntrys
   ],
   bootstrap: [AppComponent]
 })
