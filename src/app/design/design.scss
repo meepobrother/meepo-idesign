@@ -256,3 +256,26 @@
         }
     }
 }
+
+.meepo-design-preview-quick {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+    margin-left: 10px;
+    background: #000;
+    color: #fff;
+    span {
+        height: 33px;
+        line-height: 33px;
+        padding: 0 10px;
+        cursor: pointer;
+        text-align: center;
+        min-width: 3em;
+        &:hover{
+            background: #fff;
+            color: #000;
+        }
+    }
+}
