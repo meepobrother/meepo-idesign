@@ -3,5 +3,15 @@
     height: 100%;
     display: block;
     overflow: hidden;
-    
+    background: gray;
+    .preview {
+        margin-top: 10px;
+        width: 414px;
+        margin: 0 auto;
+        height: 100%;
+        position: relative;
+        height: 100%;
+        background: #fff;
+        overflow: auto;
+    }
 }

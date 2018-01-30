@@ -1,3 +1,6 @@
 [submodule "src/app/components/weui-image"]
 	path = src/app/components/weui-image
 	url = https://github.com/meepobrother/weui-image.git
+[submodule "src/app/components/weui-button"]
+	path = src/app/components/weui-button
+	url = https://github.com/meepobrother/weui-button.git

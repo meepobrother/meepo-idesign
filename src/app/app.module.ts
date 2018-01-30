@@ -16,6 +16,8 @@ import { We7RouterModule } from 'meepo-we7-router';
 
 import { both as flexBoth, entrys as flexEntrys, preview as flexPreview } from './components/weui-flex/public_api';
 import { both as imageBoth, entrys as imageEntrys, preview as imagePreview } from './components/weui-image/public_api';
+import { both as buttonBoth, entrys as buttonEntrys, preview as buttonPreview } from './components/weui-button/public_api';
+
 
 
 import { DESIGN_LIBRARYS, IDesignComponentModule } from 'meepo-idesign-share';
@@ -27,7 +29,8 @@ import { DESIGN_LIBRARYS, IDesignComponentModule } from 'meepo-idesign-share';
     FlexHoverDirective,
     ...entryComponents,
     ...flexEntrys,
-    ...imageEntrys
+    ...imageEntrys,
+    ...buttonEntrys
   ],
   imports: [
     BrowserModule,
@@ -60,14 +63,15 @@ import { DESIGN_LIBRARYS, IDesignComponentModule } from 'meepo-idesign-share';
     },
     {
       provide: DESIGN_LIBRARYS,
-      useValue: [flexBoth, imageBoth],
+      useValue: [flexBoth, imageBoth, buttonBoth],
       multi: true
     }
   ],
   entryComponents: [
     ...entryComponents,
     ...flexEntrys,
-    ...imageEntrys
+    ...imageEntrys,
+    ...buttonEntrys
   ],
   bootstrap: [AppComponent]
 })

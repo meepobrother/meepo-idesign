@@ -159,7 +159,6 @@ var DesignPropsService = (function () {
      */
     DesignPropsService.prototype.setActiveSettingProps = function (designLibraryProp, instance) {
         this.settingProps = designLibraryProp;
-        console.log(instance);
         if (this.instance) {
             this.instance.removeClass('is-focus');
         }

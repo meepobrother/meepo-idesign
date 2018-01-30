@@ -19,6 +19,8 @@ export class ComponentSet {
 componentsSet.push(new ComponentSet('weui-flex', 'flex容器', { title: 'flex容器' }));
 componentsSet.push(new ComponentSet('weui-flex-item', 'flex项目', { title: 'flex项目' }));
 componentsSet.push(new ComponentSet('weui-image', '图片', { title: '图片' }));
+componentsSet.push(new ComponentSet('weui-button', '按钮', { title: '按钮' }));
+
 
 
 // componentsSet.push({
