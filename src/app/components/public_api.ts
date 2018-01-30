@@ -1,9 +1,7 @@
-import { BadgeSettingComponent, AntdBadgeComponent } from './antd-mobile/badge';
 import { DesignLibraryProp } from 'meepo-idesign-share';
 import { Type } from '@angular/core';
-const componentsSet: DesignLibraryProp[] = [];
-import { both as flexBoth, entrys as flexEntrys, preview as flexPreview } from './weui-flex/public_api';
 
+const componentsSet: DesignLibraryProp[] = [];
 export class ComponentSet {
     constructor(
         public name: string,

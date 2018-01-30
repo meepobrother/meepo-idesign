@@ -12,9 +12,6 @@ import { components } from './components/public_api';
 import { both as flexBoth, entrys as flexEntrys, preview as flexPreview } from './components/weui-flex/public_api';
 import { both as imageBoth, entrys as imageEntrys, preview as imagePreview } from './components/weui-image/public_api';
 import { both as buttonBoth, entrys as buttonEntrys, preview as buttonPreview } from './components/weui-button/public_api';
-
-
-
 import { DESIGN_LIBRARYS, IDesignComponentModule } from 'meepo-idesign-share';
 
 @NgModule({
