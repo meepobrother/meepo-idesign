@@ -1,4 +1,4 @@
 <div class="row" [formGroup]="props">
-    <input type="number" placeholder="宽度/%" [formControlName]="'width.%'">
-    <input type="number" placeholder="高度/px" [formControlName]="'height.px'">
+    <input type="number" placeholder="宽度/%" [formControlName]="'width.'+unit[0]">
+    <input type="number" placeholder="高度/px" [formControlName]="'height.'+unit[0]">
 </div>

@@ -3802,6 +3802,10 @@ meepo-idesign@^1.1.8:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/meepo-idesign/-/meepo-idesign-1.2.1.tgz#d35e5a76c2867f69868dc8ba4fe40fa4bbb66681"
 
+meepo-themes@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/meepo-themes/-/meepo-themes-1.0.2.tgz#ffe93f8818e25ed7c19ac46051c9db03338bdd49"
+
 meepo-we7-router@^1.1.8:
   version "1.1.8"
   resolved "https://registry.yarnpkg.com/meepo-we7-router/-/meepo-we7-router-1.1.8.tgz#9cdba615dc5f481664111524e5a2669d2508b675"
@@ -4035,9 +4039,9 @@ ng-packagr@^1.6.0:
     uglify-js "^3.0.7"
     vinyl-fs "^2.4.4"
 
-ng-react-component@^1.5.8:
-  version "1.5.8"
-  resolved "https://registry.yarnpkg.com/ng-react-component/-/ng-react-component-1.5.8.tgz#136c0b4ccbd64140de77c6b7955cc09117cb524c"
+ng-react-component@^1.6.1:
+  version "1.6.1"
+  resolved "https://registry.yarnpkg.com/ng-react-component/-/ng-react-component-1.6.1.tgz#9811cbb27730fcc49095a1382740bd473d9b3f34"
 
 no-case@^2.2.0:
   version "2.3.2"

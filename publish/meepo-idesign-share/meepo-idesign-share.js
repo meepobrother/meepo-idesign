@@ -153,11 +153,13 @@ class DesignPropsService {
      */
     setActiveSettingProps(designLibraryProp, instance) {
         this.settingProps = designLibraryProp;
+        console.log(instance);
         if (this.instance) {
             this.instance.removeClass('is-focus');
         }
         this.instance = instance;
         instance.addClass('is-focus');
+        // instance.render.addClass(instance.ele.nativeElement,'is-focus');
     }
     /**
      * @param {?} name
@@ -689,7 +691,9 @@ ShareColorComponent.propDecorators = {
 };
 
 class ShareSizeComponent {
-    constructor() { }
+    constructor() {
+        this.unit = ['%', 'px'];
+    }
     /**
      * @return {?}
      */
@@ -700,8 +704,8 @@ ShareSizeComponent.decorators = [
                 selector: 'share-size',
                 template: `
       <div class="row" [formGroup]="props">
-          <input type="number" placeholder="宽度/%" [formControlName]="'width.%'">
-          <input type="number" placeholder="高度/px" [formControlName]="'height.px'">
+          <input type="number" placeholder="宽度/%" [formControlName]="'width.'+unit[0]">
+          <input type="number" placeholder="高度/px" [formControlName]="'height.'+unit[0]">
       </div>
     `,
                 styles: [`
@@ -729,6 +733,7 @@ ShareSizeComponent.decorators = [
 ShareSizeComponent.ctorParameters = () => [];
 ShareSizeComponent.propDecorators = {
     'props': [{ type: Input },],
+    'unit': [{ type: Input },],
 };
 
 class ShareBackgroundComponent {

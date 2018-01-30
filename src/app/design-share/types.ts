@@ -135,6 +135,7 @@ export class DesignPropsService {
         }
         this.instance = instance;
         instance.addClass('is-focus');
+        // instance.render.addClass(instance.ele.nativeElement,'is-focus');
     }
 
     getPropsByName(name: string): DesignLibraryProp {

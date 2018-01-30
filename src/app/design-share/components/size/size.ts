@@ -7,6 +7,7 @@ import { FormGroup } from '@angular/forms';
 })
 export class ShareSizeComponent implements OnInit {
     @Input() props: FormGroup;
+    @Input() unit: string[] = ['%', 'px']
     constructor() { }
     ngOnInit() { }
 }
