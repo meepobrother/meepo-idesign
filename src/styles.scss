@@ -1,7 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
+
 @import "themes/variables";
 @import "~meepo-themes";
-
 html,
 body,
 app-root {
@@ -32,10 +32,9 @@ antd-badge {
     overflow: hidden;
 }
 
-.weui-cells{
+.weui-cells {
     margin-top: 0px;
 }
-
 
 .props-title {
     padding: 5px 10px;
@@ -44,7 +43,10 @@ antd-badge {
     color: #fff;
 }
 
-.is-focus{
+.is-focus {
     border: 1px dashed red;
 }
 
+.weui-btn+.weui-btn {
+    margin-top: 0px;
+}

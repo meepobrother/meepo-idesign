@@ -694,7 +694,7 @@ var ShareSizeComponent = (function () {
 ShareSizeComponent.decorators = [
     { type: core.Component, args: [{
                 selector: 'share-size',
-                template: "\n      <div class=\"row\" [formGroup]=\"props\">\n          <input type=\"number\" placeholder=\"\u5BBD\u5EA6/%\" [formControlName]=\"'width.'+unit[0]\">\n          <input type=\"number\" placeholder=\"\u9AD8\u5EA6/px\" [formControlName]=\"'height.'+unit[0]\">\n      </div>\n    ",
+                template: "\n      <div class=\"row\" [formGroup]=\"props\">\n          <input type=\"number\" [attr.placeholder]=\"'\u5BBD\u5EA6'+unit[0]\" [formControlName]=\"'width.'+unit[0]\">\n          <input type=\"number\" [attr.placeholder]=\"'\u9AD8\u5EA6'+unit[1]\" [formControlName]=\"'height.'+unit[1]\">\n      </div>\n    ",
                 styles: ["\n      .row {\n        display: -webkit-box;\n        display: -ms-flexbox;\n        display: flex;\n        -webkit-box-orient: horizontal;\n        -webkit-box-direction: normal;\n            -ms-flex-direction: row;\n                flex-direction: row;\n        width: 100%;\n        margin-top: 5px; }\n        .row input {\n          -webkit-box-flex: 1;\n              -ms-flex: 1;\n                  flex: 1;\n          width: 50%; }\n    "]
             },] },
 ];

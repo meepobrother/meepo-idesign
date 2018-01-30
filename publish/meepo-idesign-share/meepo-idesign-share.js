@@ -703,8 +703,8 @@ ShareSizeComponent.decorators = [
                 selector: 'share-size',
                 template: `
       <div class="row" [formGroup]="props">
-          <input type="number" placeholder="宽度/%" [formControlName]="'width.'+unit[0]">
-          <input type="number" placeholder="高度/px" [formControlName]="'height.'+unit[0]">
+          <input type="number" [attr.placeholder]="'宽度'+unit[0]" [formControlName]="'width.'+unit[0]">
+          <input type="number" [attr.placeholder]="'高度'+unit[1]" [formControlName]="'height.'+unit[1]">
       </div>
     `,
                 styles: [`

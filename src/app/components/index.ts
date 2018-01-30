@@ -1,5 +1,3 @@
-import { Test1Component, Test1SettingComponent } from "./test1";
-import { Test2Component, Test2SettingComponent } from "./test2";
 import { BadgeSettingComponent, AntdBadgeComponent } from './antd-mobile/badge';
 import { DesignLibraryProp } from 'meepo-idesign-share';
 import { Type } from '@angular/core';
