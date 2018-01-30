@@ -1,6 +1,6 @@
 {
   "name": "meepo-flex",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
@@ -9,7 +9,8 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "git": "git add . && git commit -m 'update to save ' && git push origin master"
+    "git": "git add . && git commit -m 'update to save ' && git push origin master",
+    "release": "standard-version && git push --follow-tags origin master && npm publish"
   },
   "private": true,
   "dependencies": {
@@ -34,9 +35,10 @@
     "meepo-themes": "^1.0.2",
     "meepo-we7-router": "^1.1.8",
     "ng-packagr": "^1.6.0",
-    "ng-react-component": "^1.6.8",
+    "ng-react-component": "^1.6.9",
     "normalize.css": "^7.0.0",
     "rxjs": "^5.5.2",
+    "standard-version": "^4.3.0",
     "weui": "^1.1.2",
     "weui-flex": "^1.4.1",
     "zone.js": "^0.8.14"
