@@ -133,11 +133,20 @@ export const DESIGN_PAGES = new InjectionToken('DESIGN_PAGES');
 export class DesignPagesComponent implements OnInit {
     pages: any[] = [];
     constructor(
-        @Inject(DESIGN_PAGES) pages: any[]
+        @Inject(DESIGN_PAGES) pages: any[],
+        public props: DesignPropsService
     ) {
         this.pages = pages;
     }
     ngOnInit() { }
+
+    previewPage(item: any) {
+        this.props.pageProps = item.props;
+    }
+
+    savePage() {
+        console.log(this.pages);
+    }
 }
 
 // 容器
@@ -178,7 +187,10 @@ export class DesignComponent implements OnInit {
         this.router.navigate(['preview'])
     }
 
-    postToHistory() { }
+    postToHistory() { 
+        console.log('postToHistory');
+        this._pages.savePage();
+    }
 
     removeComponent(uuid: string) {
         this.props.removePropsByUid(uuid);

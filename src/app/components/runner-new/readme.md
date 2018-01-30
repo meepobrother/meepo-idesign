@@ -1,3 +1,4 @@
+```ts
 import { indexProps } from './index/public_api';
 
 const pages = [{
@@ -7,3 +8,4 @@ const pages = [{
 }];
 
 export const runnerPage = pages;
+```

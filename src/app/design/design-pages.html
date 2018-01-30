@@ -1,5 +1,5 @@
-<ul>
-    <li *ngFor="let page of pages">
+<ul class="meepo-design-pages">
+    <li (click)="previewPage(page)" *ngFor="let page of pages">
         {{page.title}}
     </li>
 </ul>

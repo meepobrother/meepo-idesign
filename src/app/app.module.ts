@@ -8,11 +8,18 @@ import { IDesignModule } from './design/design.module';
 import { DESIGN_COMPONENTS } from 'meepo-idesign-share';
 import { IpreviewComponent } from './preview/preview';
 import { We7RouterModule } from 'meepo-we7-router';
-import { components } from './components/public_api';
+import { components, runnerPage } from './components/public_api';
 import { both as flexBoth, entrys as flexEntrys, preview as flexPreview } from './components/weui-flex/public_api';
 import { both as imageBoth, entrys as imageEntrys, preview as imagePreview } from './components/weui-image/public_api';
 import { both as buttonBoth, entrys as buttonEntrys, preview as buttonPreview } from './components/weui-button/public_api';
+
+import { both as headerBoth, entrys as headerEntrys, preview as headerPreview } from './components/weui-header/public_api';
+import { both as bodyBoth, entrys as bodyEntrys, preview as bodyPreview } from './components/weui-body/public_api';
+import { both as footerBoth, entrys as footerEntrys, preview as footerPreview } from './components/weui-footer/public_api';
+
 import { DESIGN_LIBRARYS, IDesignComponentModule } from 'meepo-idesign-share';
+
+console.log(runnerPage);
 
 @NgModule({
   declarations: [
@@ -21,7 +28,10 @@ import { DESIGN_LIBRARYS, IDesignComponentModule } from 'meepo-idesign-share';
     FlexHoverDirective,
     ...flexEntrys,
     ...imageEntrys,
-    ...buttonEntrys
+    ...buttonEntrys,
+    ...headerEntrys,
+    ...bodyEntrys,
+    ...footerEntrys
   ],
   imports: [
     BrowserModule,
@@ -33,15 +43,7 @@ import { DESIGN_LIBRARYS, IDesignComponentModule } from 'meepo-idesign-share';
       path: 'preview',
       component: IpreviewComponent
     }], { useHash: true }),
-    IDesignModule.forRoot([{
-      title: '任务大厅'
-    }, {
-      title: '发单页面'
-    }, {
-      title: '个人中心'
-    }, {
-      title: '跑腿认证'
-    }]),
+    IDesignModule.forRoot(runnerPage),
     FormsModule,
     ReactiveFormsModule,
     IDesignComponentModule.forRoot([], true)
@@ -54,14 +56,24 @@ import { DESIGN_LIBRARYS, IDesignComponentModule } from 'meepo-idesign-share';
     },
     {
       provide: DESIGN_LIBRARYS,
-      useValue: [flexBoth, imageBoth, buttonBoth],
+      useValue: [
+        flexBoth,
+        imageBoth,
+        buttonBoth,
+        headerBoth,
+        bodyBoth,
+        footerBoth
+      ],
       multi: true
     }
   ],
   entryComponents: [
     ...flexEntrys,
     ...imageEntrys,
-    ...buttonEntrys
+    ...buttonEntrys,
+    ...headerEntrys,
+    ...bodyEntrys,
+    ...footerEntrys
   ],
   bootstrap: [AppComponent]
 })
