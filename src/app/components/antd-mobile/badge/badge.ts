@@ -40,7 +40,7 @@ export class AntdBadgePropsDefault implements AntdBadgeProps {
     encapsulation: ViewEncapsulation.None,
     styleUrls: ['./badge.less']
 })
-export class AntdBadgeComponent extends ReactComponent<AntdBadgeProps, any> implements AfterContentInit {
+export class AntdBadgeComponent extends ReactComponent<any, any> implements AfterContentInit {
     scrollNumberCls: string;
     badgeCls: string;
     @HostBinding('class.am-badge-corner-wrapper') _corner: boolean = false;
