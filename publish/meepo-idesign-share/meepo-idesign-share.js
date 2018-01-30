@@ -320,6 +320,7 @@ class DesignPropsService {
         let /** @type {?} */ local = localStorage.getItem(this.historyKey);
         if (local) {
             const /** @type {?} */ items = (JSON.parse(local));
+            this.historys = items;
             return items;
         }
         else {

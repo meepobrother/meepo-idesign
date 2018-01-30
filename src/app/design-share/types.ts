@@ -258,6 +258,7 @@ export class DesignPropsService {
         let local = localStorage.getItem(this.historyKey);
         if (local) {
             const items = JSON.parse(local) as DesignHistoryProp[];
+            this.historys = items;
             return items;
         } else {
             return [];

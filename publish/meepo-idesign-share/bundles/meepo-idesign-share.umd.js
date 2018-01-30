@@ -327,6 +327,7 @@ var DesignPropsService = (function () {
         var /** @type {?} */ local = localStorage.getItem(this.historyKey);
         if (local) {
             var /** @type {?} */ items = (JSON.parse(local));
+            this.historys = items;
             return items;
         }
         else {
