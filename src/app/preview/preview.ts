@@ -1,7 +1,6 @@
 import { Component, OnInit, KeyValueDiffers, ElementRef, Renderer2 } from '@angular/core';
 import { ReactComponent } from 'ng-react-component';
 import { DesignPropsService } from 'meepo-idesign-share';
-import { PreviewComponents } from '../components/index';
 
 @Component({
     selector: 'ipreview',

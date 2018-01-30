@@ -1,19 +1,14 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
-
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-
 import { AppComponent } from './app.component';
 import { FlexHoverDirective } from './hover';
-
 import { IDesignModule } from './design/design.module';
-import { components, entryComponents, libraryComponents, PreviewComponents } from './components/index';
-
 import { DESIGN_COMPONENTS } from 'meepo-idesign-share';
 import { IpreviewComponent } from './preview/preview';
 import { We7RouterModule } from 'meepo-we7-router';
-
+import { components } from './components/public_api';
 import { both as flexBoth, entrys as flexEntrys, preview as flexPreview } from './components/weui-flex/public_api';
 import { both as imageBoth, entrys as imageEntrys, preview as imagePreview } from './components/weui-image/public_api';
 import { both as buttonBoth, entrys as buttonEntrys, preview as buttonPreview } from './components/weui-button/public_api';
@@ -27,7 +22,6 @@ import { DESIGN_LIBRARYS, IDesignComponentModule } from 'meepo-idesign-share';
     AppComponent,
     IpreviewComponent,
     FlexHoverDirective,
-    ...entryComponents,
     ...flexEntrys,
     ...imageEntrys,
     ...buttonEntrys
@@ -68,7 +62,6 @@ import { DESIGN_LIBRARYS, IDesignComponentModule } from 'meepo-idesign-share';
     }
   ],
   entryComponents: [
-    ...entryComponents,
     ...flexEntrys,
     ...imageEntrys,
     ...buttonEntrys
