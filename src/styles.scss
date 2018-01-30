@@ -69,3 +69,72 @@ antd-badge {
 .weui-btn+.weui-btn {
     margin-top: 0px;
 }
+
+$settingRowWidth: 260px;
+.setting-row {
+    display: flex;
+    flex-direction: column;
+    font-size: 12px;
+    width: $settingRowWidth;
+    background: #232323;
+    max-height: 100%;
+    overflow: hidden;
+    z-index: 51;
+    transition: initial;
+    h1 {
+        background-color: #353535;
+        color: #b5b5b5;
+        font-size: 12px;
+        font-weight: 400;
+        margin: 0;
+        padding: 4px 12px;
+        height: 22px;
+        min-height: 22px;
+        line-height: 22px;
+    }
+    &-input {
+        display: flex;
+        flex-direction: row;
+        color: #a0a0a0;
+        &-label {
+            text-align: right;
+            vertical-align: middle;
+            padding: 7px 5px;
+            display: inline-block;
+            text-overflow: inherit!important;
+            min-width: 5em;
+        }
+        &-unit {
+            width: 2em;
+            line-height: 30px;
+            text-align: center;
+        }
+        &-content {
+            padding: 5.5px 0px;
+            display: inline-block;
+            input {
+                cursor: pointer;
+                background-color: #353535;
+                border-radius: 2px;
+                color: #a0a0a0;
+                height: 22px!important;
+                line-height: 22px!important;
+                margin-top: -1px;
+                vertical-align: top;
+                text-align: left;
+                outline: 0;
+                transition: all .3s linear;
+                padding: 0 7px;
+                padding-right: 0px;
+                border: 0;
+                width: 8em;
+                &:focus {
+                    color: #fefefe;
+                    border-color: #444;
+                    outline: 0;
+                    box-shadow: 0 0 0 2px rgba(255, 168, 0, .4);
+                }
+            }
+        }
+    }
+}

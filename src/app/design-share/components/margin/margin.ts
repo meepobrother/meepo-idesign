@@ -3,28 +3,24 @@ import { fromEvent } from 'rxjs/observable/fromEvent';
 import { combineLatest } from 'rxjs/observable/combineLatest';
 import { map } from 'rxjs/operators/map';
 import { FormGroup } from '@angular/forms';
+import { FormControl } from '@angular/forms';
+import { ControlBase } from '../base';
 
 @Component({
     selector: 'share-margin',
-    templateUrl: './margin.html'
+    templateUrl: './margin.html',
+    styleUrls: ['./margin.scss']
 })
-export class ShareMarginComponent implements OnInit {
-    @ViewChild('top') top: ElementRef;
-    @ViewChild('right') right: ElementRef;
-    @ViewChild('bottom') bottom: ElementRef;
-    @ViewChild('left') left: ElementRef;
-    @Input() form: FormGroup;
-
-    constructor() { }
-
+export class ShareMarginComponent extends ControlBase implements OnInit {
+    constructor() {
+        super();
+    }
     ngOnInit() {
-        combineLatest(
-            fromEvent(this.top.nativeElement, 'change'),
-            fromEvent(this.right.nativeElement, 'change'),
-            fromEvent(this.bottom.nativeElement, 'change'),
-            fromEvent(this.left.nativeElement, 'change')
-        ).map(res => {
-            console.log(res);
-        });
+        const margin: string = this.props.get('margin').value;
+        const [top, right, bottom, left] = margin.split(" ");
+        this.checkControl('margin-top.px', this.pxToNumber(top));
+        this.checkControl('margin-right.px', this.pxToNumber(right));
+        this.checkControl('margin-bottom.px', this.pxToNumber(bottom));
+        this.checkControl('margin-left.px', this.pxToNumber(left));
     }
 }

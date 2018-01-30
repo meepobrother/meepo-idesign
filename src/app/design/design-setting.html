@@ -1,8 +1,12 @@
-<ng-container *ngComponent="[props.settingProps];instance: props.instance"></ng-container>
-<div class="meepo-design-setting-nav" *ngIf="props.fathersProps">
-    <a href="javascript:;" (click)="setTopProps()" style="order: -99999;">顶级></a>
-    <a href="javascript:;" (click)="setItemProps(item)" [style.order]="-i" *ngFor="let item of props.fathersProps;index as i;">{{item.title}}></a>
+<div class="setting-row">
+    <ul class="meepo-design-setting-nav" *ngIf="props.fathersProps">
+        <li (click)="setTopProps()" style="order: -99999;">顶级></li>
+        <li (click)="setItemProps(item)" [style.order]="-i" *ngFor="let item of props.fathersProps;index as i;">{{item.title}}></li>
+    </ul>
 </div>
-<div class="meepo-design-setting-drop" canDrop (canDropChange)="addComponent($event)">
-    可将元素拖拽到此处添加
+<div class="setting-row" style="overflow: auto;max-height: calc(100% - 150px)">
+    <div class="meepo-design-setting-drop" canDrop (canDropChange)="addComponent($event)">
+        可将元素拖拽到此处添加
+    </div>
+    <ng-container *ngComponent="[props.settingProps];instance: props.instance"></ng-container>
 </div>

@@ -1,4 +1,21 @@
-<div class="row" [formGroup]="props">
-    <input type="color" placeholder="背景色" [formControlName]="'background-color'">
-    <input type="color" placeholder="前景色" [formControlName]="'color'">
+<div class="setting-row" [formGroup]="props">
+    <h1>颜色</h1>
+    <div class="setting-row-input">
+        <div class="setting-row-input-label">
+            背景色:
+        </div>
+        <div class="setting-row-input-content">
+            <input type="color" placeholder="背景色" [formControlName]="'background-color'">
+        </div>
+        <span class="setting-row-input-unit"></span>
+    </div>
+    <div class="setting-row-input">
+        <div class="setting-row-input-label">
+            前景色:
+        </div>
+        <div class="setting-row-input-content">
+            <input type="color" placeholder="背景色" [formControlName]="'color'">
+        </div>
+        <span class="setting-row-input-unit"></span>
+    </div>
 </div>

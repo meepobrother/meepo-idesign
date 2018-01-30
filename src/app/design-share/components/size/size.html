@@ -1,4 +1,21 @@
-<div class="row" [formGroup]="props">
-    <input type="number" [attr.placeholder]="'宽度'+unit[0]" [formControlName]="'width.'+unit[0]">
-    <input type="number" [attr.placeholder]="'高度'+unit[1]" [formControlName]="'height.'+unit[1]">
+<div class="setting-row" [formGroup]="props">
+    <h1>大小设置</h1>
+    <div class="setting-row-input">
+        <label class="setting-row-input-label" for="setting-row-input-width">
+            宽度:
+        </label>
+        <div class="setting-row-input-content">
+            <input type="number" id="setting-row-input-width" [attr.placeholder]="'宽度'+unit[0]" [formControlName]="'width.'+unit[0]">
+        </div>
+        <span class="setting-row-input-unit">{{unit[0]}}</span>
+    </div>
+    <div class="setting-row-input">
+        <label class="setting-row-input-label" for="setting-row-input-height">
+            高度:
+        </label>
+        <div class="setting-row-input-content">
+            <input type="number" id="setting-row-input-height" [attr.placeholder]="'高度'+unit[1]" [formControlName]="'height.'+unit[1]">
+        </div>
+        <span class="setting-row-input-unit">{{unit[1]}}</span>
+    </div>
 </div>

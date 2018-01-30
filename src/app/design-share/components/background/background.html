@@ -1,6 +1,39 @@
-<div class="row" [formGroup]="props">
-    <input type="text" (change)="backgroundImageChange($event)" [attr.value]="props.get('background-image').value">
-    <input type="text" [formControlName]="'background-size'">
-    <input type="text" [formControlName]="'background-repeat'">
-    <input type="text" [formControlName]="'background-position'">
-</div>
+<!-- <div class="setting-row" [formGroup]="props">
+    <h1>背景设置</h1>
+    <div class="setting-row-input">
+        <div class="setting-row-input-label">
+            图片:
+        </div>
+        <div class="setting-row-input-content">
+            <input type="text" (change)="backgroundImageChange($event)" [attr.value]="props.get('background-image').value">
+        </div>
+        <span class="setting-row-input-unit"></span>
+    </div>
+    <div class="setting-row-input">
+        <div class="setting-row-input-label">
+            平铺:
+        </div>
+        <div class="setting-row-input-content">
+            <input type="text" [formControlName]="'background-repeat'">
+        </div>
+        <span class="setting-row-input-unit"></span>
+    </div>
+    <div class="setting-row-input">
+        <div class="setting-row-input-label">
+            大小:
+        </div>
+        <div class="setting-row-input-content">
+            <input type="text" [formControlName]="'background-size'">
+        </div>
+        <span class="setting-row-input-unit"></span>
+    </div>
+    <div class="setting-row-input">
+        <div class="setting-row-input-label">
+            位置:
+        </div>
+        <div class="setting-row-input-content">
+            <input type="text" [formControlName]="'background-position'">
+        </div>
+        <span class="setting-row-input-unit"></span>
+    </div>
+</div> -->

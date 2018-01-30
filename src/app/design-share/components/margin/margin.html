@@ -1,4 +1,39 @@
-<input type="number" #top>
-<input type="number" #right>
-<input type="number" #bottom>
-<input type="number" #left>
+<div class="setting-row" [formGroup]="props">
+    <h1>间距设置</h1>
+    <div class="setting-row-input">
+        <div class="setting-row-input-label">
+            上间距:
+        </div>
+        <div class="setting-row-input-content">
+            <input type="number" formControlName="margin-top.px">
+        </div>
+        <span class="setting-row-input-unit">px</span>
+    </div>
+    <div class="setting-row-input">
+        <div class="setting-row-input-label">
+            右间距:
+        </div>
+        <div class="setting-row-input-content">
+            <input type="number" formControlName="margin-right.px">
+        </div>
+        <span class="setting-row-input-unit">px</span>
+    </div>
+    <div class="setting-row-input">
+        <div class="setting-row-input-label">
+            下间距:
+        </div>
+        <div class="setting-row-input-content">
+            <input type="number" formControlName="margin-bottom.px">
+        </div>
+        <span class="setting-row-input-unit">px</span>
+    </div>
+    <div class="setting-row-input">
+        <div class="setting-row-input-label">
+            左间距:
+        </div>
+        <div class="setting-row-input-content">
+            <input type="number" formControlName="margin-left.px">
+        </div>
+        <span class="setting-row-input-unit">px</span>
+    </div>
+</div>

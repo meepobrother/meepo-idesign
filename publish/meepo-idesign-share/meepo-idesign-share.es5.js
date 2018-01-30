@@ -1,10 +1,19 @@
-import { Component, ComponentFactoryResolver, Directive, Inject, Injectable, InjectionToken, Input, IterableDiffers, NgModule, Renderer2, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+import { Component, ComponentFactoryResolver, Directive, Inject, Injectable, InjectionToken, Input, IterableDiffers, NgModule, Renderer2, TemplateRef, ViewContainerRef } from '@angular/core';
 import { fromEvent as fromEvent$1 } from 'rxjs/observable/fromEvent';
 import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/operator/map';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { combineLatest as combineLatest$1 } from 'rxjs/observable/combineLatest';
 /**
  * @return {?}
  */
@@ -660,19 +669,64 @@ NgComponentDirective.propDecorators = {
     'ngComponentInstance': [{ type: Input },],
     'ngComponentClick': [{ type: Input },],
 };
-var ShareColorComponent = (function () {
+var ControlBase = (function () {
+    function ControlBase() {
+    }
+    /**
+     * @param {?} name
+     * @param {?=} _default
+     * @return {?}
+     */
+    ControlBase.prototype.checkControl = function (name, _default) {
+        if (_default === void 0) { _default = ''; }
+        try {
+            var /** @type {?} */ control = this.props.get(name);
+            if (!control) {
+                this.createControl(name, _default);
+            }
+        }
+        catch (err) {
+            this.createControl(name, _default);
+        }
+    };
+    /**
+     * @param {?} name
+     * @param {?} _default
+     * @return {?}
+     */
+    ControlBase.prototype.createControl = function (name, _default) {
+        this.props.addControl(name, new FormControl(_default));
+    };
+    /**
+     * @param {?} px
+     * @return {?}
+     */
+    ControlBase.prototype.pxToNumber = function (px) {
+        return px.replace('px', '');
+    };
+    return ControlBase;
+}());
+ControlBase.propDecorators = {
+    'props': [{ type: Input },],
+};
+var ShareColorComponent = (function (_super) {
+    __extends(ShareColorComponent, _super);
     function ShareColorComponent() {
+        return _super.call(this) || this;
     }
     /**
      * @return {?}
      */
-    ShareColorComponent.prototype.ngOnInit = function () { };
+    ShareColorComponent.prototype.ngOnInit = function () {
+        this.checkControl('color', '#fff');
+        this.checkControl('background-color', 'gray');
+    };
     return ShareColorComponent;
-}());
+}(ControlBase));
 ShareColorComponent.decorators = [
     { type: Component, args: [{
                 selector: 'share-color',
-                template: "\n      <div class=\"row\" [formGroup]=\"props\">\n          <input type=\"color\" placeholder=\"\u80CC\u666F\u8272\" [formControlName]=\"'background-color'\">\n          <input type=\"color\" placeholder=\"\u524D\u666F\u8272\" [formControlName]=\"'color'\">\n      </div>\n    ",
+                template: "\n      <div class=\"setting-row\" [formGroup]=\"props\">\n          <h1>\u989C\u8272</h1>\n          <div class=\"setting-row-input\">\n              <div class=\"setting-row-input-label\">\n                  \u80CC\u666F\u8272:\n              </div>\n              <div class=\"setting-row-input-content\">\n                  <input type=\"color\" placeholder=\"\u80CC\u666F\u8272\" [formControlName]=\"'background-color'\">\n              </div>\n              <span class=\"setting-row-input-unit\"></span>\n          </div>\n          <div class=\"setting-row-input\">\n              <div class=\"setting-row-input-label\">\n                  \u524D\u666F\u8272:\n              </div>\n              <div class=\"setting-row-input-content\">\n                  <input type=\"color\" placeholder=\"\u80CC\u666F\u8272\" [formControlName]=\"'color'\">\n              </div>\n              <span class=\"setting-row-input-unit\"></span>\n          </div>\n      </div>\n    ",
                 styles: ["\n      .row {\n        display: -webkit-box;\n        display: -ms-flexbox;\n        display: flex;\n        -webkit-box-orient: horizontal;\n        -webkit-box-direction: normal;\n            -ms-flex-direction: row;\n                flex-direction: row;\n        width: 100%;\n        margin-top: 5px; }\n        .row input {\n          -webkit-box-flex: 1;\n              -ms-flex: 1;\n                  flex: 1;\n          width: 50%; }\n    "]
             },] },
 ];
@@ -680,24 +734,27 @@ ShareColorComponent.decorators = [
  * @nocollapse
  */
 ShareColorComponent.ctorParameters = function () { return []; };
-ShareColorComponent.propDecorators = {
-    'props': [{ type: Input },],
-};
-var ShareSizeComponent = (function () {
+var ShareSizeComponent = (function (_super) {
+    __extends(ShareSizeComponent, _super);
     function ShareSizeComponent() {
-        this.unit = ['%', 'px'];
+        var _this = _super.call(this) || this;
+        _this.unit = ['%', 'px'];
+        return _this;
     }
     /**
      * @return {?}
      */
-    ShareSizeComponent.prototype.ngOnInit = function () { };
+    ShareSizeComponent.prototype.ngOnInit = function () {
+        this.checkControl("width" + this.unit[0], '100');
+        this.checkControl("height" + this.unit[1], '100');
+    };
     return ShareSizeComponent;
-}());
+}(ControlBase));
 ShareSizeComponent.decorators = [
     { type: Component, args: [{
                 selector: 'share-size',
-                template: "\n      <div class=\"row\" [formGroup]=\"props\">\n          <input type=\"number\" [attr.placeholder]=\"'\u5BBD\u5EA6'+unit[0]\" [formControlName]=\"'width.'+unit[0]\">\n          <input type=\"number\" [attr.placeholder]=\"'\u9AD8\u5EA6'+unit[1]\" [formControlName]=\"'height.'+unit[1]\">\n      </div>\n    ",
-                styles: ["\n      .row {\n        display: -webkit-box;\n        display: -ms-flexbox;\n        display: flex;\n        -webkit-box-orient: horizontal;\n        -webkit-box-direction: normal;\n            -ms-flex-direction: row;\n                flex-direction: row;\n        width: 100%;\n        margin-top: 5px; }\n        .row input {\n          -webkit-box-flex: 1;\n              -ms-flex: 1;\n                  flex: 1;\n          width: 50%; }\n    "]
+                template: "\n      <div class=\"setting-row\" [formGroup]=\"props\">\n          <h1>\u5927\u5C0F\u8BBE\u7F6E</h1>\n          <div class=\"setting-row-input\">\n              <label class=\"setting-row-input-label\" for=\"setting-row-input-width\">\n                  \u5BBD\u5EA6:\n              </label>\n              <div class=\"setting-row-input-content\">\n                  <input type=\"number\" id=\"setting-row-input-width\" [attr.placeholder]=\"'\u5BBD\u5EA6'+unit[0]\" [formControlName]=\"'width.'+unit[0]\">\n              </div>\n              <span class=\"setting-row-input-unit\">{{unit[0]}}</span>\n          </div>\n          <div class=\"setting-row-input\">\n              <label class=\"setting-row-input-label\" for=\"setting-row-input-height\">\n                  \u9AD8\u5EA6:\n              </label>\n              <div class=\"setting-row-input-content\">\n                  <input type=\"number\" id=\"setting-row-input-height\" [attr.placeholder]=\"'\u9AD8\u5EA6'+unit[1]\" [formControlName]=\"'height.'+unit[1]\">\n              </div>\n              <span class=\"setting-row-input-unit\">{{unit[1]}}</span>\n          </div>\n      </div>\n    ",
+                styles: ["\n      :host {\n        display: block; }\n    "]
             },] },
 ];
 /**
@@ -708,13 +765,19 @@ ShareSizeComponent.propDecorators = {
     'props': [{ type: Input },],
     'unit': [{ type: Input },],
 };
-var ShareBackgroundComponent = (function () {
+var ShareBackgroundComponent = (function (_super) {
+    __extends(ShareBackgroundComponent, _super);
     function ShareBackgroundComponent() {
+        return _super.call(this) || this;
     }
     /**
      * @return {?}
      */
-    ShareBackgroundComponent.prototype.ngOnInit = function () { };
+    ShareBackgroundComponent.prototype.ngOnInit = function () {
+        this.checkControl('background-size', 'cover');
+        this.checkControl('background-position', 'cover');
+        this.checkControl('background-repeat', 'no-repeat');
+    };
     /**
      * @param {?} e
      * @return {?}
@@ -723,55 +786,79 @@ var ShareBackgroundComponent = (function () {
         this.props.get('background-image').setValue("url(" + e.target.value + ")");
     };
     return ShareBackgroundComponent;
-}());
+}(ControlBase));
 ShareBackgroundComponent.decorators = [
     { type: Component, args: [{
                 selector: 'share-background',
-                template: "\n      <div class=\"row\" [formGroup]=\"props\">\n          <input type=\"text\" (change)=\"backgroundImageChange($event)\" [attr.value]=\"props.get('background-image').value\">\n          <input type=\"text\" [formControlName]=\"'background-size'\">\n          <input type=\"text\" [formControlName]=\"'background-repeat'\">\n          <input type=\"text\" [formControlName]=\"'background-position'\">\n      </div>\n    "
+                template: "\n      <!-- <div class=\"setting-row\" [formGroup]=\"props\">\n          <h1>\u80CC\u666F\u8BBE\u7F6E</h1>\n          <div class=\"setting-row-input\">\n              <div class=\"setting-row-input-label\">\n                  \u56FE\u7247:\n              </div>\n              <div class=\"setting-row-input-content\">\n                  <input type=\"text\" (change)=\"backgroundImageChange($event)\" [attr.value]=\"props.get('background-image').value\">\n              </div>\n              <span class=\"setting-row-input-unit\"></span>\n          </div>\n          <div class=\"setting-row-input\">\n              <div class=\"setting-row-input-label\">\n                  \u5E73\u94FA:\n              </div>\n              <div class=\"setting-row-input-content\">\n                  <input type=\"text\" [formControlName]=\"'background-repeat'\">\n              </div>\n              <span class=\"setting-row-input-unit\"></span>\n          </div>\n          <div class=\"setting-row-input\">\n              <div class=\"setting-row-input-label\">\n                  \u5927\u5C0F:\n              </div>\n              <div class=\"setting-row-input-content\">\n                  <input type=\"text\" [formControlName]=\"'background-size'\">\n              </div>\n              <span class=\"setting-row-input-unit\"></span>\n          </div>\n          <div class=\"setting-row-input\">\n              <div class=\"setting-row-input-label\">\n                  \u4F4D\u7F6E:\n              </div>\n              <div class=\"setting-row-input-content\">\n                  <input type=\"text\" [formControlName]=\"'background-position'\">\n              </div>\n              <span class=\"setting-row-input-unit\"></span>\n          </div>\n      </div> -->\n    "
             },] },
 ];
 /**
  * @nocollapse
  */
 ShareBackgroundComponent.ctorParameters = function () { return []; };
-ShareBackgroundComponent.propDecorators = {
-    'props': [{ type: Input },],
-};
-var ShareMarginComponent = (function () {
+var ShareMarginComponent = (function (_super) {
+    __extends(ShareMarginComponent, _super);
     function ShareMarginComponent() {
+        return _super.call(this) || this;
     }
     /**
      * @return {?}
      */
     ShareMarginComponent.prototype.ngOnInit = function () {
-        combineLatest$1(fromEvent$1(this.top.nativeElement, 'change'), fromEvent$1(this.right.nativeElement, 'change'), fromEvent$1(this.bottom.nativeElement, 'change'), fromEvent$1(this.left.nativeElement, 'change')).map(function (res) {
-            console.log(res);
-        });
+        var /** @type {?} */ margin = this.props.get('margin').value;
+        var _a = margin.split(" "), top = _a[0], right = _a[1], bottom = _a[2], left = _a[3];
+        this.checkControl('margin-top.px', this.pxToNumber(top));
+        this.checkControl('margin-right.px', this.pxToNumber(right));
+        this.checkControl('margin-bottom.px', this.pxToNumber(bottom));
+        this.checkControl('margin-left.px', this.pxToNumber(left));
     };
     return ShareMarginComponent;
-}());
+}(ControlBase));
 ShareMarginComponent.decorators = [
     { type: Component, args: [{
                 selector: 'share-margin',
-                template: "\n      <input type=\"number\" #top>\n      <input type=\"number\" #right>\n      <input type=\"number\" #bottom>\n      <input type=\"number\" #left>\n    "
+                template: "\n      <div class=\"setting-row\" [formGroup]=\"props\">\n          <h1>\u95F4\u8DDD\u8BBE\u7F6E</h1>\n          <div class=\"setting-row-input\">\n              <div class=\"setting-row-input-label\">\n                  \u4E0A\u95F4\u8DDD:\n              </div>\n              <div class=\"setting-row-input-content\">\n                  <input type=\"number\" formControlName=\"margin-top.px\">\n              </div>\n              <span class=\"setting-row-input-unit\">px</span>\n          </div>\n          <div class=\"setting-row-input\">\n              <div class=\"setting-row-input-label\">\n                  \u53F3\u95F4\u8DDD:\n              </div>\n              <div class=\"setting-row-input-content\">\n                  <input type=\"number\" formControlName=\"margin-right.px\">\n              </div>\n              <span class=\"setting-row-input-unit\">px</span>\n          </div>\n          <div class=\"setting-row-input\">\n              <div class=\"setting-row-input-label\">\n                  \u4E0B\u95F4\u8DDD:\n              </div>\n              <div class=\"setting-row-input-content\">\n                  <input type=\"number\" formControlName=\"margin-bottom.px\">\n              </div>\n              <span class=\"setting-row-input-unit\">px</span>\n          </div>\n          <div class=\"setting-row-input\">\n              <div class=\"setting-row-input-label\">\n                  \u5DE6\u95F4\u8DDD:\n              </div>\n              <div class=\"setting-row-input-content\">\n                  <input type=\"number\" formControlName=\"margin-left.px\">\n              </div>\n              <span class=\"setting-row-input-unit\">px</span>\n          </div>\n      </div>\n    ",
+                styles: ["\n      :host {\n        display: block; }\n    "]
             },] },
 ];
 /**
  * @nocollapse
  */
 ShareMarginComponent.ctorParameters = function () { return []; };
-ShareMarginComponent.propDecorators = {
-    'top': [{ type: ViewChild, args: ['top',] },],
-    'right': [{ type: ViewChild, args: ['right',] },],
-    'bottom': [{ type: ViewChild, args: ['bottom',] },],
-    'left': [{ type: ViewChild, args: ['left',] },],
-    'form': [{ type: Input },],
-};
+var SharePositionComponent = (function (_super) {
+    __extends(SharePositionComponent, _super);
+    function SharePositionComponent() {
+        return _super.call(this) || this;
+    }
+    /**
+     * @return {?}
+     */
+    SharePositionComponent.prototype.ngOnInit = function () {
+        this.checkControl('position', 'relative');
+        this.checkControl('left.px', '0');
+        this.checkControl('right.px', '0');
+        this.checkControl('top.px', '0');
+        this.checkControl('bottom.px', '0');
+    };
+    return SharePositionComponent;
+}(ControlBase));
+SharePositionComponent.decorators = [
+    { type: Component, args: [{
+                selector: 'share-position',
+                template: "\n      <div class=\"setting-row\" [formGroup]=\"props\">\n              <h1>\u5B9A\u4F4D</h1>\n              <div class=\"setting-row-input\">\n                  <div class=\"setting-row-input-label\">\n                      \u4E0A:\n                  </div>\n                  <div class=\"setting-row-input-content\">\n                      <input type=\"number\" formControlName=\"top.px\">\n                  </div>\n                  <span class=\"setting-row-input-unit\">px</span>\n              </div>\n              <div class=\"setting-row-input\">\n                  <div class=\"setting-row-input-label\">\n                      \u53F3:\n                  </div>\n                  <div class=\"setting-row-input-content\">\n                      <input type=\"number\" formControlName=\"right.px\">\n                  </div>\n                  <span class=\"setting-row-input-unit\">px</span>\n              </div>\n              <div class=\"setting-row-input\">\n                  <div class=\"setting-row-input-label\">\n                      \u4E0B:\n                  </div>\n                  <div class=\"setting-row-input-content\">\n                      <input type=\"number\" formControlName=\"bottom.px\">\n                  </div>\n                  <span class=\"setting-row-input-unit\">px</span>\n              </div>\n              <div class=\"setting-row-input\">\n                  <div class=\"setting-row-input-label\">\n                      \u5DE6:\n                  </div>\n                  <div class=\"setting-row-input-content\">\n                      <input type=\"number\" formControlName=\"left.px\">\n                  </div>\n                  <span class=\"setting-row-input-unit\">px</span>\n              </div>\n          </div>\n    "
+            },] },
+];
+/**
+ * @nocollapse
+ */
+SharePositionComponent.ctorParameters = function () { return []; };
 var shareComponents = [
     ShareColorComponent,
     ShareSizeComponent,
     ShareBackgroundComponent,
-    ShareMarginComponent
+    ShareMarginComponent,
+    SharePositionComponent
 ];
 var IDesignComponentModule = (function () {
     function IDesignComponentModule() {
@@ -823,5 +910,5 @@ IDesignComponentModule.ctorParameters = function () { return []; };
 /**
  * Generated bundle index. Do not edit.
  */
-export { IDesignComponentModule, NgComponentDirective, DesignApiService, DesignLibraryService, DESIGN_LIBRARYS, DesignPropsService, DESIGN_COMPONENTS, ShareBackgroundComponent as ɵe, ShareColorComponent as ɵc, ShareMarginComponent as ɵf, shareComponents as ɵb, ShareSizeComponent as ɵd, DRAG_DROP_ALL as ɵa };
+export { IDesignComponentModule, NgComponentDirective, DesignApiService, DesignLibraryService, DESIGN_LIBRARYS, DesignPropsService, DESIGN_COMPONENTS, ShareBackgroundComponent as ɵf, ControlBase as ɵd, ShareColorComponent as ɵc, ShareMarginComponent as ɵg, SharePositionComponent as ɵh, shareComponents as ɵb, ShareSizeComponent as ɵe, DRAG_DROP_ALL as ɵa };
 //# sourceMappingURL=meepo-idesign-share.es5.js.map

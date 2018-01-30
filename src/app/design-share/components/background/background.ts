@@ -1,26 +1,20 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { FormGroup } from '@angular/forms';
-export interface ShareBackgroundProps {
-    background: string | null;
-    backgroundAttachment: string | null;
-    backgroundClip: string | null;
-    backgroundColor: string | null;
-    backgroundImage: string | null;
-    backgroundOrigin: string | null;
-    backgroundPosition: string | null;
-    backgroundPositionX: string | null;
-    backgroundPositionY: string | null;
-    backgroundRepeat: string | null;
-    backgroundSize: string | null;
-}
+import { FormGroup, FormControl } from '@angular/forms';
+import { ControlBase } from '../base';
+
 @Component({
     selector: 'share-background',
     templateUrl: './background.html'
 })
-export class ShareBackgroundComponent implements OnInit {
-    @Input() props: FormGroup;
-    constructor() { }
-    ngOnInit() { }
+export class ShareBackgroundComponent extends ControlBase implements OnInit {
+    constructor() {
+        super();
+    }
+    ngOnInit() {
+        this.checkControl('background-size', 'cover');
+        this.checkControl('background-position', 'cover');
+        this.checkControl('background-repeat', 'no-repeat');
+    }
 
     backgroundImageChange(e: any) {
         this.props.get('background-image').setValue(`url(${e.target.value})`);
