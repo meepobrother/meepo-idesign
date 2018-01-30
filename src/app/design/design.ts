@@ -22,8 +22,8 @@ export class DesignSettingComponent implements OnInit {
     item: DesignLibraryProp;
     instance: ReactComponent<any, any>;
     constructor(
-        private props: DesignPropsService,
-        private api: DesignApiService
+        public props: DesignPropsService,
+        public api: DesignApiService
     ) { }
     ngOnInit() { }
     setSetting(com: DesignLibraryProp, instance?: any) {

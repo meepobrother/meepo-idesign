@@ -10,7 +10,7 @@ import { DesignPropsService } from 'meepo-idesign-share';
 export class IpreviewComponent extends ReactComponent<any, any> {
     constructor(
         differs: KeyValueDiffers,
-        private history: DesignPropsService,
+        public history: DesignPropsService,
         render: Renderer2,
         ele: ElementRef
     ) {
