@@ -44,7 +44,26 @@ antd-badge {
 }
 
 .is-focus {
-    border: 1px dashed red;
+    position: relative;
+    &:before {
+        content: " ";
+        display: block;
+        width: 100%;
+        border: 1px dashed rgb(160, 0, 0);
+        position: absolute;
+        bottom: 0px;
+        height: 0px;
+        z-index: 9;
+    }
+    &:after {
+        content: " ";
+        display: block;
+        width: 100%;
+        border: 1px dashed rgb(160, 0, 0);
+        position: absolute;
+        top: 0px;
+        height: 0px;
+    }
 }
 
 .weui-btn+.weui-btn {

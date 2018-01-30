@@ -16,6 +16,8 @@ import { both as buttonBoth, entrys as buttonEntrys, preview as buttonPreview } 
 import { both as headerBoth, entrys as headerEntrys, preview as headerPreview } from './components/weui-header/public_api';
 import { both as bodyBoth, entrys as bodyEntrys, preview as bodyPreview } from './components/weui-body/public_api';
 import { both as footerBoth, entrys as footerEntrys, preview as footerPreview } from './components/weui-footer/public_api';
+import { both as cubeBoth, entrys as cubeEntrys, preview as cubePreview } from './components/weui-cube/public_api';
+
 
 import { DESIGN_LIBRARYS, IDesignComponentModule } from 'meepo-idesign-share';
 
@@ -31,7 +33,8 @@ console.log(runnerPage);
     ...buttonEntrys,
     ...headerEntrys,
     ...bodyEntrys,
-    ...footerEntrys
+    ...footerEntrys,
+    ...cubeEntrys
   ],
   imports: [
     BrowserModule,
@@ -62,7 +65,8 @@ console.log(runnerPage);
         buttonBoth,
         headerBoth,
         bodyBoth,
-        footerBoth
+        footerBoth,
+        cubeBoth
       ],
       multi: true
     }
@@ -73,7 +77,8 @@ console.log(runnerPage);
     ...buttonEntrys,
     ...headerEntrys,
     ...bodyEntrys,
-    ...footerEntrys
+    ...footerEntrys,
+    ...cubeEntrys
   ],
   bootstrap: [AppComponent]
 })

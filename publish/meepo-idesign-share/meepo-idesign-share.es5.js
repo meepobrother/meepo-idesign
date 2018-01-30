@@ -1,9 +1,10 @@
-import { Component, ComponentFactoryResolver, Directive, Inject, Injectable, InjectionToken, Input, IterableDiffers, NgModule, Renderer2, TemplateRef, ViewContainerRef } from '@angular/core';
+import { Component, ComponentFactoryResolver, Directive, Inject, Injectable, InjectionToken, Input, IterableDiffers, NgModule, Renderer2, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
 import { fromEvent as fromEvent$1 } from 'rxjs/observable/fromEvent';
 import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/operator/map';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { combineLatest as combineLatest$1 } from 'rxjs/observable/combineLatest';
 /**
  * @return {?}
  */
@@ -736,10 +737,41 @@ ShareBackgroundComponent.ctorParameters = function () { return []; };
 ShareBackgroundComponent.propDecorators = {
     'props': [{ type: Input },],
 };
+var ShareMarginComponent = (function () {
+    function ShareMarginComponent() {
+    }
+    /**
+     * @return {?}
+     */
+    ShareMarginComponent.prototype.ngOnInit = function () {
+        combineLatest$1(fromEvent$1(this.top.nativeElement, 'change'), fromEvent$1(this.right.nativeElement, 'change'), fromEvent$1(this.bottom.nativeElement, 'change'), fromEvent$1(this.left.nativeElement, 'change')).map(function (res) {
+            console.log(res);
+        });
+    };
+    return ShareMarginComponent;
+}());
+ShareMarginComponent.decorators = [
+    { type: Component, args: [{
+                selector: 'share-margin',
+                template: "\n      <input type=\"number\" #top>\n      <input type=\"number\" #right>\n      <input type=\"number\" #bottom>\n      <input type=\"number\" #left>\n    "
+            },] },
+];
+/**
+ * @nocollapse
+ */
+ShareMarginComponent.ctorParameters = function () { return []; };
+ShareMarginComponent.propDecorators = {
+    'top': [{ type: ViewChild, args: ['top',] },],
+    'right': [{ type: ViewChild, args: ['right',] },],
+    'bottom': [{ type: ViewChild, args: ['bottom',] },],
+    'left': [{ type: ViewChild, args: ['left',] },],
+    'form': [{ type: Input },],
+};
 var shareComponents = [
     ShareColorComponent,
     ShareSizeComponent,
-    ShareBackgroundComponent
+    ShareBackgroundComponent,
+    ShareMarginComponent
 ];
 var IDesignComponentModule = (function () {
     function IDesignComponentModule() {
@@ -791,5 +823,5 @@ IDesignComponentModule.ctorParameters = function () { return []; };
 /**
  * Generated bundle index. Do not edit.
  */
-export { IDesignComponentModule, NgComponentDirective, DesignApiService, DesignLibraryService, DESIGN_LIBRARYS, DesignPropsService, DESIGN_COMPONENTS, ShareBackgroundComponent as ɵe, ShareColorComponent as ɵc, shareComponents as ɵb, ShareSizeComponent as ɵd, DRAG_DROP_ALL as ɵa };
+export { IDesignComponentModule, NgComponentDirective, DesignApiService, DesignLibraryService, DESIGN_LIBRARYS, DesignPropsService, DESIGN_COMPONENTS, ShareBackgroundComponent as ɵe, ShareColorComponent as ɵc, ShareMarginComponent as ɵf, shareComponents as ɵb, ShareSizeComponent as ɵd, DRAG_DROP_ALL as ɵa };
 //# sourceMappingURL=meepo-idesign-share.es5.js.map

@@ -1,8 +1,8 @@
 (function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@angular/core'), require('rxjs/observable/fromEvent'), require('rxjs/add/operator/switchMap'), require('rxjs/add/operator/map'), require('@angular/forms'), require('@angular/common')) :
-	typeof define === 'function' && define.amd ? define(['exports', '@angular/core', 'rxjs/observable/fromEvent', 'rxjs/add/operator/switchMap', 'rxjs/add/operator/map', '@angular/forms', '@angular/common'], factory) :
-	(factory((global['meepo-idesign-share'] = {}),global.ng.core,global.Rx.Observable,global.Rx.Observable.prototype,global.Rx.Observable.prototype,global.ng.forms,global.ng.common));
-}(this, (function (exports,core,fromEvent,switchMap,map,forms,common) { 'use strict';
+	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@angular/core'), require('rxjs/observable/fromEvent'), require('rxjs/add/operator/switchMap'), require('rxjs/add/operator/map'), require('@angular/forms'), require('@angular/common'), require('rxjs/observable/combineLatest')) :
+	typeof define === 'function' && define.amd ? define(['exports', '@angular/core', 'rxjs/observable/fromEvent', 'rxjs/add/operator/switchMap', 'rxjs/add/operator/map', '@angular/forms', '@angular/common', 'rxjs/observable/combineLatest'], factory) :
+	(factory((global['meepo-idesign-share'] = {}),global.ng.core,global.Rx.Observable,global.Rx.Observable.prototype,global.Rx.Observable.prototype,global.ng.forms,global.ng.common,global.Rx.Observable));
+}(this, (function (exports,core,fromEvent,switchMap,map,forms,common,combineLatest) { 'use strict';
 
 /**
  * @return {?}
@@ -736,10 +736,41 @@ ShareBackgroundComponent.ctorParameters = function () { return []; };
 ShareBackgroundComponent.propDecorators = {
     'props': [{ type: core.Input },],
 };
+var ShareMarginComponent = (function () {
+    function ShareMarginComponent() {
+    }
+    /**
+     * @return {?}
+     */
+    ShareMarginComponent.prototype.ngOnInit = function () {
+        combineLatest.combineLatest(fromEvent.fromEvent(this.top.nativeElement, 'change'), fromEvent.fromEvent(this.right.nativeElement, 'change'), fromEvent.fromEvent(this.bottom.nativeElement, 'change'), fromEvent.fromEvent(this.left.nativeElement, 'change')).map(function (res) {
+            console.log(res);
+        });
+    };
+    return ShareMarginComponent;
+}());
+ShareMarginComponent.decorators = [
+    { type: core.Component, args: [{
+                selector: 'share-margin',
+                template: "\n      <input type=\"number\" #top>\n      <input type=\"number\" #right>\n      <input type=\"number\" #bottom>\n      <input type=\"number\" #left>\n    "
+            },] },
+];
+/**
+ * @nocollapse
+ */
+ShareMarginComponent.ctorParameters = function () { return []; };
+ShareMarginComponent.propDecorators = {
+    'top': [{ type: core.ViewChild, args: ['top',] },],
+    'right': [{ type: core.ViewChild, args: ['right',] },],
+    'bottom': [{ type: core.ViewChild, args: ['bottom',] },],
+    'left': [{ type: core.ViewChild, args: ['left',] },],
+    'form': [{ type: core.Input },],
+};
 var shareComponents = [
     ShareColorComponent,
     ShareSizeComponent,
-    ShareBackgroundComponent
+    ShareBackgroundComponent,
+    ShareMarginComponent
 ];
 var IDesignComponentModule = (function () {
     function IDesignComponentModule() {
@@ -798,6 +829,7 @@ exports.DesignPropsService = DesignPropsService;
 exports.DESIGN_COMPONENTS = DESIGN_COMPONENTS;
 exports.ɵe = ShareBackgroundComponent;
 exports.ɵc = ShareColorComponent;
+exports.ɵf = ShareMarginComponent;
 exports.ɵb = shareComponents;
 exports.ɵd = ShareSizeComponent;
 exports.ɵa = DRAG_DROP_ALL;
