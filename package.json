@@ -1,6 +1,6 @@
 {
   "name": "meepo-flex",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
@@ -10,7 +10,7 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "git": "git add . && git commit -m 'update to save ' && git push origin master",
-    "release": "standard-version && git push --follow-tags origin master && npm publish"
+    "release": "standard-version && git push --follow-tags origin master"
   },
   "private": false,
   "dependencies": {
