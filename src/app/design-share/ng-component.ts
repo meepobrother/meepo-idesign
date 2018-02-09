@@ -113,7 +113,7 @@ export class NgComponentDirective implements OnChanges {
                     this.setDrage(instance);
                 }
                 if (this.ngComponentDrop || this.dragDropAll) {
-                    // this.setDrop(instance);
+                    this.setDrop(instance);
                 }
                 if (designLibraryProp.uuid) {
                     instance.guid = designLibraryProp.uuid;

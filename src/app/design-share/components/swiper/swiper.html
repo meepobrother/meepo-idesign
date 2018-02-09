@@ -1,0 +1,57 @@
+<div class="setting-row" [formGroup]="props">
+    <h1>滑动设置</h1>
+    <div class="setting-row-input">
+        <div class="setting-row-input-label">
+            是否循环
+        </div>
+        <div class="setting-row-input-content">
+            <select formControlName="loop">
+                <option value="true">循环</option>
+                <option value="false">不循环</option>
+            </select>
+        </div>
+    </div>
+    <div class="setting-row-input">
+        <div class="setting-row-input-label">
+            速度
+        </div>
+        <div class="setting-row-input-content">
+            <input type="number" formControlName="speed">
+        </div>
+    </div>
+    <div class="setting-row-input">
+        <div class="setting-row-input-label">
+            切换动画
+        </div>
+        <div class="setting-row-input-content">
+            <select formControlName="effect">
+                <option value="slide">slide</option>
+                <option value="fade">fade</option>
+                <option value="cube">cube</option>
+                <option value="coverflow">coverflow</option>
+                <option value="flip">flip</option>
+            </select>
+        </div>
+    </div>
+    <div class="setting-row-input">
+        <div class="setting-row-input-label">
+            自动播放
+        </div>
+        <div class="setting-row-input-content">
+            <input type="number" formControlName="delay">
+        </div>
+    </div>
+    <div class="setting-row-input">
+        <div class="setting-row-input-label">
+            页码
+        </div>
+        <div class="setting-row-input-content">
+            <select formControlName="pagination">
+                <option value="bullets">bullets</option>
+                <option value="fraction">fraction</option>
+                <option value="progressbar">progressbar</option>
+                <option value="custom">custom</option>
+            </select>
+        </div>
+    </div>
+</div>

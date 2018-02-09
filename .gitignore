@@ -5,7 +5,7 @@
 /tmp
 /out-tsc
 /publish
-
+/src/app/php/vender
 # dependencies
 /node_modules
 

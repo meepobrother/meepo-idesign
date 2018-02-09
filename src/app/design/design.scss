@@ -96,106 +96,14 @@
             }
         }
     }
-    &-preview {
-        display: flex;
-        background: rgb(243, 243, 243);
-        width: 450px;
-        max-height: 100%;
-        overflow: auto;
-        flex-direction: column;
-        &-iphone {
-            position: relative;
-            height: 100%;
-            width: 414px;
-            background: #fff;
-            max-height: 736px;
-            min-height: 736px;
-            overflow: auto;
-        }
-        .device {
-            margin: 0 auto;
-        }
-        &-deletor {
-            min-height: 150px;
-            display: flex;
-            flex-direction: row;
-            justify-content: center;
-            align-items: center;
-            background: gray;
-            color: #fff;
-            margin-bottom: 10px;
-            margin-left: 10px;
-            margin-right: 10px;
-        }
-        &-iphone {
-            margin: 0 auto;
-        }
-        &-container {
-            height: 100%;
-            position: absolute;
-            top: 0px;
-            left: 0px;
-            right: 0px;
-            bottom: 0px;
-        }
-        .device-content {
-            overflow: auto;
-            width: 100%;
-            height: 100%;
-        }
-    }
-    &-setting {
-        display: block;
-        background: #efefef;
-        flex: 1;
-        padding: 0 10px;
-        border-left: 10px solid #fff;
-        overflow: auto;
-        &-empty {
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            font-size: .8em;
-            color: gray;
-        }
-        &-drop {
-            position: relative;
-            border: 1px dashed red;
-            height: 200px;
-            min-height: 200px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            margin-top: 0px;
-            color: gray;
-            background: #fff;
-        }
-        &-nav {
-            background: rgb(0, 0, 0);
-            color: #fff;
-            padding: 5px 20px;
-            list-style: none;
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            height: 33px;
-            li {
-                color: #fff;
-                display: block;
-                line-height: 20px;
-                cursor: pointer;
-            }
-        }
-    }
+    
+    
     &-footer {
         position: fixed;
         bottom: 0px;
         left: 0px;
         right: 0px;
-        height: 60px;
+        height: 50px;
         display: flex;
         flex-direction: row;
         justify-content: flex-end;
@@ -204,10 +112,10 @@
         &-save,
         &-preview,
         &-post {
-            width: 8em;
+            width: 7em;
             text-align: center;
             height: 100%;
-            line-height: 60px;
+            line-height: 50px;
         }
         &-save {
             background: #c74a06;
@@ -257,25 +165,3 @@
     }
 }
 
-.meepo-design-preview-quick {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    flex-wrap: wrap;
-    margin-bottom: 10px;
-    margin-left: 10px;
-    background: #000;
-    color: #fff;
-    span {
-        height: 33px;
-        line-height: 33px;
-        padding: 0 10px;
-        cursor: pointer;
-        text-align: center;
-        min-width: 3em;
-        &:hover{
-            background: #fff;
-            color: #000;
-        }
-    }
-}

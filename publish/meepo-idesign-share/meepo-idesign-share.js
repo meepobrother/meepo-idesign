@@ -2,7 +2,7 @@ import { Component, ComponentFactoryResolver, Directive, Inject, Injectable, Inj
 import { fromEvent as fromEvent$1 } from 'rxjs/observable/fromEvent';
 import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/operator/map';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormControl, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
 /**
@@ -97,9 +97,11 @@ class DesignPropsService {
     /**
      * @param {?} props
      * @param {?} library
+     * @param {?} fb
      */
-    constructor(props, library) {
+    constructor(props, library, fb) {
         this.library = library;
+        this.fb = fb;
         // 所有props
         this.props = [];
         // 当前页面
@@ -116,6 +118,12 @@ class DesignPropsService {
         catch (err) {
             localStorage.clear();
         }
+        this.settingForm = this.fb.group({
+            content: ''
+        });
+        this.settingForm.valueChanges.subscribe(res => {
+            this._settingProps.props['content'] = res.content;
+        });
     }
     /**
      * @param {?} val
@@ -123,6 +131,12 @@ class DesignPropsService {
      */
     set settingProps(val) {
         this._settingProps = val;
+        try {
+            this.settingForm.get('content').setValue(this._settingProps.props['content']);
+        }
+        catch (err) {
+            this.settingForm.addControl('content', new FormControl(this._settingProps.props['content']));
+        }
         try {
             if (!this._settingProps) {
                 this.fathersProps = [];
@@ -158,7 +172,6 @@ class DesignPropsService {
         }
         this.instance = instance;
         instance.addClass('is-focus');
-        // instance.render.addClass(instance.ele.nativeElement,'is-focus');
     }
     /**
      * @param {?} name
@@ -265,7 +278,10 @@ class DesignPropsService {
                 let /** @type {?} */ father = this.getPropsByUid(props.father);
                 let /** @type {?} */ index = father.props.children.indexOf(props);
                 if (index > -1) {
-                    father.props.children.splice(index, 1);
+                    const /** @type {?} */ children = father.props.children.splice(index, 1);
+                    this.instance.setProps(Object.assign({}, father.props, {
+                        children: children
+                    }));
                 }
             }
             else {
@@ -360,6 +376,7 @@ DesignPropsService.decorators = [
 DesignPropsService.ctorParameters = () => [
     { type: undefined, decorators: [{ type: Inject, args: [DESIGN_COMPONENTS,] },] },
     { type: DesignLibraryService, },
+    { type: FormBuilder, },
 ];
 class DesignLibraryService {
     /**
@@ -482,7 +499,7 @@ class NgComponentDirective {
                     this.setDrage(instance);
                 }
                 if (this.ngComponentDrop || this.dragDropAll) {
-                    // this.setDrop(instance);
+                    this.setDrop(instance);
                 }
                 if (designLibraryProp.uuid) {
                     instance.guid = designLibraryProp.uuid;
@@ -655,15 +672,31 @@ class ControlBase {
      * @return {?}
      */
     checkControl(name, _default = '') {
-        try {
-            const /** @type {?} */ control = this.props.get(name);
-            if (!control) {
-                this.createControl(name, _default);
-            }
-        }
-        catch (err) {
+        if (!this.props.contains(name)) {
             this.createControl(name, _default);
         }
+    }
+    /**
+     * @param {?} name
+     * @return {?}
+     */
+    getStyle(name) {
+        if (this.ele) {
+            return this.ele.style[this.strToHump(name)];
+        }
+        else {
+            return '';
+        }
+    }
+    /**
+     * @param {?} name
+     * @return {?}
+     */
+    strToHump(name) {
+        const /** @type {?} */ re = /-(\w)/g;
+        return name.replace(re, function ($0, $1) {
+            return $1.toUpperCase();
+        });
     }
     /**
      * @param {?} name
@@ -678,10 +711,14 @@ class ControlBase {
      * @return {?}
      */
     pxToNumber(px) {
+        if (!px) {
+            return '0';
+        }
         return px.replace('px', '');
     }
 }
 ControlBase.propDecorators = {
+    'ele': [{ type: Input },],
     'props': [{ type: Input },],
 };
 
@@ -693,8 +730,8 @@ class ShareColorComponent extends ControlBase {
      * @return {?}
      */
     ngOnInit() {
-        this.checkControl('color', '#fff');
-        this.checkControl('background-color', 'gray');
+        this.checkControl('color', this.getStyle('color'));
+        this.checkControl('background-color', this.getStyle('background-color'));
     }
 }
 ShareColorComponent.decorators = [
@@ -756,8 +793,30 @@ class ShareSizeComponent extends ControlBase {
      * @return {?}
      */
     ngOnInit() {
-        this.checkControl(`width${this.unit[0]}`, '100');
-        this.checkControl(`height${this.unit[1]}`, '100');
+        this.checkControl(`width.${this.unit[0]}`, '100');
+        this.checkControl(`height.px`, '50');
+        this.checkControl(`line-height.px`, '50');
+        this.checkControl(`min-height.px`, '50');
+        this.checkControl(`min-width.${this.unit[0]}`, '100');
+        try {
+            this.props.controls['height.px'].valueChanges.subscribe(res => {
+                this.props.controls['line-height.px'].setValue(res);
+                this.props.controls['min-height.px'].setValue(res);
+            });
+            this.props.controls[`width.${this.unit[0]}`].valueChanges.subscribe(res => {
+                this.props.controls[`min-width.${this.unit[0]}`].setValue(res);
+            });
+        }
+        catch (err) {
+            console.log(this.props.get('height.px'));
+        }
+    }
+    /**
+     * @param {?} name
+     * @return {?}
+     */
+    clearValue(name) {
+        this.props.controls[name].setValue(null);
     }
 }
 ShareSizeComponent.decorators = [
@@ -771,18 +830,32 @@ ShareSizeComponent.decorators = [
                   宽度:
               </label>
               <div class="setting-row-input-content">
-                  <input type="number" id="setting-row-input-width" [attr.placeholder]="'宽度'+unit[0]" [formControlName]="'width.'+unit[0]">
+                  <input type="number" #width id="setting-row-input-width" [attr.placeholder]="'宽度'+unit[0]" [formControlName]="'width.'+unit[0]">
               </div>
-              <span class="setting-row-input-unit">{{unit[0]}}</span>
+              <span class="setting-row-input-unit">
+                  {{unit[0]}}
+              </span>
+              <span (click)="clearValue('width.'+unit[0])" class="setting-row-input-unit">自动</span>
           </div>
           <div class="setting-row-input">
               <label class="setting-row-input-label" for="setting-row-input-height">
                   高度:
               </label>
               <div class="setting-row-input-content">
-                  <input type="number" id="setting-row-input-height" [attr.placeholder]="'高度'+unit[1]" [formControlName]="'height.'+unit[1]">
+                  <input type="number" id="setting-row-input-height" placeholder="高度" formControlName="height.px">
               </div>
-              <span class="setting-row-input-unit">{{unit[1]}}</span>
+              <span class="setting-row-input-unit">px</span>
+              <span (click)="clearValue('height.px')" class="setting-row-input-unit">自动</span>
+          </div>
+          <div class="setting-row-input">
+              <label class="setting-row-input-label" for="setting-row-input-height">
+                  行高:
+              </label>
+              <div class="setting-row-input-content">
+                  <input type="number" id="setting-row-input-height" placeholder="行高" formControlName="line-height.px">
+              </div>
+              <span class="setting-row-input-unit">px</span>
+              <span (click)="clearValue('line-height.px')" class="setting-row-input-unit">自动</span>
           </div>
       </div>
     `,
@@ -809,6 +882,7 @@ class ShareBackgroundComponent extends ControlBase {
      * @return {?}
      */
     ngOnInit() {
+        this.checkControl('background-image', '');
         this.checkControl('background-size', 'cover');
         this.checkControl('background-position', 'cover');
         this.checkControl('background-repeat', 'no-repeat');
@@ -893,7 +967,7 @@ ShareMarginComponent.decorators = [
                 selector: 'share-margin',
                 template: `
       <div class="setting-row" [formGroup]="props">
-          <h1>间距设置</h1>
+          <h1>外间距设置</h1>
           <div class="setting-row-input">
               <div class="setting-row-input-label">
                   上间距:
@@ -943,9 +1017,248 @@ ShareMarginComponent.decorators = [
  */
 ShareMarginComponent.ctorParameters = () => [];
 
+class SharePaddingComponent extends ControlBase {
+    constructor() {
+        super();
+    }
+    /**
+     * @return {?}
+     */
+    ngOnInit() {
+        this.checkControl('padding', '0');
+        const /** @type {?} */ margin = this.props.get('padding').value;
+        const [top, right, bottom, left] = margin.split(" ");
+        this.checkControl('padding-top.px', this.pxToNumber(top));
+        this.checkControl('padding-right.px', this.pxToNumber(right));
+        this.checkControl('padding-bottom.px', this.pxToNumber(bottom));
+        this.checkControl('padding-left.px', this.pxToNumber(left));
+    }
+}
+SharePaddingComponent.decorators = [
+    { type: Component, args: [{
+                selector: 'share-padding',
+                template: `
+      <div class="setting-row" [formGroup]="props">
+          <h1>內间距设置</h1>
+          <div class="setting-row-input">
+              <div class="setting-row-input-label">
+                  上间距:
+              </div>
+              <div class="setting-row-input-content">
+                  <input type="number" formControlName="padding-top.px">
+              </div>
+              <span class="setting-row-input-unit">px</span>
+          </div>
+          <div class="setting-row-input">
+              <div class="setting-row-input-label">
+                  右间距:
+              </div>
+              <div class="setting-row-input-content">
+                  <input type="number" formControlName="padding-right.px">
+              </div>
+              <span class="setting-row-input-unit">px</span>
+          </div>
+          <div class="setting-row-input">
+              <div class="setting-row-input-label">
+                  下间距:
+              </div>
+              <div class="setting-row-input-content">
+                  <input type="number" formControlName="padding-bottom.px">
+              </div>
+              <span class="setting-row-input-unit">px</span>
+          </div>
+          <div class="setting-row-input">
+              <div class="setting-row-input-label">
+                  左间距:
+              </div>
+              <div class="setting-row-input-content">
+                  <input type="number" formControlName="padding-left.px">
+              </div>
+              <span class="setting-row-input-unit">px</span>
+          </div>
+      </div>
+    `
+            },] },
+];
+/**
+ * @nocollapse
+ */
+SharePaddingComponent.ctorParameters = () => [];
+
+class ShareBorderComponent extends ControlBase {
+    constructor() {
+        super();
+    }
+    /**
+     * @return {?}
+     */
+    ngOnInit() {
+        if (this.props.contains('border')) {
+            const /** @type {?} */ border = this.props.get('border').value;
+            const [width, style, color] = border.split(' ');
+            this.checkControl('border-top-width.px', this.pxToNumber(width));
+            this.checkControl('border-right-width.px', this.pxToNumber(width));
+            this.checkControl('border-bottom-width.px', this.pxToNumber(width));
+            this.checkControl('border-left-width.px', this.pxToNumber(width));
+            this.checkControl('border-color', color);
+            this.checkControl('border-style', style);
+        }
+    }
+}
+ShareBorderComponent.decorators = [
+    { type: Component, args: [{
+                selector: 'share-border',
+                template: `
+      <div class="setting-row" [formGroup]="props">
+          <h1>边框设置</h1>
+          <div class="setting-row-input" *ngIf="props.contains('border-top-width.px')">
+              <div class="setting-row-input-label">
+                  上边框:
+              </div>
+              <div class="setting-row-input-content">
+                  <input type="number" min="0" step="1" formControlName="border-top-width.px">
+              </div>
+              <span class="setting-row-input-unit">px</span>
+          </div>
+          <div class="setting-row-input" *ngIf="props.contains('border-right-width.px')">
+              <div class="setting-row-input-label">
+                  右边框:
+              </div>
+              <div class="setting-row-input-content">
+                  <input type="number" min="0" step="1" formControlName="border-right-width.px">
+              </div>
+              <span class="setting-row-input-unit">px</span>
+          </div>
+          <div class="setting-row-input" *ngIf="props.contains('border-bottom-width.px')">
+              <div class="setting-row-input-label">
+                  下边框:
+              </div>
+              <div class="setting-row-input-content">
+                  <input type="number" min="0" step="1" formControlName="border-bottom-width.px">
+              </div>
+              <span class="setting-row-input-unit">px</span>
+          </div>
+          <div class="setting-row-input" *ngIf="props.contains('border-left-width.px')">
+              <div class="setting-row-input-label">
+                  左边框:
+              </div>
+              <div class="setting-row-input-content">
+                  <input type="number" min="0" step="1" formControlName="border-left-width.px">
+              </div>
+              <span class="setting-row-input-unit">px</span>
+          </div>
+      </div>
+    `
+            },] },
+];
+/**
+ * @nocollapse
+ */
+ShareBorderComponent.ctorParameters = () => [];
+
+class ShareSwiperComponent extends ControlBase {
+    constructor() {
+        super();
+    }
+    /**
+     * @return {?}
+     */
+    ngOnInit() {
+        this.checkControl('loop', 'true');
+        this.checkControl('speed', '300');
+        this.checkControl('delay', '3000');
+        this.checkControl('effect', 'slide');
+        this.checkControl('pagination', 'bullets');
+    }
+}
+ShareSwiperComponent.decorators = [
+    { type: Component, args: [{
+                selector: 'share-swiper',
+                template: `
+      <div class="setting-row" [formGroup]="props">
+          <h1>滑动设置</h1>
+          <div class="setting-row-input">
+              <div class="setting-row-input-label">
+                  是否循环
+              </div>
+              <div class="setting-row-input-content">
+                  <select formControlName="loop">
+                      <option value="true">循环</option>
+                      <option value="false">不循环</option>
+                  </select>
+              </div>
+          </div>
+          <div class="setting-row-input">
+              <div class="setting-row-input-label">
+                  速度
+              </div>
+              <div class="setting-row-input-content">
+                  <input type="number" formControlName="speed">
+              </div>
+          </div>
+          <div class="setting-row-input">
+              <div class="setting-row-input-label">
+                  切换动画
+              </div>
+              <div class="setting-row-input-content">
+                  <select formControlName="effect">
+                      <option value="slide">slide</option>
+                      <option value="fade">fade</option>
+                      <option value="cube">cube</option>
+                      <option value="coverflow">coverflow</option>
+                      <option value="flip">flip</option>
+                  </select>
+              </div>
+          </div>
+          <div class="setting-row-input">
+              <div class="setting-row-input-label">
+                  自动播放
+              </div>
+              <div class="setting-row-input-content">
+                  <input type="number" formControlName="delay">
+              </div>
+          </div>
+          <div class="setting-row-input">
+              <div class="setting-row-input-label">
+                  页码
+              </div>
+              <div class="setting-row-input-content">
+                  <select formControlName="pagination">
+                      <option value="bullets">bullets</option>
+                      <option value="fraction">fraction</option>
+                      <option value="progressbar">progressbar</option>
+                      <option value="custom">custom</option>
+                  </select>
+              </div>
+          </div>
+      </div>
+    `
+            },] },
+];
+/**
+ * @nocollapse
+ */
+ShareSwiperComponent.ctorParameters = () => [];
+
 class SharePositionComponent extends ControlBase {
     constructor() {
         super();
+        this._noup = false;
+        this._nodown = false;
+    }
+    /**
+     * @param {?} val
+     * @return {?}
+     */
+    set noup(val) {
+        this._noup = true;
+    }
+    /**
+     * @param {?} val
+     * @return {?}
+     */
+    set nodown(val) {
+        this._nodown = true;
     }
     /**
      * @return {?}
@@ -954,8 +1267,12 @@ class SharePositionComponent extends ControlBase {
         this.checkControl('position', 'relative');
         this.checkControl('left.px', '0');
         this.checkControl('right.px', '0');
-        this.checkControl('top.px', '0');
-        this.checkControl('bottom.px', '0');
+        if (!this._noup) {
+            this.checkControl('top.px', '0');
+        }
+        if (!this._nodown) {
+            this.checkControl('bottom.px', '0');
+        }
     }
 }
 SharePositionComponent.decorators = [
@@ -963,8 +1280,10 @@ SharePositionComponent.decorators = [
                 selector: 'share-position',
                 template: `
       <div class="setting-row" [formGroup]="props">
-              <h1>定位</h1>
-              <div class="setting-row-input">
+              <h1>
+                  定位
+              </h1>
+              <div class="setting-row-input" *ngIf="!_noup">
                   <div class="setting-row-input-label">
                       上:
                   </div>
@@ -982,7 +1301,7 @@ SharePositionComponent.decorators = [
                   </div>
                   <span class="setting-row-input-unit">px</span>
               </div>
-              <div class="setting-row-input">
+              <div class="setting-row-input" *ngIf="!_nodown">
                   <div class="setting-row-input-label">
                       下:
                   </div>
@@ -1008,13 +1327,20 @@ SharePositionComponent.decorators = [
  * @nocollapse
  */
 SharePositionComponent.ctorParameters = () => [];
+SharePositionComponent.propDecorators = {
+    'noup': [{ type: Input },],
+    'nodown': [{ type: Input },],
+};
 
 const shareComponents = [
     ShareColorComponent,
     ShareSizeComponent,
     ShareBackgroundComponent,
     ShareMarginComponent,
-    SharePositionComponent
+    SharePaddingComponent,
+    SharePositionComponent,
+    ShareBorderComponent,
+    ShareSwiperComponent
 ];
 
 class IDesignComponentModule {
@@ -1067,5 +1393,5 @@ IDesignComponentModule.ctorParameters = () => [];
  * Generated bundle index. Do not edit.
  */
 
-export { IDesignComponentModule, NgComponentDirective, DesignApiService, DesignLibraryService, DESIGN_LIBRARYS, DesignPropsService, DESIGN_COMPONENTS, ShareBackgroundComponent as ɵf, ControlBase as ɵd, ShareColorComponent as ɵc, ShareMarginComponent as ɵg, SharePositionComponent as ɵh, shareComponents as ɵb, ShareSizeComponent as ɵe, DRAG_DROP_ALL as ɵa };
+export { IDesignComponentModule, NgComponentDirective, DesignApiService, DesignLibraryService, DESIGN_LIBRARYS, DesignPropsService, DESIGN_COMPONENTS, ShareBackgroundComponent as ɵf, ControlBase as ɵd, ShareBorderComponent as ɵj, ShareColorComponent as ɵc, ShareMarginComponent as ɵg, SharePaddingComponent as ɵh, SharePositionComponent as ɵi, shareComponents as ɵb, ShareSizeComponent as ɵe, ShareSwiperComponent as ɵk, DRAG_DROP_ALL as ɵa };
 //# sourceMappingURL=meepo-idesign-share.js.map

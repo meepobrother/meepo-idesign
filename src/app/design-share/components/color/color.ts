@@ -10,7 +10,7 @@ export class ShareColorComponent extends ControlBase implements OnInit {
         super();
     }
     ngOnInit() {
-        this.checkControl('color', '#fff');
-        this.checkControl('background-color', 'gray');
+        this.checkControl('color', this.getStyle('color'));
+        this.checkControl('background-color', this.getStyle('background-color'));
     }
 }

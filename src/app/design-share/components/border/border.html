@@ -1,0 +1,39 @@
+<div class="setting-row" [formGroup]="props">
+    <h1>边框设置</h1>
+    <div class="setting-row-input" *ngIf="props.contains('border-top-width.px')">
+        <div class="setting-row-input-label">
+            上边框:
+        </div>
+        <div class="setting-row-input-content">
+            <input type="number" min="0" step="1" formControlName="border-top-width.px">
+        </div>
+        <span class="setting-row-input-unit">px</span>
+    </div>
+    <div class="setting-row-input" *ngIf="props.contains('border-right-width.px')">
+        <div class="setting-row-input-label">
+            右边框:
+        </div>
+        <div class="setting-row-input-content">
+            <input type="number" min="0" step="1" formControlName="border-right-width.px">
+        </div>
+        <span class="setting-row-input-unit">px</span>
+    </div>
+    <div class="setting-row-input" *ngIf="props.contains('border-bottom-width.px')">
+        <div class="setting-row-input-label">
+            下边框:
+        </div>
+        <div class="setting-row-input-content">
+            <input type="number" min="0" step="1" formControlName="border-bottom-width.px">
+        </div>
+        <span class="setting-row-input-unit">px</span>
+    </div>
+    <div class="setting-row-input" *ngIf="props.contains('border-left-width.px')">
+        <div class="setting-row-input-label">
+            左边框:
+        </div>
+        <div class="setting-row-input-content">
+            <input type="number" min="0" step="1" formControlName="border-left-width.px">
+        </div>
+        <span class="setting-row-input-unit">px</span>
+    </div>
+</div>

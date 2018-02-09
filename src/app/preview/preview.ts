@@ -18,6 +18,12 @@ export class IpreviewComponent extends ReactComponent<any, any> {
     }
     ngOnInit() {
         this.history.backToHistory();
+        const scale = window.screen.width / 414;
+        const meta = `<meta name="viewport" content="width=414, initial-scale=${scale}">`;
+        const metaElement: HTMLMetaElement = document.createElement('meta');
+        metaElement.name = 'viewport';
+        metaElement.content = `width=414, initial-scale=${scale}, minimum-scale=${scale}, maximum-scale=${scale}, user-scalable=false`;
+        document.head.appendChild(metaElement);
     }
     onStateChange() { }
     onPropsChange() { }

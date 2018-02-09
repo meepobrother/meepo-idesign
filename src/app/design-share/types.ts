@@ -75,7 +75,7 @@ export class DesignApiService {
 }
 export const DESIGN_COMPONENTS = new InjectionToken('DESIGN_COMPONENTS');
 import 'rxjs/add/operator/map';
-
+import { FormGroup, FormControl, FormBuilder } from '@angular/forms';
 @Injectable()
 export class DesignPropsService {
     // 所有props
@@ -84,8 +84,14 @@ export class DesignPropsService {
     pageProps: DesignLibraryProp[] = [];
     // 设置
     _settingProps: DesignLibraryProp;
+    settingForm: FormGroup;
     set settingProps(val: DesignLibraryProp) {
         this._settingProps = val;
+        try {
+            this.settingForm.get('content').setValue(this._settingProps.props['content']);
+        } catch (err) {
+            this.settingForm.addControl('content', new FormControl(this._settingProps.props['content']))
+        }
         try {
             if (!this._settingProps) {
                 this.fathersProps = [];
@@ -118,7 +124,8 @@ export class DesignPropsService {
 
     constructor(
         @Inject(DESIGN_COMPONENTS) props: any,
-        public library: DesignLibraryService
+        public library: DesignLibraryService,
+        private fb: FormBuilder
     ) {
         this.props = flatten(props);
         try {
@@ -126,6 +133,12 @@ export class DesignPropsService {
         } catch (err) {
             localStorage.clear();
         }
+        this.settingForm = this.fb.group({
+            content: ''
+        });
+        this.settingForm.valueChanges.subscribe(res => {
+            this._settingProps.props['content'] = res.content;
+        });
     }
 
     setActiveSettingProps(designLibraryProp: any, instance: any) {
@@ -135,7 +148,6 @@ export class DesignPropsService {
         }
         this.instance = instance;
         instance.addClass('is-focus');
-        // instance.render.addClass(instance.ele.nativeElement,'is-focus');
     }
 
     getPropsByName(name: string): DesignLibraryProp {
@@ -215,7 +227,13 @@ export class DesignPropsService {
                 let father: any = this.getPropsByUid(props.father);
                 let index = father.props.children.indexOf(props);
                 if (index > -1) {
-                    father.props.children.splice(index, 1);
+                    const children = father.props.children.splice(index, 1);
+                    this.instance.setProps({
+                        ...father.props,
+                        ...{
+                            children: children
+                        }
+                    });
                 }
             } else {
                 let index = this.pageProps.indexOf(props);

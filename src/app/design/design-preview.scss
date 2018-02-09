@@ -1,0 +1,73 @@
+
+.meepo-design-preview {
+    display: flex;
+    background: rgb(243, 243, 243);
+    width: 450px;
+    max-height: 100%;
+    overflow: auto;
+    flex-direction: column;
+    justify-content: center;
+    &-quick {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        flex-wrap: wrap;
+        background: #000;
+        color: #fff;
+        font-size: 12px;
+        width: 414px;
+        margin: 0 auto;
+        span {
+            height: 30px;
+            line-height: 30px;
+            padding: 0 5px;
+            cursor: pointer;
+            text-align: center;
+            min-width: 3em;
+            &:hover {
+                background: #fff;
+                color: #000;
+            }
+        }
+    }
+    &-iphone {
+        position: relative;
+        height: 100%;
+        width: 414px;
+        background: #fff;
+        max-height: 736px;
+        min-height: 736px;
+        overflow: hidden;
+    }
+    .device {
+        margin: 0 auto;
+    }
+    &-deletor {
+        min-height: 150px;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        background: gray;
+        color: #fff;
+        margin-bottom: 10px;
+        margin-left: 10px;
+        margin-right: 10px;
+    }
+    &-iphone {
+        margin: 0 auto;
+    }
+    &-container {
+        height: 100%;
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        right: 0px;
+        bottom: 0px;
+    }
+    .device-content {
+        overflow: auto;
+        width: 100%;
+        height: 100%;
+    }
+}

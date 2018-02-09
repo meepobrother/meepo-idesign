@@ -2,42 +2,10 @@ import { CreateLib } from 'ng-react-component';
 
 const props = [];
 props.push(new CreateLib('weui-header', '顶部导航', {
-    children: [
-        new CreateLib('weui-header-options', '城市选择', {
-            address: '杭州市',
-            lat: '',
-            lng: '',
-            style: {
-                [`position`]: 'absolute',
-                [`min-width`]: '44px',
-                [`height.%`]: '100',
-                [`left.px`]: '0',
-                [`top.px`]: '0'
-            }
-        }),
-        new CreateLib('weui-header-options', '城市选择', {
-            address: '杭州市',
-            lat: '',
-            lng: '',
-            style: {
-                [`text-align`]: 'center',
-                [`width.%`]: '100',
-                [`height.%`]: '100',
-            }
-        }),
-        new CreateLib('weui-header-options', '城市选择', {
-            address: '杭州市',
-            lat: '',
-            lng: '',
-            style: {
-                [`position`]: 'absolute',
-                [`min-width`]: '44px',
-                [`height.%`]: '100',
-                [`right.px`]: '0',
-                [`top.px`]: '0'
-            }
-        })
-    ]
+    children: [],
+    style: {
+        [`position`]: 'absolute'
+    }
 }));
 
 props.push(new CreateLib('weui-body', '主要内容', {
@@ -100,6 +68,9 @@ props.push(new CreateLib('weui-body', '主要内容', {
 }));
 
 props.push(new CreateLib('weui-footer', '底部导航', {
+    style: {
+        [`position`]: 'absolute'
+    },
     children: [
         new CreateLib('weui-footer-item', '菜单项目', {
             title: '首页',

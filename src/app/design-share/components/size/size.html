@@ -5,17 +5,31 @@
             宽度:
         </label>
         <div class="setting-row-input-content">
-            <input type="number" id="setting-row-input-width" [attr.placeholder]="'宽度'+unit[0]" [formControlName]="'width.'+unit[0]">
+            <input type="number" #width id="setting-row-input-width" [attr.placeholder]="'宽度'+unit[0]" [formControlName]="'width.'+unit[0]">
         </div>
-        <span class="setting-row-input-unit">{{unit[0]}}</span>
+        <span class="setting-row-input-unit">
+            {{unit[0]}}
+        </span>
+        <span (click)="clearValue('width.'+unit[0])" class="setting-row-input-unit">自动</span>
     </div>
     <div class="setting-row-input">
         <label class="setting-row-input-label" for="setting-row-input-height">
             高度:
         </label>
         <div class="setting-row-input-content">
-            <input type="number" id="setting-row-input-height" [attr.placeholder]="'高度'+unit[1]" [formControlName]="'height.'+unit[1]">
+            <input type="number" id="setting-row-input-height" placeholder="高度" formControlName="height.px">
         </div>
-        <span class="setting-row-input-unit">{{unit[1]}}</span>
+        <span class="setting-row-input-unit">px</span>
+        <span (click)="clearValue('height.px')" class="setting-row-input-unit">自动</span>
+    </div>
+    <div class="setting-row-input">
+        <label class="setting-row-input-label" for="setting-row-input-height">
+            行高:
+        </label>
+        <div class="setting-row-input-content">
+            <input type="number" id="setting-row-input-height" placeholder="行高" formControlName="line-height.px">
+        </div>
+        <span class="setting-row-input-unit">px</span>
+        <span (click)="clearValue('line-height.px')" class="setting-row-input-unit">自动</span>
     </div>
 </div>

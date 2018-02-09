@@ -17,11 +17,9 @@ import { both as headerBoth, entrys as headerEntrys, preview as headerPreview } 
 import { both as bodyBoth, entrys as bodyEntrys, preview as bodyPreview } from './components/weui-body/public_api';
 import { both as footerBoth, entrys as footerEntrys, preview as footerPreview } from './components/weui-footer/public_api';
 import { both as cubeBoth, entrys as cubeEntrys, preview as cubePreview } from './components/weui-cube/public_api';
-
+import { both as swiperBoth, entrys as swiperEntrys, preview as swiperPreview } from './components/weui-swiper/public_api';
 
 import { DESIGN_LIBRARYS, IDesignComponentModule } from 'meepo-idesign-share';
-
-console.log(runnerPage);
 
 @NgModule({
   declarations: [
@@ -34,7 +32,8 @@ console.log(runnerPage);
     ...headerEntrys,
     ...bodyEntrys,
     ...footerEntrys,
-    ...cubeEntrys
+    ...cubeEntrys,
+    ...swiperEntrys
   ],
   imports: [
     BrowserModule,
@@ -66,7 +65,8 @@ console.log(runnerPage);
         headerBoth,
         bodyBoth,
         footerBoth,
-        cubeBoth
+        cubeBoth,
+        swiperBoth
       ],
       multi: true
     }
@@ -78,7 +78,8 @@ console.log(runnerPage);
     ...headerEntrys,
     ...bodyEntrys,
     ...footerEntrys,
-    ...cubeEntrys
+    ...cubeEntrys,
+    ...swiperEntrys
   ],
   bootstrap: [AppComponent]
 })

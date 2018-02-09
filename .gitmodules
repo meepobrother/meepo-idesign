@@ -4,3 +4,6 @@
 [submodule "src/app/components/weui-button"]
 	path = src/app/components/weui-button
 	url = https://github.com/meepobrother/weui-button.git
+[submodule "src/app/components/weui-swiper"]
+	path = src/app/components/weui-swiper
+	url = https://github.com/meepobrother/weui-swiper.git

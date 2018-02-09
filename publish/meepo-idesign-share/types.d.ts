@@ -34,11 +34,14 @@ export declare class DesignApiService {
 }
 export declare const DESIGN_COMPONENTS: InjectionToken<{}>;
 import 'rxjs/add/operator/map';
+import { FormGroup, FormBuilder } from '@angular/forms';
 export declare class DesignPropsService {
     library: DesignLibraryService;
+    private fb;
     props: any[];
     pageProps: DesignLibraryProp[];
     _settingProps: DesignLibraryProp;
+    settingForm: FormGroup;
     settingProps: DesignLibraryProp;
     instance: any;
     fathers: any;
@@ -46,7 +49,7 @@ export declare class DesignPropsService {
     historyKey: string;
     historys: any[];
     removePosition: number[];
-    constructor(props: any, library: DesignLibraryService);
+    constructor(props: any, library: DesignLibraryService, fb: FormBuilder);
     setActiveSettingProps(designLibraryProp: any, instance: any): void;
     getPropsByName(name: string): DesignLibraryProp;
     addPropByName(name: string, father?: string): void;

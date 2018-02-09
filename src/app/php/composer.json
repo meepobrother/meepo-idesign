@@ -1,0 +1,12 @@
+{
+    "name": "meepo/core",
+    "authors": [
+        {
+            "name": "13140415408",
+            "email": "1037483576@qq.com"
+        }
+    ],
+    "require": {
+        "monolog/monolog": "^1.23"
+    }
+}

@@ -1,6 +1,8 @@
 <div class="setting-row" [formGroup]="props">
-        <h1>定位</h1>
-        <div class="setting-row-input">
+        <h1>
+            定位
+        </h1>
+        <div class="setting-row-input" *ngIf="!_noup">
             <div class="setting-row-input-label">
                 上:
             </div>
@@ -18,7 +20,7 @@
             </div>
             <span class="setting-row-input-unit">px</span>
         </div>
-        <div class="setting-row-input">
+        <div class="setting-row-input" *ngIf="!_nodown">
             <div class="setting-row-input-label">
                 下:
             </div>

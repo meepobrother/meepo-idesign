@@ -1,0 +1,21 @@
+{
+    "name": "weui-nav",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1",
+      "git": "git add . && git commit -m 'update to save ' && git push origin master"
+    },
+    "repository": {
+      "type": "git",
+      "url": "git+https://github.com/meepobrother/weui-nav.git"
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+      "url": "https://github.com/meepobrother/weui-nav/issues"
+    },
+    "homepage": "https://github.com/meepobrother/weui-nav#readme"
+  }
+  

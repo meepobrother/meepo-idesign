@@ -1,6 +1,6 @@
 import {
   Component, ViewContainerRef,
-  OnInit, Injector, ComponentFactoryResolver
+  OnInit, Injector, ComponentFactoryResolver, ElementRef
 } from '@angular/core';
 import { ViewEncapsulation } from '@angular/core';
 import { NgModuleRef } from '@angular/core';
@@ -14,7 +14,10 @@ import { DesignPropsService } from 'meepo-idesign-share';
 export class AppComponent implements OnInit {
   title = 'app';
   constructor(
-    public props: DesignPropsService
+    public props: DesignPropsService,
+    public ele: ElementRef
   ) { }
-  ngOnInit() {}
+  ngOnInit() {
+    // console.log(this.ele.nativeElement.style);
+  }
 }

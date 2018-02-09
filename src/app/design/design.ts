@@ -15,7 +15,8 @@ export function deepCopy(obj: any) {
 // 设置
 @Component({
     selector: 'design-setting',
-    templateUrl: './design-setting.html'
+    templateUrl: './design-setting.html',
+    styleUrls: ['./design-setting.scss']
 })
 export class DesignSettingComponent implements OnInit {
     @HostBinding('class.meepo-design-setting') _setting: boolean = true;
@@ -23,9 +24,11 @@ export class DesignSettingComponent implements OnInit {
     instance: ReactComponent<any, any>;
     constructor(
         public props: DesignPropsService,
-        public api: DesignApiService
-    ) { }
-    ngOnInit() { }
+        public api: DesignApiService,
+    ) {
+    }
+    ngOnInit() {
+    }
     setSetting(com: DesignLibraryProp, instance?: any) {
         this.item = com;
         this.instance = instance;
@@ -55,7 +58,9 @@ export class DesignSettingComponent implements OnInit {
 // 预览
 @Component({
     selector: 'design-preview',
-    templateUrl: './design-preview.html'
+    templateUrl: './design-preview.html',
+    styleUrls: ['./design-preview.scss'],
+    encapsulation: ViewEncapsulation.None
 })
 export class DesignPreviewComponent implements OnInit {
     @HostBinding('class.meepo-design-preview') _preview: boolean = true;
@@ -187,7 +192,7 @@ export class DesignComponent implements OnInit {
         this.router.navigate(['preview'])
     }
 
-    postToHistory() { 
+    postToHistory() {
         console.log('postToHistory');
         this._pages.savePage();
     }

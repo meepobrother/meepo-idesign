@@ -131,8 +131,10 @@
     tslib "^1.7.1"
 
 "@angular/flex-layout@^2.0.0-beta.12":
-  version "2.0.0-rc.1"
-  resolved "https://registry.yarnpkg.com/@angular/flex-layout/-/flex-layout-2.0.0-rc.1.tgz#96fa7f85b2c4bacf2784913a2d607e2ed23dc7f1"
+  version "2.0.0-beta.12"
+  resolved "https://registry.yarnpkg.com/@angular/flex-layout/-/flex-layout-2.0.0-beta.12.tgz#80970dc1d60f27fa41537659926f3238f759f343"
+  dependencies:
+    tslib "^1.7.1"
 
 "@angular/forms@^5.0.0":
   version "5.2.2"
@@ -222,6 +224,10 @@
 "@types/selenium-webdriver@^2.53.35", "@types/selenium-webdriver@~2.53.39":
   version "2.53.43"
   resolved "https://registry.yarnpkg.com/@types/selenium-webdriver/-/selenium-webdriver-2.53.43.tgz#2de3d718819bc20165754c4a59afb7e9833f6707"
+
+"@types/swiper@^3.4.6":
+  version "3.4.6"
+  resolved "https://registry.yarnpkg.com/@types/swiper/-/swiper-3.4.6.tgz#88b26d47f7d9cdc6c563c154e10d449b7018e1b8"
 
 JSONStream@^1.0.4:
   version "1.3.2"
@@ -1866,6 +1872,10 @@ dom-serializer@0:
   dependencies:
     domelementtype "~1.1.1"
     entities "~1.1.1"
+
+dom7@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/dom7/-/dom7-2.0.1.tgz#a8a2c802cf17c20b051d9414143061472201a233"
 
 domain-browser@^1.1.1:
   version "1.2.0"
@@ -4059,9 +4069,11 @@ meepo-idesign@^1.1.8:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/meepo-idesign/-/meepo-idesign-1.2.1.tgz#d35e5a76c2867f69868dc8ba4fe40fa4bbb66681"
 
-meepo-themes@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/meepo-themes/-/meepo-themes-1.0.2.tgz#ffe93f8818e25ed7c19ac46051c9db03338bdd49"
+meepo-themes@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/meepo-themes/-/meepo-themes-1.0.4.tgz#cd295536f8ccfadec0028f3676372475086d15ac"
+  dependencies:
+    swiper "^4.1.0"
 
 meepo-we7-router@^1.1.8:
   version "1.1.8"
@@ -4300,9 +4312,9 @@ ng-packagr@^1.6.0:
     uglify-js "^3.0.7"
     vinyl-fs "^2.4.4"
 
-ng-react-component@^1.7.1:
-  version "1.7.1"
-  resolved "https://registry.yarnpkg.com/ng-react-component/-/ng-react-component-1.7.1.tgz#63d4148693f9b4dc90beaacc4c3a832252b48c8a"
+ng-react-component@^1.7.4:
+  version "1.7.4"
+  resolved "https://registry.yarnpkg.com/ng-react-component/-/ng-react-component-1.7.4.tgz#ef99816dd9bf8f12fe61138c11bcd68a02d31004"
 
 no-case@^2.2.0:
   version "2.3.2"
@@ -6303,6 +6315,12 @@ svgo@^0.7.0:
     mkdirp "~0.5.1"
     sax "~1.2.1"
     whet.extend "~0.9.9"
+
+swiper@^4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/swiper/-/swiper-4.1.0.tgz#3d1d97aef948366b8b36fa90d41dcedf5432c88c"
+  dependencies:
+    dom7 "^2.0.1"
 
 symbol-observable@1.0.1:
   version "1.0.1"

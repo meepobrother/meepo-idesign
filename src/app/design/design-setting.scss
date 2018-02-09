@@ -1,0 +1,67 @@
+.grid-item {
+    float: left;
+    font-size: 12px;
+    width: 6em;
+    text-align: center;
+    background: #ccc;
+    cursor: pointer;
+    height: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    &:hover {
+        background: #000;
+        color: #fff;
+    }
+}
+
+.meepo-design-setting {
+    display: block;
+    background: #efefef;
+    flex: 1;
+    padding: 0 10px;
+    border-left: 10px solid #fff;
+    overflow: auto;
+    &-empty {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        font-size: .8em;
+        color: gray;
+    }
+    &-drop {
+        position: relative;
+        border: 1px dashed red;
+        height: 80px;
+        display: flex;
+        flex-direction: column;
+        margin-top: 0px;
+        color: gray;
+        background: rgb(128, 128, 128);
+        textarea {
+            width: 100%;
+            height: 100%;
+            background: #efefef;
+        }
+    }
+    &-nav {
+        background: rgb(0, 0, 0);
+        color: #fff;
+        padding: 5px 20px;
+        list-style: none;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        height: 33px;
+        li {
+            color: #fff;
+            display: block;
+            line-height: 20px;
+            cursor: pointer;
+        }
+    }
+}

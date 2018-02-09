@@ -13,6 +13,7 @@ import {
     DESIGN_PAGES
 } from './design';
 import { CanDropDirective, CanDragDirective } from './drop-drag';
+import { ReactiveFormsModule } from '@angular/forms';
 @NgModule({
     imports: [
         CommonModule,
@@ -20,7 +21,8 @@ import { CanDropDirective, CanDragDirective } from './drop-drag';
             path: 'design',
             component: DesignComponent
         }]),
-        IDesignComponentModule.forRoot([])
+        IDesignComponentModule.forRoot([]),
+        ReactiveFormsModule
     ],
     exports: [
         DesignLibraryComponent, DesignComponent,

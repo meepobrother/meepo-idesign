@@ -11,6 +11,7 @@ export class ShareBackgroundComponent extends ControlBase implements OnInit {
         super();
     }
     ngOnInit() {
+        this.checkControl('background-image', '');
         this.checkControl('background-size', 'cover');
         this.checkControl('background-position', 'cover');
         this.checkControl('background-repeat', 'no-repeat');

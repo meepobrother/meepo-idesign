@@ -26,7 +26,6 @@ antd-badge {
 .weui-flex__item {
     min-height: 50px;
     background: gray;
-    border: .5px solid #fff;
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -43,28 +42,7 @@ antd-badge {
     color: #fff;
 }
 
-.is-focus {
-    position: relative;
-    &:before {
-        content: " ";
-        display: block;
-        width: 100%;
-        border: 1px dashed rgb(160, 0, 0);
-        position: absolute;
-        bottom: 0px;
-        height: 0px;
-        z-index: 9;
-    }
-    &:after {
-        content: " ";
-        display: block;
-        width: 100%;
-        border: 1px dashed rgb(160, 0, 0);
-        position: absolute;
-        top: 0px;
-        height: 0px;
-    }
-}
+.is-focus {}
 
 .weui-btn+.weui-btn {
     margin-top: 0px;
@@ -91,6 +69,11 @@ $settingRowWidth: 260px;
         height: 22px;
         min-height: 22px;
         line-height: 22px;
+    }
+    select {
+        background-color: #353535;
+        color: #a0a0a0;
+        float: right;
     }
     &-input {
         display: flex;
