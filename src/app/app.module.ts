@@ -19,6 +19,9 @@ import { both as footerBoth, entrys as footerEntrys, preview as footerPreview } 
 import { both as cubeBoth, entrys as cubeEntrys, preview as cubePreview } from './components/weui-cube/public_api';
 import { both as swiperBoth, entrys as swiperEntrys, preview as swiperPreview } from './components/weui-swiper/public_api';
 
+import { both as meepoSmsBoth, entrys as meepoSmsEntrys, preview as meepoSmsPreview } from './components/meepo-sms/public_api';
+
+
 import { DESIGN_LIBRARYS, IDesignComponentModule } from 'meepo-idesign-share';
 
 @NgModule({
@@ -33,7 +36,8 @@ import { DESIGN_LIBRARYS, IDesignComponentModule } from 'meepo-idesign-share';
     ...bodyEntrys,
     ...footerEntrys,
     ...cubeEntrys,
-    ...swiperEntrys
+    ...swiperEntrys,
+    ...meepoSmsEntrys
   ],
   imports: [
     BrowserModule,
@@ -66,7 +70,8 @@ import { DESIGN_LIBRARYS, IDesignComponentModule } from 'meepo-idesign-share';
         bodyBoth,
         footerBoth,
         cubeBoth,
-        swiperBoth
+        swiperBoth,
+        meepoSmsBoth
       ],
       multi: true
     }
@@ -79,7 +84,8 @@ import { DESIGN_LIBRARYS, IDesignComponentModule } from 'meepo-idesign-share';
     ...bodyEntrys,
     ...footerEntrys,
     ...cubeEntrys,
-    ...swiperEntrys
+    ...swiperEntrys,
+    ...meepoSmsEntrys
   ],
   bootstrap: [AppComponent]
 })
