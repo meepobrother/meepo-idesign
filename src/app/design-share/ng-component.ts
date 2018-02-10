@@ -100,12 +100,14 @@ export class NgComponentDirective implements OnChanges {
                 if (designLibraryProp.state) {
                     instance.state = designLibraryProp.state;
                 }
-                instance.onClick.subscribe((ev: MouseEvent) => {
-                    if (this.ngComponentPreview) {
-                        this.props.setActiveSettingProps(designLibraryProp, instance);
-                        ev.stopPropagation();
-                    }
-                });
+                if (instance.onClick && instance.onClick.subscribe) {
+                    instance.onClick.subscribe((ev: MouseEvent) => {
+                        if (this.ngComponentPreview) {
+                            this.props.setActiveSettingProps(designLibraryProp, instance);
+                            ev.stopPropagation();
+                        }
+                    });
+                }
                 instance.setClass(this.ngComponentClass);
                 instance.setStyle(this.ngComponentStyle);
                 instance.instance = this.ngComponentInstance;
@@ -120,7 +122,6 @@ export class NgComponentDirective implements OnChanges {
                 } else {
                     designLibraryProp.uuid = instance.guid = guid();
                 }
-                // api
                 this.api.save(instance, designLibraryProp, this.ngComponentPreview);
             }
         } catch (err) {

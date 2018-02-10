@@ -82,9 +82,7 @@ export class DesignPreviewComponent implements OnInit {
     ) { }
     ngOnInit() { }
 
-    _showMore(e: DesignLibraryProp) {
-        console.log('显示操作提示');
-    }
+    _showMore(e: DesignLibraryProp) { }
 
     addComponent(name: string) {
         this.props.addPropByName(name);
@@ -149,9 +147,7 @@ export class DesignPagesComponent implements OnInit {
         this.props.pageProps = item.props;
     }
 
-    savePage() {
-        console.log(this.pages);
-    }
+    savePage() { }
 }
 
 // 容器
@@ -176,9 +172,8 @@ export class DesignComponent implements OnInit {
         private props: DesignPropsService,
         private router: Router
     ) { }
-    ngOnInit() {
 
-    }
+    ngOnInit() { }
 
     setSetting(com: { props: DesignLibraryProp, instance: any }) {
         this._setting.setSetting(com.props, com.instance);
@@ -193,7 +188,6 @@ export class DesignComponent implements OnInit {
     }
 
     postToHistory() {
-        console.log('postToHistory');
         this._pages.savePage();
     }
 

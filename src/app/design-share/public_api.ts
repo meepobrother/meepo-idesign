@@ -5,3 +5,4 @@ export {
     DesignLibraryService, DESIGN_LIBRARYS, DesignPropsService,
     DESIGN_COMPONENTS
 } from './types';
+export { guid } from './guid';

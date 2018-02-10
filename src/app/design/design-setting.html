@@ -1,6 +1,6 @@
 <div class="setting-row">
     <ul class="meepo-design-setting-nav" *ngIf="props.fathersProps">
-        <li (click)="setItemProps(item)" [style.order]="-i" *ngFor="let item of props.fathersProps;index as i;">{{item.title}}></li>
+        <li (click)="setItemProps(item)" [style.order]="1000-i" *ngFor="let item of props.fathersProps;index as i;">{{item.title}}></li>
     </ul>
 </div>
 <div class="setting-row" [formGroup]="props.settingForm" style="overflow: auto;max-height: calc(100% - 150px)">

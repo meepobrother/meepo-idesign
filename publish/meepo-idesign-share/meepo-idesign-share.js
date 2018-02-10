@@ -153,6 +153,7 @@ class DesignPropsService {
             }
         }
         catch (err) { }
+        console.log(this);
     }
     /**
      * @return {?}
@@ -486,12 +487,14 @@ class NgComponentDirective {
                 if (designLibraryProp.state) {
                     instance.state = designLibraryProp.state;
                 }
-                instance.onClick.subscribe((ev) => {
-                    if (this.ngComponentPreview) {
-                        this.props.setActiveSettingProps(designLibraryProp, instance);
-                        ev.stopPropagation();
-                    }
-                });
+                if (instance.onClick && instance.onClick.subscribe) {
+                    instance.onClick.subscribe((ev) => {
+                        if (this.ngComponentPreview) {
+                            this.props.setActiveSettingProps(designLibraryProp, instance);
+                            ev.stopPropagation();
+                        }
+                    });
+                }
                 instance.setClass(this.ngComponentClass);
                 instance.setStyle(this.ngComponentStyle);
                 instance.instance = this.ngComponentInstance;
@@ -507,7 +510,6 @@ class NgComponentDirective {
                 else {
                     designLibraryProp.uuid = instance.guid = guid();
                 }
-                // api
                 this.api.save(instance, designLibraryProp, this.ngComponentPreview);
             }
         }
@@ -1393,5 +1395,5 @@ IDesignComponentModule.ctorParameters = () => [];
  * Generated bundle index. Do not edit.
  */
 
-export { IDesignComponentModule, NgComponentDirective, DesignApiService, DesignLibraryService, DESIGN_LIBRARYS, DesignPropsService, DESIGN_COMPONENTS, ShareBackgroundComponent as ɵf, ControlBase as ɵd, ShareBorderComponent as ɵj, ShareColorComponent as ɵc, ShareMarginComponent as ɵg, SharePaddingComponent as ɵh, SharePositionComponent as ɵi, shareComponents as ɵb, ShareSizeComponent as ɵe, ShareSwiperComponent as ɵk, DRAG_DROP_ALL as ɵa };
+export { IDesignComponentModule, NgComponentDirective, DesignApiService, DesignLibraryService, DESIGN_LIBRARYS, DesignPropsService, DESIGN_COMPONENTS, guid, ShareBackgroundComponent as ɵf, ControlBase as ɵd, ShareBorderComponent as ɵj, ShareColorComponent as ɵc, ShareMarginComponent as ɵg, SharePaddingComponent as ɵh, SharePositionComponent as ɵi, shareComponents as ɵb, ShareSizeComponent as ɵe, ShareSwiperComponent as ɵk, DRAG_DROP_ALL as ɵa };
 //# sourceMappingURL=meepo-idesign-share.js.map
