@@ -293,12 +293,17 @@ var DesignPropsService = (function () {
         if (props) {
             if (props.father) {
                 var /** @type {?} */ father = this.getPropsByUid(props.father);
-                var /** @type {?} */ index = father.props.children.indexOf(props);
-                if (index > -1) {
-                    var /** @type {?} */ children = father.props.children.splice(index, 1);
-                    this.instance.setProps(Object.assign({}, father.props, {
-                        children: children
-                    }));
+                try {
+                    var /** @type {?} */ index = father.props.children.indexOf(props);
+                    if (index > -1) {
+                        var /** @type {?} */ children = father.props.children.splice(index, 1);
+                        this.instance.setProps(Object.assign({}, father.props, {
+                            children: children
+                        }));
+                    }
+                }
+                catch (e) {
+                    console.log(e);
                 }
             }
             else {

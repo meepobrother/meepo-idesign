@@ -225,15 +225,19 @@ export class DesignPropsService {
         if (props) {
             if (props.father) {
                 let father: any = this.getPropsByUid(props.father);
-                let index = father.props.children.indexOf(props);
-                if (index > -1) {
-                    const children = father.props.children.splice(index, 1);
-                    this.instance.setProps({
-                        ...father.props,
-                        ...{
-                            children: children
-                        }
-                    });
+                try {
+                    let index = father.props.children.indexOf(props);
+                    if (index > -1) {
+                        const children = father.props.children.splice(index, 1);
+                        this.instance.setProps({
+                            ...father.props,
+                            ...{
+                                children: children
+                            }
+                        });
+                    }
+                } catch (e) {
+                    console.log(e);
                 }
             } else {
                 let index = this.pageProps.indexOf(props);

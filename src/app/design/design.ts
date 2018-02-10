@@ -12,86 +12,8 @@ import { ReactComponent } from 'ng-react-component';
 export function deepCopy(obj: any) {
     return JSON.parse(JSON.stringify(obj));
 }
-// 设置
-@Component({
-    selector: 'design-setting',
-    templateUrl: './design-setting.html',
-    styleUrls: ['./design-setting.scss'],
-    encapsulation: ViewEncapsulation.None
-})
-export class DesignSettingComponent {
-    @HostBinding('class.meepo-design-setting') _setting: boolean = true;
-    item: DesignLibraryProp;
-    instance: ReactComponent<any, any>;
-    constructor(
-        public props: DesignPropsService,
-        public api: DesignApiService,
-    ) {
-    }
+import { entrys as meepoMobileEntrys, both as meepoMobileBoth, MeepoMobileSettingComponent } from './meepo-mobile/public_api';
 
-    setSetting(com: DesignLibraryProp, instance?: any) {
-        this.item = com;
-        this.instance = instance;
-    }
-
-    setTopProps() {
-        this.props.settingProps = null;
-    }
-    // 设置激活元素
-    setItemProps(item: any) {
-        const instance = this.api.get(item.uuid);
-        this.props.setActiveSettingProps(item, instance.view.instance);
-    }
-
-    addComponent(e: any) {
-        this.props.addPropsToInstanceByName(e);
-    }
-
-    removeComponent(uuid: string) {
-        this.props.removePropsByUid(uuid);
-    }
-
-    toFatherProps(e: any) {
-        this.props.toFatherProps();
-    }
-}
-// 预览
-@Component({
-    selector: 'design-preview',
-    templateUrl: './design-preview.html',
-    styleUrls: ['./design-preview.scss'],
-    encapsulation: ViewEncapsulation.None
-})
-export class DesignPreviewComponent implements OnInit {
-    @HostBinding('class.meepo-design-preview') _preview: boolean = true;
-    @Output() doClick: EventEmitter<any> = new EventEmitter();
-    directives: any = {
-        name: 'device-iphone-8 device-gold',
-        color: '',
-        src: './assets/img/bg-03.jpg',
-        type: 'image'
-    };
-
-    onClick: any = (e: DesignLibraryProp, instance: any) => {
-        this.doClick.emit({ props: e, instance: instance });
-    }
-
-    isOpen: boolean = false;
-    constructor(
-        public props: DesignPropsService
-    ) { }
-    ngOnInit() { }
-
-    _showMore(e: DesignLibraryProp) { }
-
-    addComponent(name: string) {
-        this.props.addPropByName(name);
-    }
-
-    removeComponent(uuid: string) {
-        this.props.removePropsByUid(uuid);
-    }
-}
 // 组件库
 @Component({
     selector: 'design-library',
@@ -144,7 +66,7 @@ export class DesignPagesComponent implements OnInit {
     ngOnInit() { }
 
     previewPage(item: any) {
-        this.props.pageProps = item.props;
+        this.props.pageProps = this.props.deepCopy(item.props);
     }
 
     savePage() { }
@@ -160,9 +82,8 @@ export class DesignPagesComponent implements OnInit {
 export class DesignComponent implements OnInit {
     @HostBinding('class.meepo-design') _design: boolean = true;
 
-    @ViewChild(DesignSettingComponent) _setting: DesignSettingComponent;
+    @ViewChild(MeepoMobileSettingComponent) _setting: MeepoMobileSettingComponent;
     @ViewChild(DesignLibraryComponent) _library: DesignLibraryComponent;
-    @ViewChild(DesignPreviewComponent) _preview: DesignPreviewComponent;
     @ViewChild(DesignHistoryComponent) _history: DesignHistoryComponent;
     @ViewChild(DesignPagesComponent) _pages: DesignPagesComponent;
 
@@ -176,6 +97,7 @@ export class DesignComponent implements OnInit {
     ngOnInit() { }
 
     setSetting(com: { props: DesignLibraryProp, instance: any }) {
+        console.log('com', com);
         this._setting.setSetting(com.props, com.instance);
     }
 

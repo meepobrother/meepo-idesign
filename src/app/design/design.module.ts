@@ -8,8 +8,7 @@ import { DesignLibraryProp, DesignLibraryService, IDesignComponentModule } from 
 import { entrys as meepoMobileEntrys } from './meepo-mobile/public_api';
 import {
     DesignLibraryComponent, DesignComponent,
-    DesignHistoryComponent, DesignPreviewComponent,
-    DesignSettingComponent, DesignPagesComponent,
+    DesignHistoryComponent, DesignPagesComponent,
     DESIGN_PAGES
 } from './design';
 import { CanDropDirective, CanDragDirective } from './drop-drag';
@@ -26,14 +25,12 @@ import { ReactiveFormsModule } from '@angular/forms';
     ],
     exports: [
         DesignLibraryComponent, DesignComponent,
-        DesignHistoryComponent, DesignPreviewComponent,
-        DesignSettingComponent, CanDropDirective, CanDragDirective,
+        DesignHistoryComponent, CanDropDirective, CanDragDirective,
         DesignPagesComponent
     ],
     declarations: [
         DesignLibraryComponent, DesignComponent,
-        DesignHistoryComponent, DesignPreviewComponent,
-        DesignSettingComponent, CanDropDirective, CanDragDirective,
+        DesignHistoryComponent, CanDropDirective, CanDragDirective,
         DesignPagesComponent, ...meepoMobileEntrys
     ],
     providers: [],

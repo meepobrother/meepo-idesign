@@ -3,8 +3,8 @@
         <design-pages *ngIf="!activeHistory"></design-pages>
     </div>
 </div>
-<design-preview (doClick)="setSetting($event)"></design-preview>
-<design-setting></design-setting>
+<meepo-mobile-preview></meepo-mobile-preview>
+<meepo-mobile-setting></meepo-mobile-setting>
 
 <div class="meepo-design-footer">
     <a href="javascript:;" (click)="saveToHistory()" class="meepo-design-footer-save">保存</a>

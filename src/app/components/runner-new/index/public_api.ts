@@ -4,7 +4,7 @@ const props = [];
 props.push(new CreateLib('weui-body', '主体', {
     children: [],
     style: {}
-}, [], 'page1', 'body1'));
+}, [], null, 'body1'));
 
 export const indexProps = props;
 
