@@ -16,9 +16,10 @@ export function deepCopy(obj: any) {
 @Component({
     selector: 'design-setting',
     templateUrl: './design-setting.html',
-    styleUrls: ['./design-setting.scss']
+    styleUrls: ['./design-setting.scss'],
+    encapsulation: ViewEncapsulation.None
 })
-export class DesignSettingComponent implements OnInit {
+export class DesignSettingComponent {
     @HostBinding('class.meepo-design-setting') _setting: boolean = true;
     item: DesignLibraryProp;
     instance: ReactComponent<any, any>;
@@ -27,8 +28,7 @@ export class DesignSettingComponent implements OnInit {
         public api: DesignApiService,
     ) {
     }
-    ngOnInit() {
-    }
+
     setSetting(com: DesignLibraryProp, instance?: any) {
         this.item = com;
         this.instance = instance;

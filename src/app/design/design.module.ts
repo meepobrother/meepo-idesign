@@ -5,7 +5,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { DesignLibraryProp, DesignLibraryService, IDesignComponentModule } from 'meepo-idesign-share';
-
+import { entrys as meepoMobileEntrys } from './meepo-mobile/public_api';
 import {
     DesignLibraryComponent, DesignComponent,
     DesignHistoryComponent, DesignPreviewComponent,
@@ -34,7 +34,7 @@ import { ReactiveFormsModule } from '@angular/forms';
         DesignLibraryComponent, DesignComponent,
         DesignHistoryComponent, DesignPreviewComponent,
         DesignSettingComponent, CanDropDirective, CanDragDirective,
-        DesignPagesComponent,
+        DesignPagesComponent, ...meepoMobileEntrys
     ],
     providers: [],
 })

@@ -39,8 +39,7 @@ import { DESIGN_LIBRARYS, IDesignComponentModule } from 'meepo-idesign-share';
     ...cubeEntrys,
     ...swiperEntrys,
     ...meepoSmsEntrys,
-    ...meepoWelcomeEntrys,
-    ...meepoMobileEntrys
+    ...meepoWelcomeEntrys
   ],
   imports: [
     BrowserModule,
@@ -75,7 +74,6 @@ import { DESIGN_LIBRARYS, IDesignComponentModule } from 'meepo-idesign-share';
         cubeBoth,
         swiperBoth,
         meepoSmsBoth,
-        meepoMobileBoth,
         meepoWelcomeBoth
       ],
       multi: true
@@ -91,8 +89,7 @@ import { DESIGN_LIBRARYS, IDesignComponentModule } from 'meepo-idesign-share';
     ...cubeEntrys,
     ...swiperEntrys,
     ...meepoSmsEntrys,
-    ...meepoWelcomeEntrys,
-    ...meepoMobileEntrys
+    ...meepoWelcomeEntrys
   ],
   bootstrap: [AppComponent]
 })

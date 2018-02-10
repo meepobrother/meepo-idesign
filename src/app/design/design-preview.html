@@ -1,10 +1,4 @@
 <div class="meepo-design-preview-iphone" canDrop (canDropChange)="addComponent($event)">
-    <ng-container *ngComponent="
-            props.pageProps;
-            preview: true;
-            click: onClick;
-            class: {'editing':true};
-            drag: true;
-        "></ng-container>
+    <meepo-mobile-preview></meepo-mobile-preview>
 </div>
 <div style="min-height: 50px;position: relative;"></div>

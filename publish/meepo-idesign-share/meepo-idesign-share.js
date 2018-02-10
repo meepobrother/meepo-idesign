@@ -153,7 +153,6 @@ class DesignPropsService {
             }
         }
         catch (err) { }
-        console.log(this);
     }
     /**
      * @return {?}
@@ -495,8 +494,8 @@ class NgComponentDirective {
                         }
                     });
                 }
-                instance.setClass(this.ngComponentClass);
-                instance.setStyle(this.ngComponentStyle);
+                instance.setClass(instance.props.classObj);
+                instance.setStyle(instance.props.style);
                 instance.instance = this.ngComponentInstance;
                 if (this.ngComponentDrag || this.dragDropAll) {
                     this.setDrage(instance);

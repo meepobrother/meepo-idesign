@@ -173,7 +173,6 @@ var DesignPropsService = (function () {
                 }
             }
             catch (err) { }
-            console.log(this);
         },
         enumerable: true,
         configurable: true
@@ -517,8 +516,8 @@ var NgComponentDirective = (function () {
                         }
                     });
                 }
-                instance_1.setClass(this.ngComponentClass);
-                instance_1.setStyle(this.ngComponentStyle);
+                instance_1.setClass(instance_1.props.classObj);
+                instance_1.setStyle(instance_1.props.style);
                 instance_1.instance = this.ngComponentInstance;
                 if (this.ngComponentDrag || this.dragDropAll) {
                     this.setDrage(instance_1);

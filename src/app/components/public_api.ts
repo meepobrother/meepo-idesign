@@ -1,4 +1,5 @@
 import { DesignLibraryProp } from 'meepo-idesign-share';
+
 import { CreateLib } from 'ng-react-component';
 import { Type } from '@angular/core';
 
@@ -16,10 +17,10 @@ componentsSet.push(new CreateLib('weui-city', '城市切换', { title: '城市�
 
 componentsSet.push(new CreateLib('weui-body', '主要内容', { title: '主要内容' }));
 componentsSet.push(new CreateLib('weui-footer', '底部导航', { title: '底部导航' }));
-componentsSet.push(new CreateLib('weui-swiper', '滑动框', { title: '滑动框' }, [], {}, [
+componentsSet.push(new CreateLib('weui-swiper', '滑动框', { title: '滑动框' }, [], '', '', {}, [
     new CreateLib('weui-swiper-item', '滑动项目', {
         title: '滑动项目'
-    }, [], {}, [])
+    }, [], '', '', {}, [])
 ]));
 
 componentsSet.push(new CreateLib('weui-swiper-item', '滑动项目', {

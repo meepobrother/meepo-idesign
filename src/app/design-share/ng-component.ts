@@ -108,8 +108,9 @@ export class NgComponentDirective implements OnChanges {
                         }
                     });
                 }
-                instance.setClass(this.ngComponentClass);
-                instance.setStyle(this.ngComponentStyle);
+                instance.setClass(instance.props.classObj);
+                instance.setStyle(instance.props.style);
+
                 instance.instance = this.ngComponentInstance;
                 if (this.ngComponentDrag || this.dragDropAll) {
                     this.setDrage(instance);

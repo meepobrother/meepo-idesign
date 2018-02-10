@@ -4061,9 +4061,9 @@ meepo-common@^1.1.7:
   version "1.1.8"
   resolved "https://registry.yarnpkg.com/meepo-common/-/meepo-common-1.1.8.tgz#f9e4cbe5ddec0b3233720dc483cde9d1b9b2e683"
 
-meepo-idesign-share@^1.4.1:
-  version "1.4.1"
-  resolved "https://registry.yarnpkg.com/meepo-idesign-share/-/meepo-idesign-share-1.4.1.tgz#e02c8ffae5145d9877bd6661b61f1cadb6913732"
+meepo-idesign-share@^1.4.3:
+  version "1.4.3"
+  resolved "https://registry.yarnpkg.com/meepo-idesign-share/-/meepo-idesign-share-1.4.3.tgz#7cdcc7741dd72c37937374c8736f88868e043e38"
 
 meepo-idesign@^1.1.8:
   version "1.2.1"
@@ -4312,9 +4312,9 @@ ng-packagr@^1.6.0:
     uglify-js "^3.0.7"
     vinyl-fs "^2.4.4"
 
-ng-react-component@^1.7.9:
-  version "1.7.9"
-  resolved "https://registry.yarnpkg.com/ng-react-component/-/ng-react-component-1.7.9.tgz#7078d0c2a18786609325c381c04bd51dd611bab5"
+ng-react-component@^1.8.3:
+  version "1.8.3"
+  resolved "https://registry.yarnpkg.com/ng-react-component/-/ng-react-component-1.8.3.tgz#25b78483e9ee95c8fed0fd848791be630ad507e4"
 
 no-case@^2.2.0:
   version "2.3.2"

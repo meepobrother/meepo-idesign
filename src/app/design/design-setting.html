@@ -1,16 +1,2 @@
-<div class="setting-row">
-    <ul class="meepo-design-setting-nav" *ngIf="props.fathersProps">
-        <li (click)="setItemProps(item)" [style.order]="1000-i" *ngFor="let item of props.fathersProps;index as i;">{{item.title}}></li>
-    </ul>
-</div>
-<div class="setting-row" [formGroup]="props.settingForm" style="overflow: auto;max-height: calc(100% - 150px)">
-    <div class="meepo-design-setting-drop">
-        <textarea formControlName="content" canDrop (canDropChange)="addComponent($event)" placeholder="可将元素拖拽到此处添加"></textarea>
-        <ng-container *ngFor="let item of props.settingProps?.items">
-            <div class="grid-item" [canDrag]="item.name">
-                <span>{{item.title}}</span>
-            </div>
-        </ng-container>
-    </div>
-    <ng-container *ngComponent="[props.settingProps];instance: props.instance"></ng-container>
-</div>
+
+<meepo-mobile-setting></meepo-mobile-setting>
