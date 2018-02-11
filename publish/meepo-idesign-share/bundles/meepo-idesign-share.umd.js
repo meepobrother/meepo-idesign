@@ -1052,6 +1052,82 @@ var shareComponents = [
     ShareBorderComponent,
     ShareSwiperComponent
 ];
+var NgEachOfContext = (function () {
+    /**
+     * @param {?} $implicit
+     * @param {?} ngEachOf
+     * @param {?} key
+     */
+    function NgEachOfContext($implicit, ngEachOf, key) {
+        this.$implicit = $implicit;
+        this.ngEachOf = ngEachOf;
+        this.key = key;
+    }
+    return NgEachOfContext;
+}());
+var NgEachOf = (function () {
+    /**
+     * @param {?} _viewContainer
+     * @param {?} _template
+     * @param {?} _differs
+     */
+    function NgEachOf(_viewContainer, _template, _differs) {
+        this._viewContainer = _viewContainer;
+        this._template = _template;
+        this._differs = _differs;
+        this._differ = null;
+    }
+    Object.defineProperty(NgEachOf.prototype, "ngForTemplate", {
+        /**
+         * @param {?} value
+         * @return {?}
+         */
+        set: function (value) {
+            if (value) {
+                this._template = value;
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    /**
+     * @param {?} changes
+     * @return {?}
+     */
+    NgEachOf.prototype.ngOnChanges = function (changes) {
+        this._viewContainer.clear();
+        if ('ngEachOf' in changes) {
+            var /** @type {?} */ value = changes['ngEachOf'].currentValue;
+            this._applyChanges(value);
+        }
+    };
+    /**
+     * @param {?} changes
+     * @return {?}
+     */
+    NgEachOf.prototype._applyChanges = function (changes) {
+        for (var /** @type {?} */ key in changes) {
+            var /** @type {?} */ item = changes[key];
+            var /** @type {?} */ view = this._viewContainer.createEmbeddedView(this._template, new NgEachOfContext(item, this.ngEachOf, key), parseInt(key, 16));
+        }
+    };
+    return NgEachOf;
+}());
+NgEachOf.decorators = [
+    { type: core.Directive, args: [{ selector: '[ngEach][ngEachOf]' },] },
+];
+/**
+ * @nocollapse
+ */
+NgEachOf.ctorParameters = function () { return [
+    { type: core.ViewContainerRef, },
+    { type: core.TemplateRef, },
+    { type: core.KeyValueDiffers, },
+]; };
+NgEachOf.propDecorators = {
+    'ngEachOf': [{ type: core.Input },],
+    'ngForTemplate': [{ type: core.Input },],
+};
 var IDesignComponentModule = (function () {
     function IDesignComponentModule() {
     }
@@ -1084,10 +1160,14 @@ IDesignComponentModule.decorators = [
                 ],
                 exports: [
                     NgComponentDirective
-                ].concat(shareComponents),
+                ].concat(shareComponents, [
+                    NgEachOf
+                ]),
                 declarations: [
                     NgComponentDirective
-                ].concat(shareComponents),
+                ].concat(shareComponents, [
+                    NgEachOf
+                ]),
                 providers: [
                     DesignApiService,
                     DesignLibraryService,
@@ -1119,6 +1199,8 @@ exports.ɵb = shareComponents;
 exports.ɵe = ShareSizeComponent;
 exports.ɵk = ShareSwiperComponent;
 exports.ɵa = DRAG_DROP_ALL;
+exports.ɵm = NgEachOf;
+exports.ɵl = NgEachOfContext;
 
 Object.defineProperty(exports, '__esModule', { value: true });
 

@@ -36,7 +36,7 @@
     "meepo-themes": "^1.0.4",
     "meepo-we7-router": "^1.1.8",
     "ng-packagr": "^1.6.0",
-    "ng-react-component": "^1.8.3",
+    "ng-react-component": "^1.9.1",
     "normalize.css": "^7.0.0",
     "rxjs": "^5.5.2",
     "standard-version": "^4.3.0",

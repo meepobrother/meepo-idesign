@@ -8,7 +8,7 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import { Component, ComponentFactoryResolver, Directive, Inject, Injectable, InjectionToken, Input, IterableDiffers, NgModule, Renderer2, TemplateRef, ViewContainerRef } from '@angular/core';
+import { Component, ComponentFactoryResolver, Directive, Inject, Injectable, InjectionToken, Input, IterableDiffers, KeyValueDiffers, NgModule, Renderer2, TemplateRef, ViewContainerRef } from '@angular/core';
 import { fromEvent as fromEvent$1 } from 'rxjs/observable/fromEvent';
 import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/operator/map';
@@ -1052,6 +1052,82 @@ var shareComponents = [
     ShareBorderComponent,
     ShareSwiperComponent
 ];
+var NgEachOfContext = (function () {
+    /**
+     * @param {?} $implicit
+     * @param {?} ngEachOf
+     * @param {?} key
+     */
+    function NgEachOfContext($implicit, ngEachOf, key) {
+        this.$implicit = $implicit;
+        this.ngEachOf = ngEachOf;
+        this.key = key;
+    }
+    return NgEachOfContext;
+}());
+var NgEachOf = (function () {
+    /**
+     * @param {?} _viewContainer
+     * @param {?} _template
+     * @param {?} _differs
+     */
+    function NgEachOf(_viewContainer, _template, _differs) {
+        this._viewContainer = _viewContainer;
+        this._template = _template;
+        this._differs = _differs;
+        this._differ = null;
+    }
+    Object.defineProperty(NgEachOf.prototype, "ngForTemplate", {
+        /**
+         * @param {?} value
+         * @return {?}
+         */
+        set: function (value) {
+            if (value) {
+                this._template = value;
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    /**
+     * @param {?} changes
+     * @return {?}
+     */
+    NgEachOf.prototype.ngOnChanges = function (changes) {
+        this._viewContainer.clear();
+        if ('ngEachOf' in changes) {
+            var /** @type {?} */ value = changes['ngEachOf'].currentValue;
+            this._applyChanges(value);
+        }
+    };
+    /**
+     * @param {?} changes
+     * @return {?}
+     */
+    NgEachOf.prototype._applyChanges = function (changes) {
+        for (var /** @type {?} */ key in changes) {
+            var /** @type {?} */ item = changes[key];
+            var /** @type {?} */ view = this._viewContainer.createEmbeddedView(this._template, new NgEachOfContext(item, this.ngEachOf, key), parseInt(key, 16));
+        }
+    };
+    return NgEachOf;
+}());
+NgEachOf.decorators = [
+    { type: Directive, args: [{ selector: '[ngEach][ngEachOf]' },] },
+];
+/**
+ * @nocollapse
+ */
+NgEachOf.ctorParameters = function () { return [
+    { type: ViewContainerRef, },
+    { type: TemplateRef, },
+    { type: KeyValueDiffers, },
+]; };
+NgEachOf.propDecorators = {
+    'ngEachOf': [{ type: Input },],
+    'ngForTemplate': [{ type: Input },],
+};
 var IDesignComponentModule = (function () {
     function IDesignComponentModule() {
     }
@@ -1084,10 +1160,14 @@ IDesignComponentModule.decorators = [
                 ],
                 exports: [
                     NgComponentDirective
-                ].concat(shareComponents),
+                ].concat(shareComponents, [
+                    NgEachOf
+                ]),
                 declarations: [
                     NgComponentDirective
-                ].concat(shareComponents),
+                ].concat(shareComponents, [
+                    NgEachOf
+                ]),
                 providers: [
                     DesignApiService,
                     DesignLibraryService,
@@ -1102,5 +1182,5 @@ IDesignComponentModule.ctorParameters = function () { return []; };
 /**
  * Generated bundle index. Do not edit.
  */
-export { IDesignComponentModule, NgComponentDirective, DesignApiService, DesignLibraryService, DESIGN_LIBRARYS, DesignPropsService, DESIGN_COMPONENTS, guid, ShareBackgroundComponent as ɵf, ControlBase as ɵd, ShareBorderComponent as ɵj, ShareColorComponent as ɵc, ShareMarginComponent as ɵg, SharePaddingComponent as ɵh, SharePositionComponent as ɵi, shareComponents as ɵb, ShareSizeComponent as ɵe, ShareSwiperComponent as ɵk, DRAG_DROP_ALL as ɵa };
+export { IDesignComponentModule, NgComponentDirective, DesignApiService, DesignLibraryService, DESIGN_LIBRARYS, DesignPropsService, DESIGN_COMPONENTS, guid, ShareBackgroundComponent as ɵf, ControlBase as ɵd, ShareBorderComponent as ɵj, ShareColorComponent as ɵc, ShareMarginComponent as ɵg, SharePaddingComponent as ɵh, SharePositionComponent as ɵi, shareComponents as ɵb, ShareSizeComponent as ɵe, ShareSwiperComponent as ɵk, DRAG_DROP_ALL as ɵa, NgEachOf as ɵm, NgEachOfContext as ɵl };
 //# sourceMappingURL=meepo-idesign-share.es5.js.map

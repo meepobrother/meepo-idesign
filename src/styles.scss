@@ -85,7 +85,7 @@ $settingRowWidth: 260px;
             padding: 7px 5px;
             display: inline-block;
             text-overflow: inherit!important;
-            min-width: 5em;
+            min-width: 8em;
         }
         &-unit {
             width: 2em;
@@ -110,7 +110,7 @@ $settingRowWidth: 260px;
                 padding: 0 7px;
                 padding-right: 0px;
                 border: 0;
-                width: 8em;
+                width: 10em;
                 &:focus {
                     color: #fefefe;
                     border-color: #444;

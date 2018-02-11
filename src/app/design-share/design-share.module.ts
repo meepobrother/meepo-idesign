@@ -6,6 +6,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
 import { shareComponents } from './components/public_api';
+import { NgEachOf } from './ng-each-of';
 @NgModule({
     imports: [
         CommonModule,
@@ -13,11 +14,13 @@ import { shareComponents } from './components/public_api';
     ],
     exports: [
         NgComponentDirective,
-        ...shareComponents
+        ...shareComponents,
+        NgEachOf
     ],
     declarations: [
         NgComponentDirective,
-        ...shareComponents
+        ...shareComponents,
+        NgEachOf
     ],
     providers: [
         DesignApiService,

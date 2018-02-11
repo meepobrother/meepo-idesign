@@ -13,3 +13,4 @@ export { shareComponents as ɵb } from './components/public_api';
 export { ShareSizeComponent as ɵe } from './components/size/size';
 export { ShareSwiperComponent as ɵk } from './components/swiper/swiper';
 export { DRAG_DROP_ALL as ɵa } from './ng-component';
+export { NgEachOf as ɵm, NgEachOfContext as ɵl } from './ng-each-of';

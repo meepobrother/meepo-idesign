@@ -20,7 +20,6 @@ import { both as cubeBoth, entrys as cubeEntrys, preview as cubePreview } from '
 import { both as swiperBoth, entrys as swiperEntrys, preview as swiperPreview } from './components/weui-swiper/public_api';
 
 import { both as meepoSmsBoth, entrys as meepoSmsEntrys, preview as meepoSmsPreview } from './components/meepo-sms/public_api';
-import { both as meepoMobileBoth, entrys as meepoMobileEntrys, preview as meepoMobilePreview } from './components/meepo-mobile/public_api';
 import { both as meepoWelcomeBoth, entrys as meepoWelcomeEntrys, preview as meepoWelcomePreview } from './components/meepo-welcome/public_api';
 
 import { DESIGN_LIBRARYS, IDesignComponentModule } from 'meepo-idesign-share';

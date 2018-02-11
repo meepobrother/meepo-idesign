@@ -1,4 +1,4 @@
-import { Component, ComponentFactoryResolver, Directive, Inject, Injectable, InjectionToken, Input, IterableDiffers, NgModule, Renderer2, TemplateRef, ViewContainerRef } from '@angular/core';
+import { Component, ComponentFactoryResolver, Directive, Inject, Injectable, InjectionToken, Input, IterableDiffers, KeyValueDiffers, NgModule, Renderer2, TemplateRef, ViewContainerRef } from '@angular/core';
 import { fromEvent as fromEvent$1 } from 'rxjs/observable/fromEvent';
 import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/operator/map';
@@ -1349,6 +1349,77 @@ const shareComponents = [
     ShareSwiperComponent
 ];
 
+class NgEachOfContext {
+    /**
+     * @param {?} $implicit
+     * @param {?} ngEachOf
+     * @param {?} key
+     */
+    constructor($implicit, ngEachOf, key) {
+        this.$implicit = $implicit;
+        this.ngEachOf = ngEachOf;
+        this.key = key;
+    }
+}
+class NgEachOf {
+    /**
+     * @param {?} _viewContainer
+     * @param {?} _template
+     * @param {?} _differs
+     */
+    constructor(_viewContainer, _template, _differs) {
+        this._viewContainer = _viewContainer;
+        this._template = _template;
+        this._differs = _differs;
+        this._differ = null;
+    }
+    /**
+     * @param {?} value
+     * @return {?}
+     */
+    set ngForTemplate(value) {
+        if (value) {
+            this._template = value;
+        }
+    }
+    /**
+     * @param {?} changes
+     * @return {?}
+     */
+    ngOnChanges(changes) {
+        this._viewContainer.clear();
+        if ('ngEachOf' in changes) {
+            const /** @type {?} */ value = changes['ngEachOf'].currentValue;
+            this._applyChanges(value);
+        }
+    }
+    /**
+     * @param {?} changes
+     * @return {?}
+     */
+    _applyChanges(changes) {
+        for (const /** @type {?} */ key in changes) {
+            const /** @type {?} */ item = changes[key];
+            const /** @type {?} */ view = this._viewContainer.createEmbeddedView(this._template, new NgEachOfContext(item, this.ngEachOf, key), parseInt(key, 16));
+        }
+    }
+}
+NgEachOf.decorators = [
+    { type: Directive, args: [{ selector: '[ngEach][ngEachOf]' },] },
+];
+/**
+ * @nocollapse
+ */
+NgEachOf.ctorParameters = () => [
+    { type: ViewContainerRef, },
+    { type: TemplateRef, },
+    { type: KeyValueDiffers, },
+];
+NgEachOf.propDecorators = {
+    'ngEachOf': [{ type: Input },],
+    'ngForTemplate': [{ type: Input },],
+};
+
 class IDesignComponentModule {
     /**
      * @param {?} coms
@@ -1377,11 +1448,13 @@ IDesignComponentModule.decorators = [
                 ],
                 exports: [
                     NgComponentDirective,
-                    ...shareComponents
+                    ...shareComponents,
+                    NgEachOf
                 ],
                 declarations: [
                     NgComponentDirective,
-                    ...shareComponents
+                    ...shareComponents,
+                    NgEachOf
                 ],
                 providers: [
                     DesignApiService,
@@ -1399,5 +1472,5 @@ IDesignComponentModule.ctorParameters = () => [];
  * Generated bundle index. Do not edit.
  */
 
-export { IDesignComponentModule, NgComponentDirective, DesignApiService, DesignLibraryService, DESIGN_LIBRARYS, DesignPropsService, DESIGN_COMPONENTS, guid, ShareBackgroundComponent as ɵf, ControlBase as ɵd, ShareBorderComponent as ɵj, ShareColorComponent as ɵc, ShareMarginComponent as ɵg, SharePaddingComponent as ɵh, SharePositionComponent as ɵi, shareComponents as ɵb, ShareSizeComponent as ɵe, ShareSwiperComponent as ɵk, DRAG_DROP_ALL as ɵa };
+export { IDesignComponentModule, NgComponentDirective, DesignApiService, DesignLibraryService, DESIGN_LIBRARYS, DesignPropsService, DESIGN_COMPONENTS, guid, ShareBackgroundComponent as ɵf, ControlBase as ɵd, ShareBorderComponent as ɵj, ShareColorComponent as ɵc, ShareMarginComponent as ɵg, SharePaddingComponent as ɵh, SharePositionComponent as ɵi, shareComponents as ɵb, ShareSizeComponent as ɵe, ShareSwiperComponent as ɵk, DRAG_DROP_ALL as ɵa, NgEachOf as ɵm, NgEachOfContext as ɵl };
 //# sourceMappingURL=meepo-idesign-share.js.map
